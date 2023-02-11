@@ -1,7 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDocs, collection } from 'firebase/firestore';
-
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
@@ -28,4 +27,6 @@ async function getDB(db) {
 }
 
 getDB(db)*/
+
+
 export default db;
