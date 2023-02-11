@@ -1,7 +1,6 @@
 
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection } from 'firebase/firestore';
-console.log('running')
 
 
 const firebaseConfig = {
@@ -13,12 +12,10 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APPID,
 };
 
-console.log(firebaseConfig)
 
 //initialize firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-console.log(db)
 
 async function getDB(db) {
     const test = collection(db, 'test')
