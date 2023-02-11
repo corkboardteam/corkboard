@@ -3,6 +3,10 @@ import './App.css';
 
 function App() {
   return (
+    <body>
+      Content goes here.
+      </body>
+    /*
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -19,6 +23,7 @@ function App() {
         </a>
       </header>
     </div>
+    */
   );
 }
 
