@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather&family=Source+Sans+Pro&display=swap');
+
+table {
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+th{
+  font-family: 'Merriweather', serif;
+}
+
+td{
+  font-family: 'Source+Sans+Pro', sans-serif;
+}
+
+tr {
+  border-bottom: 1px solid black;
+  padding: 5px;
+}
