@@ -16,7 +16,7 @@ const firebaseConfig = {
 //initialize firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+/*
 async function getDB(db) {
     const test = collection(db, 'test')
     const obj = await getDocs(test)
@@ -27,5 +27,5 @@ async function getDB(db) {
     })
 }
 
-getDB(db)
+getDB(db)*/
 export default db;
