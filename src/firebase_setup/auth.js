@@ -41,7 +41,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 // Initialize Authenticator 
 const auth = getAuth(app);
-connectAuthEmulator(auth, "http://localhost:9099");
+connectAuthEmulator(auth, "http://localhost:3000");
 
 const loginEmailPassword =  async () => {
   const loginEmail = txtEmail.value;
