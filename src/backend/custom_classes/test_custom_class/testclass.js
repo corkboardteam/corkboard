@@ -1,6 +1,6 @@
 import { Fridge, FridgeConverter } from '../fridge'
 import { getDoc, setDoc, doc } from 'firebase/firestore'
-import db from '../../firebase'
+import db from '../../config'
 
 function TestClass() {
 

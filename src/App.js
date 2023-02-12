@@ -1,6 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
-import db from './firebase_setup/firebase'
+import logo from './frontend/media/logo.svg';
+import './frontend/styles/App.css';
+import db from './backend/config'
 
 function App() {
   return (

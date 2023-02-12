@@ -11,10 +11,11 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APPID,
 };
 
-
 //initialize firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+export default { db, app };
 /*
 async function getDB(db) {
     const test = collection(db, 'test')
@@ -28,5 +29,5 @@ async function getDB(db) {
 
 getDB(db)*/
 
+// export default db;
 
-export default db;
