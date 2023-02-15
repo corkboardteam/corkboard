@@ -5,35 +5,35 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword, } from 'firebase/auth';
 
-const usrEmail = document.querySelector('#usrEmail');
-const usrPassword = document.querySelector('#usrPassword');
+export const usrEmail = document.querySelector('#usrEmail');
+export const usrPassword = document.querySelector('#usrPassword');
 
-const btnLogin = document.querySelector('#btnLogin');
-const btnSignup = document.querySelector('#btnSignup');
+export const btnLogin = document.querySelector('#btnLogin');
+export const btnSignup = document.querySelector('#btnSignup');
 
-const btnLogout = document.querySelector('#btnLogout');
+export const btnLogout = document.querySelector('#btnLogout');
 
-const authState = document.querySelector('#authState');
+export const authState = document.querySelector('#authState');
 
-const loginError = document.querySelector('#loginError');
-const loginErrorMsg = document.querySelector('#loginErrorMsg');
+export const loginError = document.querySelector('#loginError');
+export const loginErrorMsg = document.querySelector('#loginErrorMsg');
 
-const showLoginForm = () => {
+export const showLoginForm = () => {
     login.style.display = 'block';
     app.style.display = 'none';
 }
 
-const showApp = () => {
+export const showApp = () => {
     login.style.display = 'none';
     app.style.display = 'block';
 }
 
-const hideLoginError = () => {
+export const hideLoginError = () => {
     loginError.style.display = 'none';
     loginErrorMsg.innerHTML = '';
 }
   
-const showLoginError = (error) => {
+export const showLoginError = (error) => {
     loginError.style.display = 'block';
     if (error.code == AuthErrorCodes.INVALID_PASSWORD) {
         loginErrorMsg.innerHTML = `Wrong password. Try again.`;
@@ -43,7 +43,7 @@ const showLoginError = (error) => {
     }
 }
   
-const showLoginState = (user) => {
+export const showLoginState = (user) => {
     authState.innerHTML = `You're logged in as ${user.displayName} (uid: ${user.uid}, email: ${user.email}) `;
 }
   
