@@ -1,6 +1,6 @@
 import { auth } from './config.js';
 
-const email = loginForm = document.getElementById('login-form');
+const loginForm = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const loginBtn = document.getElementById('login');
