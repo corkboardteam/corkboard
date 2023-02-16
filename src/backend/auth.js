@@ -1,111 +1,112 @@
-import app from './config';
-import { AuthErrorCodes } from 'firebase/auth';
-import { 
-    getAuth, onAuthStateChanged, signOut,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword, } from 'firebase/auth';
+import { auth } from './config.js';
 
-export const usrEmail = document.querySelector('#usrEmail');
-export const usrPassword = document.querySelector('#usrPassword');
-
-export const btnLogin = document.querySelector('#btnLogin');
-export const btnSignup = document.querySelector('#btnSignup');
-
-export const btnLogout = document.querySelector('#btnLogout');
-
-export const authState = document.querySelector('#authState');
-
-export const loginError = document.querySelector('#loginError');
-export const loginErrorMsg = document.querySelector('#loginErrorMsg');
+const email = loginForm = document.getElementById('login-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('login');
+const signupBtn = document.getElementById('signup');
+const loginErr = document.getElementById('login-err');
+const loginErrMsg = document.getElementById('login-err-msg');
+const appPage = document.getElementById('app');
+const authState = document.getElementById('auth-state');
+const logoutBtn = document.getElementById('logout');
 
 export const showLoginForm = () => {
-    login.style.display = 'block';
-    app.style.display = 'none';
+    loginForm.style.display = 'block';
+    appPage.style.display = 'none';
 }
 
 export const showApp = () => {
-    login.style.display = 'none';
-    app.style.display = 'block';
+    loginForm.style.display = 'none';
+    appPage.style.display = 'block';
+}
+
+export const showLoginError = (error) => {
+    loginErr.style.display = 'block';
+    if (error.code == AuthErrorCodes.INVALID_PASSWORD) {
+        loginErrMsg.innerHTML = 'Wrong password. Try again.';
+    }
+    else {
+        loginErrMsg.innerHTML = 'Error: ${error.message}'; 
+    }
 }
 
 export const hideLoginError = () => {
-    loginError.style.display = 'none';
-    loginErrorMsg.innerHTML = '';
-}
-  
-export const showLoginError = (error) => {
-    loginError.style.display = 'block';
-    if (error.code == AuthErrorCodes.INVALID_PASSWORD) {
-        loginErrorMsg.innerHTML = `Wrong password. Try again.`;
-    }
-    else {
-        loginErrorMsg.innerHTML = `Error: ${error.message}`; 
-    }
-}
-  
-export const showLoginState = (user) => {
-    authState.innerHTML = `You're logged in as ${user.displayName} (uid: ${user.uid}, email: ${user.email}) `;
-}
-  
-hideLoginError()
-
-// Login using email/password
-const loginEmailPassword = async () => {
-  const loginEmail = usrEmail.value
-  const loginPassword = usrPassword.value
-
-  try {
-    await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
-  }
-  catch(error) {
-    console.log(`There was an error: ${error}`)
-    showLoginError(error)
-  }
+    loginErr.style.display = 'none';
+    loginErrMsg.innerHTML = '';
 }
 
-// Create new account using email/password
+// Create new user account with email and password
 const createAccount = async () => {
-  const email = usrEmail.value
-  const password = usrPassword.value
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   try {
-    await createUserWithEmailAndPassword(auth, email, password)
+    const userCreds = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCreds.user;
+    console.log("New user account created with UID: ${user.uid}");
   }
   catch(error) {
-    console.log(`There was an error: ${error}`)
-    showLoginError(error)
-  } 
+    console.error('Error creating user account:', error);
+    showLoginError(error);
+  }
 }
 
-// Monitor auth state
-const monitorAuthState = async () => {
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      console.log(user)
-      showApp()
-      showLoginState(user)
+// login with email and password
+const login = async () => {
+  const loginEmail = emailInput.value;
+  const loginPassword = passwordInput.value;
 
-      hideLoginError()
-    }
-    else {
-      showLoginForm()
-      authState.innerHTML = `You're not logged in.`
-    }
-  })
+  try {
+    const userCreds = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+    const user = userCreds.user;
+    console.log("User logged in with UID: ${user.uid}");
+  }
+  catch(error) {
+    console.error('Error logging in: ', error);
+    showLoginError(error);
+  }
 }
 
 // Log out
 const logout = async () => {
-  await signOut(auth);
+  try {
+    await signOut(auth);
+    console.log("User logged out");
+  }
+  catch(error) {
+    console.log("Error logging out", error);
+    showLoginError(error);
+  }
 }
 
-btnLogin.addEventListener("click", loginEmailPassword) 
-btnSignup.addEventListener("click", createAccount)
-btnLogout.addEventListener("click", logout)
+export const showLoginState = (user) => {
+    authState.innerHTML = "You're logged in as ${user.displayName} (UID: ${user.uid}) (email: ${user.email})";
+}
 
-const auth = getAuth(app);
+// Monitor authentication state
+const monitorAuthState = async () => {
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      // User is logged in
+      console.log('Logged in as ${user.displayName}')
+      showApp();
+      showLoginState(user);
+      hideLoginError();
+    } else {
+      // User is logged out
+      showLoginForm();
+      authState.innerHTML = "You're not logged in.";
+    }
+  });
+}
 
 monitorAuthState();
+
+signupBtn.addEventListener('click', createAccount);
+loginBtn.addEventListener('click', login);
+logoutBtn.addEventListener('click', logout);
+
 
 
 
