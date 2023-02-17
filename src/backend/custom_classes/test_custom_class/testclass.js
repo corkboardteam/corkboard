@@ -1,7 +1,8 @@
 import { Fridge, FridgeConverter } from '../fridge'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../../config'
-import { getAllGroceries } from '../grocery'
+import { getAllGroceries, Grocery } from '../grocery'
+import GroceryList from '../../../frontend/pages/GroceryList'
 function TestClass() {
 
     async function addFridge() {
@@ -14,7 +15,11 @@ function TestClass() {
 
     addFridge();
     getAllGroceries()
-    return (<div></div>)
+    return (
+        <div>
+            <GroceryList />
+        </div>
+    )
 }
 
 export default TestClass
