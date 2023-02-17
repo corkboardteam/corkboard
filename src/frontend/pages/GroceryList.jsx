@@ -7,11 +7,12 @@ function GroceryList() {
     useEffect(() => {
         async function checkGroceries() {
             const groceries = await getAllGroceries();
-            setAllGroceries(groceries);
+            console.log(groceries)
+            setAllGroceries(groceries)
         }
 
         checkGroceries();
-    })
+    }, [])
     return (
         <body>
             <table>
