@@ -3,11 +3,11 @@ import './frontend/styles/App.css';
 import db from './backend/config'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
 import GroceryList from './frontend/pages/GroceryList';
+
 function App() {
   return (
     <body>
-      <TestClass></TestClass>
-      <GroceryList></GroceryList>
+
       <table>
         <tr>
           <th>Item</th>
