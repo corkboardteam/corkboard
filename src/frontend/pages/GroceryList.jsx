@@ -7,12 +7,12 @@ function GroceryList() {
     useEffect(() => {
         async function checkGroceries() {
             const groceries = await getAllGroceries();
-            console.log(groceries)
+
             setAllGroceries(groceries)
         }
 
         checkGroceries();
-    }, [])
+    }, []) // [] makes sure useEffect only runs on mount, avoids infinitely reading from database
     return (
         <body>
             <table>
