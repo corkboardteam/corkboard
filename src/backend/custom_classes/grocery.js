@@ -31,9 +31,12 @@ async function addGroceryItem(itemName, price, storeName) {
 
 async function getAllGroceries() {
     const querySnapshot = await getDocs(collection(db, "groceries").withConverter(GroceryConverter));
+    let allGroceries = []
     querySnapshot.forEach((doc) => {
-        return doc.data().itemName;
+        allGroceries.push({ data: doc.data(), id: doc.id });
     })
+
+    return allGroceries;
 }
 
 
