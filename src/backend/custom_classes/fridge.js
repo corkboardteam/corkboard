@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import db from '../config'
+import db from '../firebase'
 
 class Fridge {
     constructor(groupName, users, groceries) {

@@ -1,63 +1,29 @@
-import logo from './frontend/media/logo.svg';
-import './frontend/styles/App.css';
-import db from './backend/config'
+import React from 'react'
+import { Container } from 'react-bootstrap'
+import Dashboard from './frontend/pages/Dashboard'
+import Login from './frontend/pages/Login'
+import Signup from './frontend/pages/Signup'
+import { Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './backend/custom_classes/authContext'
 
 function App() {
   return (
-    <body>
-      <table>
-        <tr>
-          <th>Item</th>
-          <th>Stock</th>
-          <th>Limit</th>
-          <th>Where to buy</th>
-        </tr>
-        <tr>
-          <td>eggs</td>
-          <td>ten eggs</td>
-          <td>sixty eggs</td>
-          <td>Ralphs</td>
-        </tr>
-        <tr>
-          <td>oatmeal</td>
-          <td>zero</td>
-          <td>three canisters</td>
-          <td>Target</td>
-        </tr>
-        <tr>
-          <td>milk</td>
-          <td>one gallon</td>
-          <td>two gallons</td>
-          <td>Ralphs</td>
-        </tr>
-        <tr>
-          <td>spinach</td>
-          <td>one bag</td>
-          <td>three bags</td>
-          <td>Whole Foods</td>
-        </tr>
-      </table>
-      <button>+</button>
-    </body>
-    /*
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <h1 className='text-center text-3xl font-bold mt-8'>
+        Corkboard
+      </h1>
+      <Container style={{ maxWidth: "400px", marginTop: "2rem" }}>
+        <AuthProvider>
+          <Routes>
+            <Route exact path = '/' element={<Dashboard />} />
+            <Route path = '/login' element={<Login />} />
+            <Route path = '/signup' element={<Signup />} />
+          </Routes>
+        </AuthProvider>
+      </Container>
     </div>
-    */
   );
 }
 
-export default App;
+export default App
