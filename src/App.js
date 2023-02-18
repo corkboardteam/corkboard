@@ -8,6 +8,7 @@ import Profile from './frontend/components/Profile'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/auth_functions/authContext'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
+
 function App() {
   return (
     <Container style={{ maxWidth: "600px", marginTop: "2rem" }}>
