@@ -2,7 +2,7 @@ import { Fridge, FridgeConverter } from '../fridge'
 import { getDoc, setDoc, doc } from 'firebase/firestore'
 import db from '../../firebase'
 import { getAllGroceries, Grocery } from '../grocery'
-import GroceryList from '../../../frontend/pages/GroceryList'
+import GroceryList from '../../../frontend/components/GroceryList'
 function TestClass() {
 
     async function addFridge() {
