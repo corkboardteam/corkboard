@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { UserAuth } from '../../backend/auth_functions/authContext';
 
-export const Signup = () => {
+const Signup = () => {
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -14,7 +14,7 @@ export const Signup = () => {
 
 	const handleSubmit = async (e) => {
 			e.preventDefault();
-
+			
 			try {
 					setError('');
 					setLoading(true);

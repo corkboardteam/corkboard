@@ -1,13 +1,44 @@
-import React from 'react';
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
+import { UserAuth } from "../../backend/auth_functions/authContext"
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 
 
-function Dashboard() {
+const Dashboard = () => {
+  const [error, setError] = useState('');
+  const { currUser, logout } = UserAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    setError("")
+    try {
+      await logout();
+      navigate('/');
+    } catch {
+      setError('Failed to log out');
+    }
+  }
   return (
+    
     <div className="w-100 text-center mt-2">
         Go to Grocery List <Link to="/grocerylist">Grocery List</Link>
-        <body>
+        <Card>
+        <Card.Body>
+          <h2 className="text-center mb-4">Dashboard</h2>
+          {error && <Alert variant="danger">{error}</Alert>}
+          <strong>Email:</strong> {currUser.email}
+          <Link to="/profile" className="btn btn-primary w-100 mt-3">
+            Update Profile
+          </Link>
+        </Card.Body>
+      </Card>
+      <div className="w-100 text-center mt-2">
+        <Button variant="link" onClick={handleLogout}>
+          Log Out
+        </Button>
+      </div>
+    </div>
+        /* <body>
           <table>
             <tr>
               <th>Item</th>
@@ -42,8 +73,8 @@ function Dashboard() {
           </table>
           <button>+</button>
           
-        </body>
-      </div>
+        </body> */
+    
   );
 }
 

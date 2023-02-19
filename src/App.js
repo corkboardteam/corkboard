@@ -8,6 +8,7 @@ import Profile from './frontend/components/Profile'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/auth_functions/authContext'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
+import ForgotPassword from './frontend/components/ForgotPassword'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path = '/dashboard' element={<Dashboard />} />
           <Route path = '/signup' element={<Signup />} />
           <Route path = '/profile' element={<Profile />} />
+          <Route path = '/forgot-password' element={<ForgotPassword />} />
           <Route path = '/grocerylist' element={<GroceryList />} />
         </Routes>
       </AuthProvider>
