@@ -12,6 +12,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [newDisplayName, setNewDisplayName] = useState('');
   const [newProfilePicture, setNewProfilePicture] = useState('');
+  const [newGroupID, setNewGroupID] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -65,6 +66,18 @@ const Profile = () => {
         }
       }
 
+      // if (newGroupID) {
+      //   try {
+      //     setLoading(true);
+      //     setError('');
+      //     await updateNewGroupID(newGroupID);
+      //     setNewGroupID('');
+      //     navigate('/profile');
+      //   } catch (error) {
+      //     console.error(error);
+      //     setError('Failed to update Group ID');
+      //   }
+
       await updateProfile({
         displayName: newDisplayName,
         photoURL: newProfilePicture,
@@ -94,6 +107,10 @@ const Profile = () => {
                 <Form.Label>Profile Picture URL</Form.Label>
                 <Form.Control type="text" defaultValue={userData.photoURL} onChange={(e) => setNewProfilePicture(e.target.value)} />
               </Form.Group>
+              {/* <Form.Group id="Group">
+                <Form.Label>Group</Form.Label>
+                <Form.Control type="text" defaultValue={userData.GroupID} onChange={(e) => setNewGroupID(e.target.value)} />
+              </Form.Group> */}
               <hr />
               <Form.Group id="email">
                 <Form.Label>Current Email</Form.Label>

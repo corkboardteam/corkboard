@@ -4,6 +4,7 @@ import Dashboard from './frontend/components/Dashboard'
 import GroceryList from './frontend/components/GroceryList'
 import Login from './frontend/components/Login'
 import Signup from './frontend/components/Signup'
+import Group from './frontend/components/Group'
 import Profile from './frontend/components/Profile'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/auth_functions/authContext'
@@ -18,6 +19,7 @@ function App() {
           <Route path = '/' element={<Login />} />
           <Route path = '/dashboard' element={<Dashboard />} />
           <Route path = '/signup' element={<Signup />} />
+          <Route path = '/group' element={<Group />} />
           <Route path = '/profile' element={<Profile />} />
           <Route path = '/forgot-password' element={<ForgotPassword />} />
           <Route path = '/grocerylist' element={<GroceryList />} />
