@@ -5,7 +5,7 @@ import { getDoc, setDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../backend/firebase';
 import { UserAuth } from '../../backend/auth_functions/authContext';
 
-const Group = ({ curreUser }) => {
+const Group = () => {
   const [groupID, setGroupID] = useState('');
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
