@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { getDoc, setDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../backend/firebase';
+import { UserAuth } from '../../backend/auth_functions/authContext';
 
-const Group = ({ currentUser }) => {
+const Group = () => {
   const [groupID, setGroupID] = useState('');
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { currUser } = UserAuth();
+  const currentUser = currUser;
 
   const handleJoinGroup = async (e) => {
     e.preventDefault();
@@ -42,21 +45,25 @@ const Group = ({ currentUser }) => {
   const handleCreateGroup = async (e) => {
     e.preventDefault();
 
+    console.log(groupName)
+
     try {
       setLoading(true);
       setError('');
-      const groupRef = setDoc(db, 'groups', groupID);
+      const groupRef = doc(db, 'groups', groupID);
+
       const groupData = {
         name: groupName,
         description: groupDescription,
         members: [currentUser.uid],
-        groupUID: groupID 
+        groupUID: groupID
       };
 
       await setDoc(groupRef, groupData);
       console.log("Group created:", groupData.name);
       navigate('/dashboard');
     } catch (error) {
+      console.log(error)
       setError(error.message);
     }
 
@@ -101,14 +108,14 @@ const Group = ({ currentUser }) => {
             placeholder="Enter Group Description"
           />
           <Form.Group className="mb-3">
-          <Form.Label>Group UID</Form.Label>
-          <Form.Control
-            type="text"
-            value={groupID}
-            onChange={(e) => setGroupID(e.target.value)}
-            placeholder="Create Group Unique ID"
-          />
-        </Form.Group>
+            <Form.Label>Group UID</Form.Label>
+            <Form.Control
+              type="text"
+              value={groupID}
+              onChange={(e) => setGroupID(e.target.value)}
+              placeholder="Create Group Unique ID"
+            />
+          </Form.Group>
         </Form.Group>
         <Button variant="primary" type="submit" disabled={loading}>
           Create Group
