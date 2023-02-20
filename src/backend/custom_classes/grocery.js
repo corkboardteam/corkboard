@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, query, where } from "firebase/firestore";
 
 class Grocery {
     constructor(groceryName, price, storeName) {
@@ -39,5 +39,21 @@ async function getAllGroceries() {
     return allGroceries;
 }
 
+async function getSpecificGrocery(itemName) {
+    const groceriesRef = collection(db, "groceries");
+    const q = query(groceriesRef, where("itemName", "==", itemName))
 
-export { Grocery, GroceryConverter, addGroceryItem, getAllGroceries }
+    const querySnapshot = await getDocs(q.withConverter(GroceryConverter));
+    if (querySnapshot.size == 0)
+        return null;
+
+    let docs = []
+    querySnapshot.forEach((doc) => {
+        docs.push({ data: doc.data(), id: doc.id })
+    })
+
+    return docs[0];
+
+}
+
+export { Grocery, GroceryConverter, addGroceryItem, getAllGroceries, getSpecificGrocery }
