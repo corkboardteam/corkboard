@@ -92,7 +92,6 @@ async function addGroceryToFridge(itemName, maxQuantity, currentQuantity, groupN
     //edit the fridge
 
 }
-addGroceryToFridge("berries", 3, 0, "room 3")
 
 export { Fridge, FridgeConverter }
 
