@@ -20,7 +20,7 @@ const Signup = () => {
 					setLoading(true);
 					await signUp(email, password);
 					console.log('user created');
-					navigate('/dashboard');
+					navigate('/group');
 
 			} catch(error) {
 					setError('Failed to create an account')

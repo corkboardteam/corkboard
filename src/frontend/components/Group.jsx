@@ -1,12 +1,13 @@
 import { useState, useContext } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { getDoc, setDoc, doc, updateDoc } from 'firebase/firestore'
+import { getDoc, setDoc, doc, updateDoc, arrayUnion, increment } from 'firebase/firestore'
 import { db } from '../../backend/firebase';
 import { UserAuth } from '../../backend/auth_functions/authContext';
 
 const Group = () => {
   const [groupID, setGroupID] = useState('');
+  const [createdGroupID, setCreatedGroupID] = useState('');
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
   const [error, setError] = useState('');
@@ -24,21 +25,26 @@ const Group = () => {
 
       const groupRef = doc(db, 'groups', groupID);
       const groupDoc = await getDoc(groupRef);
+      const groupData = groupDoc.data()
 
-      if (!groupDoc.exists) {
+      if (groupDoc.exists()) {
+        if (groupData.members.includes(currentUser.uid)) {
+          throw new Error('You are already a member of this group');
+        }
+
+        await updateDoc(groupRef, {
+          members: arrayUnion(currentUser.uid),
+          totalMembers: increment(1)
+        });
+
+        console.log('Joined group:', groupData);
+        navigate('/dashboard');
+      } else {
         throw new Error('Group does not exist');
       }
-      const groupData = groupDoc.data()
-      await updateDoc(groupRef)({
-        members: [...groupDoc.data().members, currentUser.uid],
-      });
-      console.log('Joined group:');
-      navigate('/dashboard');
     } catch (error) {
       setError(error.message);
-      console.log("Group doesn't exist");
     }
-
     setLoading(false);
   };
 
@@ -50,23 +56,31 @@ const Group = () => {
     try {
       setLoading(true);
       setError('');
-      const groupRef = doc(db, 'groups', groupID);
+      const groupRef = doc(db, 'groups', createdGroupID);
+      console.log('groupRef:', groupRef.path);
+      const groupDoc = await getDoc(groupRef);
+      console.log('groupDoc:', groupDoc.data());
 
-      const groupData = {
-        name: groupName,
-        description: groupDescription,
-        members: [currentUser.uid],
-        groupUID: groupID
-      };
+      if (!(groupDoc.exists())) {
+        const groupData = {
+          name: groupName,
+          description: groupDescription,
+          members: arrayUnion(currentUser.uid),
+          UID: createdGroupID,
+          totalMembers: 1
+        };
+        await setDoc(groupRef, groupData);
 
-      await setDoc(groupRef, groupData);
-      console.log("Group created:", groupData.name);
-      navigate('/dashboard');
+        console.log("Group created:", groupData.name);
+        navigate('/dashboard');
+
+      } else {
+        throw new Error('Group ID aleady exists');
+      }
     } catch (error) {
       console.log(error)
       setError(error.message);
     }
-
     setLoading(false);
   };
 
@@ -111,8 +125,8 @@ const Group = () => {
             <Form.Label>Group UID</Form.Label>
             <Form.Control
               type="text"
-              value={groupID}
-              onChange={(e) => setGroupID(e.target.value)}
+              value={createdGroupID}
+              onChange={(e) => setCreatedGroupID(e.target.value)}
               placeholder="Create Group Unique ID"
             />
           </Form.Group>
