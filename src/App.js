@@ -6,10 +6,11 @@ import Login from './frontend/components/Login'
 import Signup from './frontend/components/Signup'
 import Group from './frontend/components/Group'
 import Profile from './frontend/components/Profile'
+import ForgotPassword from './frontend/components/ForgotPassword'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/auth_functions/authContext'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
-import ForgotPassword from './frontend/components/ForgotPassword'
+
 
 function App() {
   return (

@@ -14,9 +14,41 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
   
-
-  const signUp = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth,async (user) => {
+      setCurrUser(user);
+      setLoading(false);
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          setUserData(userDoc.data());
+        } else {
+          const { displayName, photoURL } = user;
+          const userData = { displayName, photoURL };
+          await setDoc(userRef, userData);
+          setUserData(userData);
+        }
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  
+  const signUp = async (email, password) => {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+    const userData = {
+      email: email,
+      displayName: null,
+      profileURL: null,
+      uid: user.uid,
+      groupID: null
+    };
+    const userRef = doc(db, 'users', user.uid);
+    setDoc(userRef, userData);
+    setUserData(userData);
   };
 
    const login = (email, password) =>  {
@@ -33,15 +65,21 @@ export const AuthProvider = ({ children }) => {
 
 
   const changePassword = (password) => {
-    return updatePassword(auth.currentUser, password);
+    const user = auth.currentUser;
+    return updatePassword(user, password);
   }
 
   const updateProfile = async (data) => {
     try {
-      const userDocRef = doc(db, 'users', auth.currentUser.uid);
-      await updateDoc(userDocRef, data);
-      setCurrUser({ ...auth.currentUser, ...data });
-      setUserData({ ...userData, ...data });
+      const user = auth.currentUser;
+      const userRef = doc(db, 'users', user.uid);
+      
+      const currentUserData = { ...userData };
+      const updatedUserData = { ...currentUserData, ...data };
+      
+      setUserData(updatedUserData);
+      setCurrUser((prevUser) => ({ ...prevUser, ...data }));
+      await updateDoc(userRef, updatedUserData);
     } catch(error) {
       console.error('Error updating profile:', error);
       throw error;
@@ -66,36 +104,26 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  const setOrUpdateGroup = async (groupID) => {
+    try {
+      await updateProfile({ groupID });
+    } catch (error) {
+      console.error('Error setting group ID: ', error);
+      throw error;
+    }
+  }
+
   const reauthenticateUser = async (email, password) => {
     try {
       const creds = EmailAuthProvider.credential(email, password);
-      await reauthenticateWithCredential(auth.currentUser, creds);
+      const user = auth.currentUser
+      await reauthenticateWithCredential(user, creds);
     } catch (error) {
       console.error('Error reauthenticating user: ', error);
       throw error;
     }
   }
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth,async (user) => {
-      setCurrUser(user);
-      setLoading(false);
-      if (user) {
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          setUserData(userDoc.data());
-        } else {
-          const { displayName, photoURL } = user;
-          const userData = { displayName, photoURL };
-          await setDoc(userDocRef, userData);
-          setUserData(userData);
-        }
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  
 
   const value = {
     signUp,
@@ -107,6 +135,7 @@ export const AuthProvider = ({ children }) => {
     changePassword,
     setOrUpdateDisplayName,
     setOrUpdateProfilePicture,
+    setOrUpdateGroup,
     reauthenticateUser,
     updateProfile
   }

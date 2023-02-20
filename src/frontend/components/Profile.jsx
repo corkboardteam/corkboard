@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Card, Alert, Container } from 'react-bootstrap';
 import { UserAuth } from '../../backend/auth_functions/authContext';
+import { GroupClass } from '../../backend/custom_classes/groupClass';
 
 const Profile = () => {
   const { currUser, userData, updateProfile, changePassword, 
@@ -26,9 +27,7 @@ const Profile = () => {
 
       if (newPassword) {
         try {
-          setLoading(true);
-          setError('');
-          await reauthenticateUser(currUser.email, currentPassword);
+          await reauthenticateUser(userData.email, currentPassword);
           await changePassword(newPassword);
           setNewPassword('');
           console.log('New password set:');
@@ -41,11 +40,9 @@ const Profile = () => {
 
       if (newDisplayName) {
         try {
-          setLoading(true);
-          setError('');
           await setOrUpdateDisplayName(newDisplayName);
           setNewDisplayName('');
-          console.log('New display name set:', currUser.displayName);
+          console.log('New display name set:', userData.displayName);
           navigate('/profile');
         } catch (error) {
           console.error(error);
@@ -55,8 +52,6 @@ const Profile = () => {
 
       if (newProfilePicture) {
         try {
-          setLoading(true);
-          setError('');
           await setOrUpdateProfilePicture(newProfilePicture);
           setNewProfilePicture('');
           navigate('/profile');
@@ -66,22 +61,18 @@ const Profile = () => {
         }
       }
 
-      // if (newGroupID) {
-      //   try {
-      //     setLoading(true);
-      //     setError('');
-      //     await updateNewGroupID(newGroupID);
-      //     setNewGroupID('');
-      //     navigate('/profile');
-      //   } catch (error) {
-      //     console.error(error);
-      //     setError('Failed to update Group ID');
-      //   }
-
-      await updateProfile({
-        displayName: newDisplayName,
-        photoURL: newProfilePicture,
-      });
+      if (newGroupID) {
+        try {
+          const group = new GroupClass(userData.groupID);
+          await group.leaveGroup(currUser);
+          await group.joinGroup(newGroupID);
+          setNewGroupID('');
+          navigate('/profile');
+        } catch (error) {
+          console.error(error);
+          setError('Failed to update Group ID');
+        }
+      }
 
       navigate('/profile');
     } catch (error) {
@@ -101,20 +92,20 @@ const Profile = () => {
             <Form onSubmit={handleSubmit}>
               <Form.Group id="displayName">
                 <Form.Label>Display Name</Form.Label>
-                <Form.Control type="text" defaultValue={userData.displayName} onChange={(e) => setNewDisplayName(e.target.value)} />
+                <Form.Control onChange={(e) => setNewDisplayName(e.target.value)} type="text" defaultValue={userData.displayName}  />
               </Form.Group>
               <Form.Group id="profilePicture">
                 <Form.Label>Profile Picture URL</Form.Label>
-                <Form.Control type="text" defaultValue={userData.photoURL} onChange={(e) => setNewProfilePicture(e.target.value)} />
+                <Form.Control onChange={(e) => setNewProfilePicture(e.target.value)} type="text" defaultValue={userData.photoURL}  />
               </Form.Group>
-              {/* <Form.Group id="Group">
+              <Form.Group id="Group">
                 <Form.Label>Group</Form.Label>
-                <Form.Control type="text" defaultValue={userData.GroupID} onChange={(e) => setNewGroupID(e.target.value)} />
-              </Form.Group> */}
+                <Form.Control onChange={(e) => setNewGroupID(e.target.value)}  type="text" defaultValue={userData.groupID} />
+              </Form.Group>
               <hr />
               <Form.Group id="email">
                 <Form.Label>Current Email</Form.Label>
-                <Form.Control type="email" defaultValue={currUser.email} readOnly />
+                <Form.Control type="email" defaultValue={userData.email} readOnly />
               </Form.Group>
               <Form.Group id="currentPassword">
                 <Form.Label>Current Password</Form.Label>
