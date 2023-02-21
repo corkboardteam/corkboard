@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { UserAuth } from '../../backend/auth_functions/authContext';
 
 const Signup = () => {
@@ -20,7 +19,7 @@ const Signup = () => {
 					setLoading(true);
 					await signUp(email, password);
 					console.log('user created');
-					navigate('/group');
+					navigate('/dashboard');
 
 			} catch(error) {
 					setError('Failed to create an account')
@@ -30,28 +29,43 @@ const Signup = () => {
 	}
 	return (
 		<>
-		<Card>
-			<Card.Body>
-				<h2 className="text-center mb-4">Sign Up</h2>
-				{error && <Alert variant='danger'>{error}</Alert>}
-				<Form onSubmit={handleSubmit}>
-					<Form.Group id="email">
-						<Form.Control onChange={(e) => setEmail(e.target.value)} type="email"  placeholder='Email' required />
-					</Form.Group>
-					<h2 className='mb-4'> </h2>
-					<Form.Group id="password">
-						<Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' required />
-					</Form.Group>
-					<Button disabled={loading} className="w-100 mt-4" type="submit">
-						Sign Up
-					</Button>
-				</Form>
-			</Card.Body>
-		</Card>
-		<div className="w-100 text-center mt-2">
-			Already have an account? <Link to="/">Login</Link>
-		</div>
-	</>
+      <div className="card">
+        <div className="card-body">
+          <h2 className="text-center mb-4">Sign Up</h2>
+          {error && <div className="alert alert-danger">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input
+                className="form-control" 
+				type="email" 
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input 
+			  	className="form-control"
+			  	type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                required
+              />
+            </div>
+            <button disabled={loading} className="btn btn-primary w-100 mt-4" type="submit">Sign Up</button>
+          </form>
+        </div>
+      </div>
+      <div className="w-100 text-center mt-2">
+        Already have an account? <Link to="/">Login</Link>
+      </div>
+    </>
 	) 
 }
 export default Signup

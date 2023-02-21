@@ -104,10 +104,13 @@ class GroupClass {
         throw new Error('You do not have permissions to edit group info')
       }
       const groupDoc = await getDoc(this.groupRef);
-      await updateDoc(this.groupRef, { 
+      const groupData = groupDoc.data();
+      const newGroupData = {
         name: newName,
-        desc: newDesc 
-      });
+        desc: newDesc
+      }
+      const updatedGroupData = { ...groupData, ...newGroupData };
+      await updateDoc(this.groupRef, updatedGroupData)
       console.log('Group info updated');
       return true;
     } catch(error) {

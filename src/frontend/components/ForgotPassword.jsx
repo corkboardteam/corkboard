@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react"
-import { Form, Button, Card, Alert } from "react-bootstrap"
+import React, { useState } from "react"
 import { UserAuth } from "../../backend/auth_functions/authContext"
 import { Link } from "react-router-dom"
 
@@ -28,24 +27,25 @@ const ForgotPassword = () => {
 
   return (
     <>
-      <Card>
-        <Card.Body>
+      <div className="card">
+        <div className="card-body">
           <h2 className="text-center mb-4">Password Reset</h2>
-          {error && <Alert variant="danger">{error}</Alert>}
-          {message && <Alert variant="success">{message}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="email">
-              <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' required />
-            </Form.Group>
-            <Button disabled={loading} className="w-100" type="submit">
+          {error && <div className="alert alert-danger">{error}</div>}
+          {message && <div className="alert alert-success">{message}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input onChange={(e) => setEmail(e.target.value)} type="email" className="form-control" id="email" placeholder="Enter email" required />
+            </div>
+            <button disabled={loading} className="btn btn-primary w-100" type="submit">
               Reset Password
-            </Button>
-          </Form>
+            </button>
+          </form>
           <div className="w-100 text-center mt-3">
             <Link to="/">Login</Link>
           </div>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
       <div className="w-100 text-center mt-2">
         Need an account? <Link to="/signup">Sign Up</Link>
       </div>
