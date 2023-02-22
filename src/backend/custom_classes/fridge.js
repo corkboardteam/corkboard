@@ -93,6 +93,6 @@ async function addGroceryToFridge(itemName, maxQuantity, currentQuantity, groupN
 
 }
 
-export { Fridge, FridgeConverter }
+export { Fridge, FridgeConverter, addNewFridge, getFridge, addGroceryToFridge }
 
 

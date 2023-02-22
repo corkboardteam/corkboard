@@ -7,6 +7,7 @@ import Signup from './frontend/components/Signup'
 import Group from './frontend/components/Group'
 import Profile from './frontend/components/Profile'
 import ForgotPassword from './frontend/components/ForgotPassword'
+import Fridge from './frontend/components/Fridge'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/auth_functions/authContext'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
@@ -17,13 +18,14 @@ function App() {
     <Container style={{ maxWidth: "600px", marginTop: "2rem" }}>
       <AuthProvider>
         <Routes>
-          <Route path = '/' element={<Login />} />
-          <Route path = '/dashboard' element={<Dashboard />} />
-          <Route path = '/signup' element={<Signup />} />
-          <Route path = '/group' element={<Group />} />
-          <Route path = '/profile' element={<Profile />} />
-          <Route path = '/forgot-password' element={<ForgotPassword />} />
-          <Route path = '/grocerylist' element={<GroceryList />} />
+          <Route path='/' element={<Login />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/group' element={<Group />} />
+          <Route path='/profile' element={<Profile />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/grocerylist' element={<GroceryList />} />
+          <Route path='/fridge' element={<Fridge />} />
         </Routes>
       </AuthProvider>
     </Container>
