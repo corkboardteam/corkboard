@@ -12,6 +12,7 @@ import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/authContext'
 import Protected from './backend/Protected'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
+import Discusion from './frontend/components/Discussion'
 
 
 function App() {
@@ -86,6 +87,7 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/grocerylist' element={<Protected><GroceryList /></Protected>} />
           <Route path='/fridge' element={<Protected><Fridge /></Protected>} />
+          <Route path='/discussion' element={<Protected><Discusion /></Protected>} />
         </Routes>
       </AuthProvider>
     </Container>
