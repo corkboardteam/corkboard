@@ -8,7 +8,8 @@ import Group from './frontend/components/Group'
 import Profile from './frontend/components/Profile'
 import ForgotPassword from './frontend/components/ForgotPassword'
 import { Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './backend/auth_functions/authContext'
+import { AuthProvider } from './backend/authContext'
+import Protected  from './backend/Protected'
 import TestClass from './backend/custom_classes/test_custom_class/testclass';
 
 
@@ -18,12 +19,12 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path = '/' element={<Login />} />
-          <Route path = '/dashboard' element={<Dashboard />} />
+          <Route path = '/dashboard' element={<Protected><Dashboard /></Protected>} />
           <Route path = '/signup' element={<Signup />} />
-          <Route path = '/group' element={<Group />} />
-          <Route path = '/profile' element={<Profile />} />
+          <Route path = '/group' element={<Protected><Group /></Protected>} />
+          <Route path = '/profile' element={<Protected><Profile /></Protected>} />
           <Route path = '/forgot-password' element={<ForgotPassword />} />
-          <Route path = '/grocerylist' element={<GroceryList />} />
+          <Route path = '/grocerylist' element={<Protected><GroceryList /></Protected>} />
         </Routes>
       </AuthProvider>
     </Container>

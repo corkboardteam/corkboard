@@ -1,36 +1,37 @@
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, 
+import {doc, getDoc, setDoc, updateDoc, arrayUnion, 
         arrayRemove, increment, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-
 class GroupClass {
-  constructor(groupID, groupName, groupDesc) {
+  constructor(groupID) {
     this.uid = groupID;
-    this.name = groupName;
-    this.desc = groupDesc;
+    this.ownerID = null;
+    this.name = null;
+    this.desc = null;
+    this.members = null;
+    this.totalMembers = null;
     this.groupRef = doc(db, 'groups', groupID);
   }
-
-  async createGroup(user) {
+  
+  async createGroup(user, groupName = null, groupDesc = null) {
     try {
       // supposed to check if a user is in a group already by checking if their groupid is null or not but not working
       // if (user.groupID != null) {
       //   throw new Error('You are already in a group, Users are only allowed to be in one group at time');
       // }
+        
         const groupDoc = await getDoc(this.groupRef);
         if (!groupDoc.exists()) { 
           const groupData = {
               ownerID: user.uid,
               uid: this.uid,
-              name : this.name,
-              desc : this.desc,
+              name : groupName,
+              desc : groupDesc,
               members: arrayUnion(user.uid),
               totalMembers: 1
           }
           await setDoc(this.groupRef, groupData);
-          console.log("Group Created:", groupData);
+          console.log("Group Created:", groupData);          
 
-          const userRef = doc(db, 'users', user.uid);     
-          await updateDoc(userRef, { groupID: this.uid }) // update user's group id
           return true;
         }
     } catch (error) {
@@ -44,22 +45,20 @@ class GroupClass {
       if (user.groupID != null) {
         throw new Error('You are already in a group, Users are only allowed to be in one group at time');
       }
+      
       const groupDoc = await getDoc(this.groupRef);
-      const groupData = groupDoc.data();
       if (groupDoc.exists()) {
-        const members = groupDoc.data().members;
+        const groupData = groupDoc.data();
+        const members = groupData.members;
         if (members.includes(user.uid)) {
           throw new Error('User is already a member of this group');
-        }
+        } 
         await updateDoc(this.groupRef, { 
           members: arrayUnion(user.uid), 
           totalMembers: increment(1)
         });
 
-        const userRef = doc(db, 'users', user.uid);      // update user's group id
-        await updateDoc(userRef, { groupID: this.uid }) 
-
-        console.log('Joined group:', groupData);
+        console.log('Joined group: ' + groupData.name, groupData);
         return true;
 
       } else {
@@ -84,12 +83,10 @@ class GroupClass {
       }
       await updateDoc(this.groupRef, { 
         members: arrayRemove(user.uid), 
-        totalMembers: groupData.totalMembers - 1
+        totalMembers: (groupData.totalMembers) - 1
       });
-      const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, { groupID: null })
 
-      console.log('You have left the group: ', groupData);
+      console.log('Left group: ' + groupData.name, groupData);
       return true;
 
     } catch(error) {
@@ -98,7 +95,7 @@ class GroupClass {
     }
   }
 
-  async updateGroup(user, newName, newDesc) {
+  async updateGroupInfo(user, newName, newDesc) {
     try {
       if (user.uid !== this.ownerID) {
         throw new Error('You do not have permissions to edit group info')
@@ -110,7 +107,8 @@ class GroupClass {
         desc: newDesc
       }
       const updatedGroupData = { ...groupData, ...newGroupData };
-      await updateDoc(this.groupRef, updatedGroupData)
+      await updateDoc(this.groupRef, updatedGroupData);
+
       console.log('Group info updated');
       return true;
     } catch(error) {
@@ -140,7 +138,7 @@ class GroupClass {
   }
 }
 
-function generateUniqueID() {
+function generateGroupUID() {
   const length = 8;
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
@@ -150,4 +148,4 @@ function generateUniqueID() {
   return result;
 }
 
-export { GroupClass, generateUniqueID };
+export { GroupClass, generateGroupUID };

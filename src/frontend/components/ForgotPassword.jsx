@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { UserAuth } from "../../backend/auth_functions/authContext"
+import { UserAuth } from "../../backend/authContext"
 import { Link } from "react-router-dom"
 
 const ForgotPassword = () => {

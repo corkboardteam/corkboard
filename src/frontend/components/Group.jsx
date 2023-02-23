@@ -1,24 +1,17 @@
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../backend/auth_functions/authContext';
-import { GroupClass, generateUniqueID } from '../../backend/custom_classes/groupClass';
+import { useNavigate, Link } from 'react-router-dom';
+import { UserAuth } from '../../backend/authContext';
+import { GroupClass, generateGroupUID } from '../../backend/custom_classes/groupClass';
 
 const Group = () => {
-  const [groupID, setGroupID] = useState('');
+  const [joinGroupID, setJoinGroupID] = useState('');
+  const [createGroupID, setCreateGroupID] = useState('');
   const [groupName, setGroupName] = useState('');
   const [groupDesc, setgroupDesc] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { currUser } = UserAuth();
-  const currentUser = currUser;
-
-  // // checks if user is already in group and prevents them from going back to group signup/join page
-  // useEffect(() => {
-  //   if (!(currentUser.groupID == null)) {
-  //     navigate('/dashboard');
-  //   }
-  // }, [currentUser, navigate]);
+  const { currentUser, updateProfile } = UserAuth();
 
   const handleJoinGroup = async (e) => {
     e.preventDefault();
@@ -26,11 +19,10 @@ const Group = () => {
       setLoading(true);
       setError('');
 
-      const group = new GroupClass(groupID, groupName, groupDesc);
-      const success = await group.joinGroup(currentUser);
-      if (success) {
-        navigate('/dashboard');
-      }
+      const group = new GroupClass(joinGroupID);
+      await group.joinGroup(currentUser);
+      await updateProfile({ groupID: joinGroupID });
+      navigate('/dashboard');
 
     } catch (error) {
       setError(error.message);
@@ -43,12 +35,11 @@ const Group = () => {
     try {
       setLoading(true);
       setError('');
-      const UID = generateUniqueID();
-      const group = new GroupClass(UID, groupName, groupDesc);
-      const success = await group.createGroup(currentUser);
-      if (success) {
-        navigate('/dashboard');
-      }
+      setCreateGroupID(generateGroupUID());
+      const group = new GroupClass(createGroupID);
+      await group.createGroup(currentUser, groupName, groupDesc);
+      await updateProfile({ groupID: createGroupID });
+      navigate('/dashboard');
 
     } catch (error) {
       setError(error.message);
@@ -58,13 +49,13 @@ const Group = () => {
 
   return (
     <div className="container">
-        <h2>Join or Create a Group</h2>
+        <h2>Join an existing group or create a new one</h2>
         <form onSubmit={handleJoinGroup}>
           <div className="mb-3">
             <label htmlFor="groupID" className="form-label">Group ID</label>
             <input type="text" className="form-control" id="groupID"
-              value={groupID}
-              onChange={(e) => setGroupID(e.target.value)}
+              value={joinGroupID}
+              onChange={(e) => setJoinGroupID(e.target.value)}
               placeholder="Enter Group ID"
             />
           </div>
@@ -95,6 +86,9 @@ const Group = () => {
           </button>
         </form>
         <div className="alert alert-danger" role="alert">{error}</div>
+        <div className="w-100 text-center mt-2">
+        Join or create a group later? <Link to="/dashboard">Dashboard</Link>
+      </div>
     </div>
   );
 };

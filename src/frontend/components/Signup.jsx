@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-import { UserAuth } from '../../backend/auth_functions/authContext';
+import { UserAuth } from '../../backend/authContext';
 
 const Signup = () => {
 
@@ -19,7 +19,7 @@ const Signup = () => {
 					setLoading(true);
 					await signUp(email, password);
 					console.log('user created');
-					navigate('/dashboard');
+					navigate('/group');
 
 			} catch(error) {
 					setError('Failed to create an account')
@@ -38,7 +38,7 @@ const Signup = () => {
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 className="form-control" 
-				type="email" 
+				        type="email" 
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

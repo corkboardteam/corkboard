@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-import { UserAuth } from "../../backend/auth_functions/authContext"
+import { UserAuth } from "../../backend/authContext"
 
 const Dashboard = () => {
   const [error, setError] = useState('');
-  const { currUser, logout } = UserAuth();
+  const { currentUser, logout } = UserAuth();
   const navigate = useNavigate();
 
   async function handleLogout() {
-    setError("")
+    setError('')
     try {
       await logout();
       navigate('/');
@@ -17,7 +17,7 @@ const Dashboard = () => {
     }
   }
   return (
-    
+  
     <div className="container">
       <div className="w-100 text-center mt-2">
         Go to Grocery List <Link to="/grocerylist">Grocery List</Link>
@@ -26,9 +26,9 @@ const Dashboard = () => {
         <div className="card-body">
           <h2 className="text-center mb-4">Dashboard</h2>
           {error && <div className="alert alert-danger">{error}</div>}
-          <strong>Email:</strong> {currUser.email}
+          <strong>Email:</strong> {currentUser.email}
           <Link to="/profile" className="btn btn-primary w-100 mt-3">
-            Update Profile
+            Edit Profile
           </Link>
         </div>
       </div>
