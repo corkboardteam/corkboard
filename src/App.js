@@ -85,6 +85,7 @@ function App() {
           <Route path='/profile' element={<Protected><Profile /></Protected>} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/grocerylist' element={<Protected><GroceryList /></Protected>} />
+          <Route path='/fridge' element={<Protected><Fridge /></Protected>} />
         </Routes>
       </AuthProvider>
     </Container>
