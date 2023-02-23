@@ -1,9 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
-import db from './firebase_setup/firebase'
+import React from 'react'
+import { Container } from 'react-bootstrap'
+import Dashboard from './frontend/components/Dashboard'
+import GroceryList from './frontend/components/GroceryList'
+import Login from './frontend/components/Login'
+import Signup from './frontend/components/Signup'
+import Group from './frontend/components/Group'
+import Profile from './frontend/components/Profile'
+import ForgotPassword from './frontend/components/ForgotPassword'
+import { Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './backend/authContext'
+import Protected  from './backend/Protected'
+import TestClass from './backend/custom_classes/test_custom_class/testclass';
+
 
 function App() {
   return (
+    /*
     <body>
       <div class="container">
         <table>
@@ -45,7 +57,6 @@ function App() {
       </div>
       <button>+</button>
     </body>
-    /*
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -63,7 +74,20 @@ function App() {
       </header>
     </div>
     */
+    <Container style={{ maxWidth: "600px", marginTop: "2rem" }}>
+      <AuthProvider>
+        <Routes>
+          <Route path = '/' element={<Login />} />
+          <Route path = '/dashboard' element={<Protected><Dashboard /></Protected>} />
+          <Route path = '/signup' element={<Signup />} />
+          <Route path = '/group' element={<Protected><Group /></Protected>} />
+          <Route path = '/profile' element={<Protected><Profile /></Protected>} />
+          <Route path = '/forgot-password' element={<ForgotPassword />} />
+          <Route path = '/grocerylist' element={<Protected><GroceryList /></Protected>} />
+        </Routes>
+      </AuthProvider>
+    </Container>
   );
 }
 
-export default App;
+export default App
