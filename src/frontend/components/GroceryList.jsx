@@ -40,6 +40,7 @@ function GroceryList() {
                             <tr key={groc.id}>
                                 <td>{groc.data.itemName}</td>
                                 <td>{groc.data.price}</td>
+                                <td>{groc.data.limit}</td>
                                 <td>{groc.data.storeName}</td>
                             </tr>
                         )
