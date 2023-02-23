@@ -27,6 +27,9 @@ async function addGroceryItem(itemName, price, storeName) {
     const newGrocery = new Grocery(itemName, price, storeName);
     const ref = doc(collection(db, "groceries")).withConverter(GroceryConverter)
     await setDoc(ref, newGrocery);
+
+    const obj = { data: newGrocery, id: ref.id }
+    return obj
 }
 
 async function getAllGroceries() {
