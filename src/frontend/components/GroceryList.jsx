@@ -47,6 +47,7 @@ function GroceryList() {
                     })
                 }
             </table>
+            {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
             <form method="post" onSubmit={addGroceryToDB}>
                 <label for="itemName">Item Name: </label>
                 <input type="text" id="itemName" name="itemName"></input>
