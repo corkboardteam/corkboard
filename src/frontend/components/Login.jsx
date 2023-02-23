@@ -45,11 +45,7 @@ const handleGoogleLogin = async (e) => {
 
 useEffect(() => {
   if (currentUser != null) {
-    if (currentUser.groupID == null) {
-      navigate('group');
-    } else {
-      navigate('/dashboard');
-    }
+    navigate('/dashboard');
   } 
 },)
   return (
