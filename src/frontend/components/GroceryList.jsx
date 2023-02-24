@@ -27,6 +27,16 @@ function GroceryList() {
 
     return (
         <body>
+            {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
+            <form method="post" onSubmit={addGroceryToDB}>
+                <label for="itemName">Item Name: </label>
+                <input type="text" id="itemName" name="itemName"></input>
+                <label for="price">Price: </label>
+                <input type="text" id="price" name="price"></input>
+                <label for="storeName">Store Name: </label>
+                <input type="text" id="storeName" name="storeName"></input>
+                <button type="submit">+</button>
+            </form>
             <table>
                 <tr>
                     <th>Item</th>
@@ -40,21 +50,13 @@ function GroceryList() {
                             <tr key={groc.id}>
                                 <td>{groc.data.itemName}</td>
                                 <td>{groc.data.price}</td>
+                                <td>{groc.data.limit}</td>
                                 <td>{groc.data.storeName}</td>
                             </tr>
                         )
                     })
                 }
             </table>
-            <form method="post" onSubmit={addGroceryToDB}>
-                <label for="itemName">Item Name: </label>
-                <input type="text" id="itemName" name="itemName"></input>
-                <label for="price">Price: </label>
-                <input type="text" id="price" name="price"></input>
-                <label for="storeName">Store Name: </label>
-                <input type="text" id="storeName" name="storeName"></input>
-                <button type="submit">+</button>
-            </form>
         </body>
 
     );

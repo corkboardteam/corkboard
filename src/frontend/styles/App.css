@@ -1,4 +1,6 @@
 .App {
+  display: flex;
+  justify-content: center;
   text-align: center;
 }
 
@@ -39,20 +41,34 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Merriweather&family=Source+Sans+Pro&display=swap');
 
-table {
-  border-collapse: separate;
-  border-spacing: 15px;
+.container {
+  padding: 30px;
+  width: 400px;
+  height: 300px;
 }
 
-th{
+table {
+  border: 2px solid forestgreen;
+  width: 100%;
+  height: 100%;
+}
+
+th {
+  border-bottom: 1px solid black;
+}
+
+td {
+  text-align: center;
+}
+
+thead{
   font-family: 'Merriweather', serif;
 }
 
-td{
+tbody{
   font-family: 'Source+Sans+Pro', sans-serif;
 }
 
 tr {
   border-bottom: 1px solid black;
-  padding: 5px;
 }
