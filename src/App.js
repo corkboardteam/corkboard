@@ -10,8 +10,6 @@ import ForgotPassword from './frontend/components/ForgotPassword'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/authContext'
 import Protected  from './backend/Protected'
-import TestClass from './backend/custom_classes/test_custom_class/testclass';
-
 
 function App() {
   return (

@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { UserAuth } from '../../backend/authContext';
 
 const Signup = () => {
-
+  
+  const { currentUser } = UserAuth();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const { signUp } = UserAuth();
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (currentUser != null) {
+      navigate('/dashboard');
+    } 
+    console.log(currentUser);
+  }, [currentUser, navigate]);
 
 	const handleSubmit = async (e) => {
 			e.preventDefault();
@@ -18,8 +26,7 @@ const Signup = () => {
 					setError('');
 					setLoading(true);
 					await signUp(email, password);
-					console.log('user created');
-					navigate('/group');
+					navigate('/dashboard');
 
 			} catch(error) {
 					setError('Failed to create an account')

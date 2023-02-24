@@ -2,30 +2,34 @@ import {doc, getDoc, setDoc, updateDoc, arrayUnion,
         arrayRemove, increment, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 class GroupClass {
-  constructor(groupID) {
+  constructor(groupID ) {
     this.uid = groupID;
-    this.ownerID = null;
-    this.name = null;
-    this.desc = null;
-    this.members = null;
-    this.totalMembers = null;
     this.groupRef = doc(db, 'groups', groupID);
   }
   
-  async createGroup(user, groupName = null, groupDesc = null) {
+  async exists() {
+    const groupDoc = await getDoc(this.groupRef);
+    return groupDoc.exists();
+  }
+
+  async data() {
+    const groupDoc = await getDoc(this.groupRef);
+    const groupData = groupDoc.data();
+    return groupData;
+  }
+
+
+  async createGroup(user, groupName) {
     try {
-      // supposed to check if a user is in a group already by checking if their groupid is null or not but not working
-      // if (user.groupID != null) {
-      //   throw new Error('You are already in a group, Users are only allowed to be in one group at time');
-      // }
-        
-        const groupDoc = await getDoc(this.groupRef);
-        if (!groupDoc.exists()) { 
+        console.log('in createGroup');
+        const exists = await this.exists();
+        if (!exists) { 
           const groupData = {
               ownerID: user.uid,
               uid: this.uid,
               name : groupName,
-              desc : groupDesc,
+              desc : null,
+              fridge: null,
               members: arrayUnion(user.uid),
               totalMembers: 1
           }
@@ -46,10 +50,10 @@ class GroupClass {
         throw new Error('You are already in a group, Users are only allowed to be in one group at time');
       }
       
-      const groupDoc = await getDoc(this.groupRef);
-      if (groupDoc.exists()) {
-        const groupData = groupDoc.data();
-        const members = groupData.members;
+      const exists = await this.exists();
+      if (exists) {
+        const data = await this.data();
+        const members = data.members;
         if (members.includes(user.uid)) {
           throw new Error('User is already a member of this group');
         } 
@@ -58,7 +62,7 @@ class GroupClass {
           totalMembers: increment(1)
         });
 
-        console.log('Joined group: ' + groupData.name, groupData);
+        console.log('Joined group: ' + data.name, data);
         return true;
 
       } else {
@@ -72,22 +76,49 @@ class GroupClass {
 
   async leaveGroup(user) {
     try {
-      const groupDoc = await getDoc(this.groupRef);
-      const groupData = groupDoc.data();
-      if (!groupDoc.exists()) {
+      const exists = await this.exists();
+      if (!exists) {
         throw new Error('Group does not exist');
       }
-      const members = groupDoc.data().members;
+      const data = await this.data();
+      const members = data.members;
+      // check if user is a member of the group
       if (!members.includes(user.uid)) {
         throw new Error('User is not a member of this group');
       }
-      await updateDoc(this.groupRef, { 
-        members: arrayRemove(user.uid), 
-        totalMembers: (groupData.totalMembers) - 1
-      });
 
-      console.log('Left group: ' + groupData.name, groupData);
-      return true;
+      if (data.ownerID === user.uid) {
+        // select a random member to be the new owner if owner leaves
+        const newOwnerIndex = Math.floor(Math.random() * members.length);
+        const newOwnerUid = members[newOwnerIndex];
+        await updateDoc(this.groupRef, {
+          members: arrayRemove(user.uid),
+          totalMembers: data.totalMembers - 1,
+          owner: newOwnerUid
+        });
+        console.log('Left group: ' + data.name, data);
+        return true;
+
+        // check if user is the last member in group, if they are leave and delete group
+      } else if (data.totalMembers === 1 && members.includes(user.uid)) {
+        await updateDoc(this.groupRef, {
+          members: arrayRemove(user.uid),
+          totalMembers: data.totalMembers - 1
+        });
+        
+        await deleteDoc(this.groupRef);
+        console.log('Left and deleted group: ' + data.name);
+        return true;
+        
+        // leave group normally
+      } else {
+        await updateDoc(this.groupRef, {
+          members: arrayRemove(user.uid),
+          totalMembers: data.totalMembers - 1
+        });
+        console.log('Left group: ' + data.name, data);
+        return true;
+      }
 
     } catch(error) {
       console.error('Error leaving group:', error);
@@ -100,13 +131,14 @@ class GroupClass {
       if (user.uid !== this.ownerID) {
         throw new Error('You do not have permissions to edit group info')
       }
-      const groupDoc = await getDoc(this.groupRef);
-      const groupData = groupDoc.data();
+      // const groupDoc = await getDoc(this.groupRef);
+      // const groupData = groupDoc.data();
       const newGroupData = {
         name: newName,
         desc: newDesc
       }
-      const updatedGroupData = { ...groupData, ...newGroupData };
+      const data = await this.data();
+      const updatedGroupData = { ...data, ...newGroupData };
       await updateDoc(this.groupRef, updatedGroupData);
 
       console.log('Group info updated');
@@ -119,12 +151,13 @@ class GroupClass {
 
   async deleteGroup(user) {
     try {
-      const groupDoc = await getDoc(this.groupRef);
-      if (!groupDoc.exists()) {
+      const exists = await this.exists();
+      if (!exists) {
         throw new Error('Group does not exist');
       }
-      const groupData = groupDoc.data();
-      if (groupData.ownerID !== user.uid) {
+      const data = await this.data();
+      // const groupData = groupDoc.data();
+      if (data.ownerID !== user.uid) {
         throw new Error('You are not the owner of this group');
       }
       await deleteDoc(this.groupRef);
@@ -136,16 +169,17 @@ class GroupClass {
       throw error;
     }
   }
+  
 }
 
-function generateGroupUID() {
+async function generateGroupUID() {
   const length = 8;
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
 }
 
 export { GroupClass, generateGroupUID };

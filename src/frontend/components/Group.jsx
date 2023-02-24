@@ -1,17 +1,23 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserAuth } from '../../backend/authContext';
 import { GroupClass, generateGroupUID } from '../../backend/custom_classes/groupClass';
 
 const Group = () => {
   const [joinGroupID, setJoinGroupID] = useState('');
-  const [createGroupID, setCreateGroupID] = useState('');
   const [groupName, setGroupName] = useState('');
-  const [groupDesc, setgroupDesc] = useState('');
+  // const [groupDesc, setgroupDesc] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { currentUser, updateProfile } = UserAuth();
+
+  useEffect(() => {
+    if (currentUser.groupID != null) {
+        navigate('/dashboard');
+    }
+    console.log(currentUser);
+  },[currentUser, navigate])
 
   const handleJoinGroup = async (e) => {
     e.preventDefault();
@@ -33,12 +39,16 @@ const Group = () => {
   const handleCreateGroup = async (e) => {
     e.preventDefault();
     try {
+      
       setLoading(true);
       setError('');
-      setCreateGroupID(generateGroupUID());
-      const group = new GroupClass(createGroupID);
-      await group.createGroup(currentUser, groupName, groupDesc);
-      await updateProfile({ groupID: createGroupID });
+      const groupID = await generateGroupUID()
+      console.log(groupID);
+      const group = new GroupClass(groupID);
+      console.log('in handleCreateGroup');
+      await group.createGroup(currentUser, groupName);
+      const groupData = await group.data();
+      await updateProfile({ groupID: groupData.uid });
       navigate('/dashboard');
 
     } catch (error) {
@@ -73,14 +83,14 @@ const Group = () => {
               placeholder="Enter Group Name"
             />
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label htmlFor="groupDesc" className="form-label">Group Description</label>
             <textarea className="form-control" id="groupDesc" rows="3"
               value={groupDesc}
               onChange={(e) => setgroupDesc(e.target.value)}
               placeholder="Enter Group Description"
             ></textarea>
-          </div>
+          </div> */}
           <button className="btn btn-primary" type="submit" disabled={loading}>
             Create Group
           </button>

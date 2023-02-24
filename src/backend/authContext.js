@@ -3,11 +3,11 @@ import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signOut, updatePassword, onAuthStateChanged, sendPasswordResetEmail, 
   reauthenticateWithCredential, EmailAuthProvider, GoogleAuthProvider,
-  updateEmail, signInWithPopup, sendEmailVerification, linkWithCredential, 
-  updatePhoneNumber, RecaptchaVerifier, PhoneAuthProvider
+  updateEmail, signInWithPopup
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
+import User from './custom_classes/user';
 
 const AuthContext = createContext();
 
@@ -18,19 +18,20 @@ export const AuthProvider = ({ children }) => {
 useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      setLoading(false);
       if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-          setCurrentUser(userDoc.data());
+        const currUser = new User(user);
+        const exists = await currUser.exists();
+        if (exists) {
+          const userData = await currUser.data(); 
+          setCurrentUser(userData);
         } else {
-          const { displayName, photoURL } = user;
-          const currentUser = { displayName, photoURL };
-          await setDoc(userRef, currentUser);
-          setCurrentUser(currentUser);
+          const currUser = new User();
+          const userData = await currUser.data();
+          await setDoc(currUser.userRef, userData);
+          setCurrentUser(userData);
         }
       }
+      setLoading(false);
     });
     return () => {
       unsubscribe();
@@ -40,20 +41,11 @@ useEffect(() => {
   const signUp = async (email, password) => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCred.user;
-      const userData = {
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      uid: user.uid,
-      phoneNumber: null,
-      groupID: null
-      };
-
-      const userRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userRef);
-      if (!userDoc.exists()) {
-        setDoc(userRef, userData);
+      const user = new User(userCred.user);
+      const exists = await user.exists();
+      if (!exists) {
+        user.createUser();
+        const userData = await user.data();
         setCurrentUser(userData);
       }
       console.log('Signed up successfully');
@@ -62,13 +54,15 @@ useEffect(() => {
       console.error('Error signing up', error);
       throw error;
     }
-    
-    
   };
 
   const login = async (email, password) =>  {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const user = new User(userCred.user);
+      const userData = await user.data();
+      setDoc(user.userRef, userData);
+      setCurrentUser(userData);
       console.log('User logged in');
 
     } catch (error) {
@@ -82,20 +76,11 @@ useEffect(() => {
     try {
       const provider = new GoogleAuthProvider();
       const userCred = await signInWithPopup(auth, provider);
-      const user = userCred.user;
-      const userData = {
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        uid: user.uid,
-        groupID: null
-      };
-    const userRef = doc(db, 'users', user.uid);
-    setDoc(userRef, userData);
-    setCurrentUser(userData);
-    console.log('User logged in with Google');
-
-
+      const user = new User(userCred.user);
+      const userData = await user.data();
+      setDoc(user.userRef, userData);
+      setCurrentUser(userData);
+      console.log('User logged in with Google');
     } catch (error) {
       console.error('Error logging in with Google', error);
       throw error;
@@ -113,49 +98,34 @@ useEffect(() => {
       throw error;
     }
   };
-  const linkPhone = async (phoneNumber, verificationCode) => {
-    try {
-      const user = auth.currentUser;
-      const applicationVerifier = new RecaptchaVerifier('recaptcha-container');
-      const provider = new PhoneAuthProvider(auth);
-      const verificationId = await provider.verifyPhoneNumber(phoneNumber, applicationVerifier);
-      const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
-      await linkWithCredential(user, credential);
-      console.log('Phone number linked successfully');
 
-    } catch (error) {
-      console.error('Error linking phone number', error);
-      throw error;
-    }
-  };
+  // const linkPhone = async (phoneNumber, verificationCode) => {
+  //   try {
+  //     const user = auth.currentUser;
+  //     const applicationVerifier = new RecaptchaVerifier('recaptcha-container');
+  //     const provider = new PhoneAuthProvider(auth);
+  //     const verificationId = await provider.verifyPhoneNumber(phoneNumber, applicationVerifier);
+  //     const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
+  //     await linkWithCredential(user, credential);
+  //     console.log('Phone number linked successfully');
 
-  const updatePhone = async (phoneNumber, verificationCode) => {
-    try {
-      const user = auth.currentUser;
-      const applicationVerifier = new RecaptchaVerifier('recaptcha-container');
-      const provider = new PhoneAuthProvider(auth);
-      const verificationId = await provider.verifyPhoneNumber(phoneNumber, applicationVerifier);
-      const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
-      await updatePhoneNumber(user, credential);
-      console.log('Phone number updated successfully');
+  //   } catch (error) {
+  //     console.error('Error linking phone number', error);
+  //     throw error;
+  //   }
+  // };
 
-    } catch (error) {
-      console.error('Error updating phone number', error);
-      throw error;
-    }
-  };
-
-  const verifyEmail = async (email) => {
-    try {
-      const user = auth.currentUser;
-      await sendEmailVerification(user);
-      console.log('Verification email sent successfully');
-    } catch (error) {
-      console.error('Error verifying email:', error);
-      throw error;
-    }
-    return 
-  };
+  // const verifyEmail = async (email) => {
+  //   try {
+  //     const user = auth.currentUser;
+  //     await sendEmailVerification(user);
+  //     console.log('Verification email sent successfully');
+  //   } catch (error) {
+  //     console.error('Error verifying email:', error);
+  //     throw error;
+  //   }
+  //   return 
+  // };
 
   const resetPassword = async (email) => {
     try {
@@ -182,6 +152,7 @@ useEffect(() => {
       throw error;
     }
   }
+
   const changePassword = async (newPassword, currPassword) => {
     try {
       const user = auth.currentUser;
@@ -209,6 +180,22 @@ useEffect(() => {
 
     } catch(error) {
       console.error('Error updating profile:', error);
+      throw error;
+    }
+  };
+
+  const updatePhoneNumber = async (phoneNumber) => {
+    try {
+      const valid = isValidPhoneNumber(phoneNumber);
+      if (valid) {
+        const formattedNumber = formatPhoneNumber(phoneNumber);
+        await updateProfile({ phoneNumber: formattedNumber });
+        console.log('Phone number updated successfully');
+      } else {
+        throw new Error('Not a valid phone number');
+      }
+    } catch (error) {
+      console.error('Error updating phone number', error);
       throw error;
     }
   };
@@ -243,10 +230,8 @@ useEffect(() => {
     changeEmail,
     updateDisplayName,
     updateProfilePicture,
-    updatePhone,
-    updateProfile,
-    verifyEmail,
-    linkPhone
+    updatePhoneNumber,
+    updateProfile
   }
   return (
     <AuthContext.Provider value = {value}>
@@ -258,3 +243,15 @@ useEffect(() => {
 export const UserAuth = () => {
   return useContext(AuthContext);
 };
+
+function formatPhoneNumber(phoneNumber) {
+  const areaCode = phoneNumber.slice(0, 3);
+  const firstThree = phoneNumber.slice(3, 6);
+  const lastFour = phoneNumber.slice(6);
+  return `${areaCode}-${firstThree}-${lastFour}`;
+}
+
+function isValidPhoneNumber(phoneNumber) {
+  const regex = /^[0-9]{10}$/;
+  return regex.test(phoneNumber);
+}
