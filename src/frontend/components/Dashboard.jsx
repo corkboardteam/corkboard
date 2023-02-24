@@ -30,6 +30,9 @@ const Dashboard = () => {
         Using Corkboard with family or friends? <Link to="/group">Join/Create a Group</Link>
       </div>
       <div className="w-100 text-center mt-2">
+        Discuss something you want to purchase? <Link to="/discussion">Discussion</Link>
+      </div>
+      <div className="w-100 text-center mt-2">
         Go to Grocery List <Link to="/grocerylist">Grocery List</Link>
       </div>
       <div className="card">
