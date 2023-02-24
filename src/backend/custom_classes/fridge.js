@@ -33,16 +33,24 @@ async function addNewFridge(groupName, user) {
     //or do we want to use the groupName as a fridge's id value
     const ref = doc(collection(db, "fridges")).withConverter(FridgeConverter);
     await setDoc(ref, newFridge);
+    return ref.id
 }
 
 async function getFridge(groupName) {
     const fridgeRef = collection(db, "fridges");
+
+    if (groupName == null) {
+        alert("not in a group yet :(")
+        return null;
+    }
     const q = query(fridgeRef, where("groupName", "==", groupName))
 
     const querySnapshot = await getDocs(q.withConverter(FridgeConverter));
 
-    if (querySnapshot.length === 0)
+    if (querySnapshot.length === 0) {
+        alert("Hi! you're not in a group yet/ your group doesnt have a fridge")
         return null;
+    }
 
     let fridge = []
 

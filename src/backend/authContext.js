@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  signOut, updatePassword, onAuthStateChanged, sendPasswordResetEmail, 
+  signOut, updatePassword, onAuthStateChanged, sendPasswordResetEmail,
   reauthenticateWithCredential, EmailAuthProvider, GoogleAuthProvider,
-  updateEmail, signInWithPopup, sendEmailVerification, linkWithCredential, 
+  updateEmail, signInWithPopup, sendEmailVerification, linkWithCredential,
   updatePhoneNumber, RecaptchaVerifier, PhoneAuthProvider
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
@@ -14,19 +14,23 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
-  
-useEffect(() => {
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       setLoading(false);
       if (user) {
+        console.log("user in use effect:")
+        console.log(user)
         const userRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
           setCurrentUser(userDoc.data());
         } else {
+
           const { displayName, photoURL } = user;
           const currentUser = { displayName, photoURL };
+          console.log("trouble")
           await setDoc(userRef, currentUser);
           setCurrentUser(currentUser);
         }
@@ -36,25 +40,30 @@ useEffect(() => {
       unsubscribe();
     };
   }, []);
-  
+
   const signUp = async (email, password) => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCred.user;
+      console.log("user: here")
+      console.log(user.uid)
       const userData = {
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      uid: user.uid,
-      phoneNumber: null,
-      groupID: null
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        phoneNumber: null,
+        groupID: null
       };
 
       const userRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userRef);
+
       if (!userDoc.exists()) {
+        console.log("exists")
         setDoc(userRef, userData);
         setCurrentUser(userData);
+        console.log(userData)
       }
       console.log('Signed up successfully');
 
@@ -62,14 +71,27 @@ useEffect(() => {
       console.error('Error signing up', error);
       throw error;
     }
-    
-    
+
+
   };
 
-  const login = async (email, password) =>  {
+  const login = async (email, password) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user
+      const userRef = doc(db, 'users', user.uid);
+
+      const docSnap = await getDoc(userRef)
+      const userData = {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        groupID: docSnap.data().groupID
+      };
       console.log('User logged in');
+      setDoc(userRef, userData);
+      setCurrentUser(userData);
 
     } catch (error) {
       console.error('Error logging in:', error);
@@ -90,17 +112,17 @@ useEffect(() => {
         uid: user.uid,
         groupID: null
       };
-    const userRef = doc(db, 'users', user.uid);
-    setDoc(userRef, userData);
-    setCurrentUser(userData);
-    console.log('User logged in with Google');
+      const userRef = doc(db, 'users', user.uid);
+      setDoc(userRef, userData);
+      setCurrentUser(userData);
+      console.log('User logged in with Google');
 
 
     } catch (error) {
       console.error('Error logging in with Google', error);
       throw error;
     }
-    
+
   };
 
   const logout = async () => {
@@ -154,7 +176,7 @@ useEffect(() => {
       console.error('Error verifying email:', error);
       throw error;
     }
-    return 
+    return
   };
 
   const resetPassword = async (email) => {
@@ -174,7 +196,7 @@ useEffect(() => {
       const credential = EmailAuthProvider.credential(user.email, currPassword);
       await reauthenticateWithCredential(user, credential);
       await updateEmail(user, newEmail);
-      await updateProfile( {email: newEmail });
+      await updateProfile({ email: newEmail });
       console.log('Email updated successfully');
 
     } catch (error) {
@@ -199,7 +221,7 @@ useEffect(() => {
   const updateProfile = async (data) => {
     try {
       const userRef = doc(db, 'users', currentUser.uid);
-      
+
       const currentUserData = { ...currentUser };
       const updatedUserData = { ...currentUserData, ...data };
 
@@ -207,7 +229,7 @@ useEffect(() => {
       setCurrentUser(updatedUserData);
       console.log('Updated Profile');
 
-    } catch(error) {
+    } catch (error) {
       console.error('Error updating profile:', error);
       throw error;
     }
@@ -217,7 +239,7 @@ useEffect(() => {
     try {
       await updateProfile({ displayName });
       console.log('Updated display name');
-    } catch(error) {
+    } catch (error) {
       console.error('Error setting display name:', error);
       throw error;
     }
@@ -227,11 +249,14 @@ useEffect(() => {
     try {
       await updateProfile({ photoURL });
       console.log('Updated profile picture');
-    } catch(error) {
+    } catch (error) {
       console.error('Error setting profile picture:', error);
       throw error;
     }
   }
+
+
+
   const value = {
     currentUser,
     signUp,
@@ -246,10 +271,11 @@ useEffect(() => {
     updatePhone,
     updateProfile,
     verifyEmail,
-    linkPhone
+    linkPhone,
+
   }
   return (
-    <AuthContext.Provider value = {value}>
+    <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   );

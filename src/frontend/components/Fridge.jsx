@@ -1,38 +1,47 @@
 import { useEffect, useState } from "react";
 import { getFridge, addGroceryToFridge } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
+import { UserAuth } from "../../backend/authContext";
+
 function Fridge() {
 
     const [fridgeItems, setFridgeItems] = useState([]);
     const [users, setUsers] = useState([])
-
+    const { currentUser } = UserAuth();
     useEffect(() => {
-        //this hardcodes the room number rn, change once user and fridge component integrated
+
         async function setupFridge() {
-            const curFridge = await getFridge("room 1")
+            if (Object.keys(currentUser).includes("groupID")) {
+                console.log(currentUser)
+                const { groupID } = currentUser
+                const curFridge = await getFridge(groupID)
 
-            const grocs = curFridge.data.groceries
-            const extendedGrocs = []
-            for await (const doc of grocs) {
-                const name = doc.itemName
-                const grocDetail = await getSpecificGrocery(name);
+                const grocs = curFridge.data.groceries
 
-                const extendedGroc = { ...doc, whereToBuy: grocDetail.data.storeName, id: grocDetail.id }
-                extendedGrocs.push(extendedGroc);
+                const extendedGrocs = []
+                for await (const doc of grocs) {
+
+                    const name = doc.itemName
+                    const grocDetail = await getSpecificGrocery(name);
+
+                    const extendedGroc = { ...doc, whereToBuy: grocDetail.data.storeName, id: grocDetail.id }
+                    extendedGrocs.push(extendedGroc);
+                }
+                setFridgeItems(extendedGrocs);
+                setUsers(curFridge.data.users);
             }
-            setFridgeItems(extendedGrocs);
-            setUsers(curFridge.data.users);
         }
 
+
         setupFridge();
-    }, [])
+    }, [currentUser])
 
     async function handleSubmit(e) {
         e.preventDefault();
 
         //check if grocery already in the fridge, if yes, alert and return
         //otherwise, add into the fridge and change state
-        const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, "room 1");
+        const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID);
 
         if (newGrocery) {
             let curItems = [...fridgeItems];
@@ -47,7 +56,7 @@ function Fridge() {
 
     return (
         <div>
-            <div>Room 1</div>
+            <div>Room ID: {currentUser.groupID}</div>
             <ul>
                 {users.map((usr, ind) => {
                     return <li key={usr}>User {ind + 1}: {usr}</li>;
