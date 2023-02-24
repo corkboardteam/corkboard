@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../backend/authContext';
-import { db } from '../../backend/firebase'
-import { doc, getDoc} from 'firebase/firestore'
 import { GroupClass } from '../../backend/custom_classes/groupClass';
 
 const Profile = () => {
   const { currentUser, changePassword, changeEmail, updateProfile, 
-          updateDisplayName, updateProfilePicture, 
-          linkPhone, updatePhone, verifyEmail 
+          updateDisplayName, updateProfilePicture, updatePhoneNumber 
         } = UserAuth();
-  const [user, setUser] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -19,13 +15,11 @@ const Profile = () => {
   const [newPhotoURL, setNewPhotoURL] = useState('');
   const [newGroupID, setNewGroupID] = useState('');
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
-    setUser(currentUser);
     console.log(currentUser);
   }, [currentUser]);
 
@@ -38,7 +32,7 @@ const Profile = () => {
         setNewDisplayName(newDisplayName);
         navigate('/profile');
      } catch (error) {
-      setError('Failed to update display name');
+      setError('Failed to update display name:', error);
      } 
     setLoading(false);
      
@@ -54,26 +48,9 @@ const Profile = () => {
       navigate('/profile');
 
     } catch (error) {
-      setError('Failed to update profile picture');
+      setError('Failed to update profile picture:', error);
     }
     setLoading(false);
-  };
-
-  const handleGroup = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      setError('');
-      if (!currentUser.groupID) {
-        await handleJoinGroup();
-      } 
-      navigate('/profile');
-    } catch (error) {
-      setError('Failed to join group');
-    }
-    
-    setLoading(false);
-    
   };
 
   const handlePhoneNumber = async (e) => {
@@ -82,14 +59,10 @@ const Profile = () => {
       // need to add buttons to link phone or update phone
       setLoading(true);
       setError('');
-      if (currentUser.phoneNumber == null) {
-        await handleLinkPhone();
-      } else {
-        await handleUpdatePhone();
-      }
+      await updatePhoneNumber(newPhoneNumber);
       navigate('/profile');
     } catch (error) {
-      setError('Failed to update phone number');
+      setError('Failed to update phone number:', error);
     }
     setLoading(false);
     
@@ -104,7 +77,7 @@ const Profile = () => {
       navigate('/profile');
       setNewEmail(newEmail);
     } catch (error) {
-      setError('Failed to update email');
+      setError('Failed to update email:', error);
     }
     
     setLoading(false);
@@ -122,49 +95,35 @@ const Profile = () => {
       setEditingPassword(false);
       navigate('/profile');
     } catch (error) {
-      setError('Failed to update password');
+      setError('Failed to update password:', error);
     } 
     setLoading(false);
     
   };
   
-  const handleLinkPhone = async () => {
-    try {
-      await linkPhone(newPhoneNumber, verificationCode);
-      setNewPhoneNumber(newPhoneNumber);
-      navigate('/');
-    } catch (error) {
-      setError('Failed to link phone number');
-    };
-  }
-
-  const handleUpdatePhone = async () => {
-    try {
-      await updatePhone(newPhoneNumber, verificationCode);
-      await updateProfile( { phoneNumber : newPhoneNumber} );
-      setNewPhoneNumber(newPhoneNumber);
-      navigate('/');
-    } catch (error) {
-      setError('Failed to link phone number');
-    }
-  };
 
   const handleJoinGroup = async () => {
     try {
-      const groupRef = doc(db, "groups", newGroupID);
-      const groupDoc = await getDoc(groupRef);
-      if (!groupDoc.exists()) {
+      const group = new GroupClass(newGroupID);
+      const exists = await group.exists();
+      if (!exists) {
         setError('Group does not exist');
         return;
       }
-      const group = new GroupClass(newGroupID);
+      const data = await group.data();
+      const members = data.members;
+      if (members.includes(currentUser.uid)) {
+        setError('You are already a member of this group');
+        return;
+      }
       await group.joinGroup(currentUser);
+      console.log('once');
       await updateProfile({ groupID: newGroupID });
-      setNewGroupID(newGroupID);
+      setNewGroupID('');
       navigate('/profile');
       
     } catch (error) {
-      setError('Failed to join group');
+      setError('Failed to join group:', error);
     }
   };
 
@@ -215,7 +174,6 @@ return (
             </div>
             <div className="mb-3" id="Group">
               <label className="form-label">Group</label>
-              <form onSubmit={handleGroup}>
                 <div className="input-group">
                   <input className="form-control" defaultValue={newGroupID || currentUser.groupID} onChange={(e) => setNewGroupID(e.target.value)} type="text" />
                   {currentUser.groupID ? (
@@ -224,18 +182,13 @@ return (
                     <button className="btn btn-primary ms-1" type="submit" onClick={handleJoinGroup} disabled={loading}>{loading ? 'Joining...' : 'Join Group'}</button>
                   )}
                 </div>
-              </form>
             </div>
-            <div className="mb-3" id="newPhoneNumber">
+            <div className="mb-3" id="phoneNumber">
               <label className="form-label">Phone Number</label>
-              <form onClick={handlePhoneNumber}>
+              <form onSubmit={handlePhoneNumber}>
                 <div className="input-group">
                   <input className="form-control" defaultValue={newPhoneNumber || currentUser.phoneNumber} onChange={(e) => setNewPhoneNumber(e.target.value)} type="text" />
-                  {currentUser.newPhoneNumber ? (
-                    <button className="btn btn-secondary ms-1" type="submit" onClick={handleLinkPhone} disabled={loading}>{loading ? 'Linking...' : 'Link Phone'}</button>
-                  ) : (
-                    <button className="btn btn-primary ms-1" type="submit" onClick={handleUpdatePhone} disabled={loading}>{loading ? 'Updating...' : 'Update Phone'}</button>
-                  )}
+                  <button type="submit" className="btn btn-outline-secondary" disabled={loading}>{loading ? 'Updating...' : 'Edit'}</button>
                 </div>
               </form>
             </div>

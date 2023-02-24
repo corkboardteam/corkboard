@@ -1,6 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { UserAuth } from "../../backend/authContext"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +8,15 @@ const ForgotPassword = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const { currentUser } = UserAuth();
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    if (currentUser != null) {
+      navigate('/dashboard');
+    } 
+    console.log(currentUser)
+  },[currentUser, navigate]);
 
   async function handleSubmit(e) {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { UserAuth } from "../../backend/authContext"
 
@@ -6,6 +6,13 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const { currentUser, logout } = UserAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/');
+    } 
+    console.log(currentUser)
+  },[currentUser, navigate]);
 
   async function handleLogout() {
     setError('')
@@ -19,6 +26,9 @@ const Dashboard = () => {
   return (
   
     <div className="container">
+      <div className="w-100 text-center mt-2">
+        Using Corkboard with family or friends? <Link to="/group">Join/Create a Group</Link>
+      </div>
       <div className="w-100 text-center mt-2">
         Go to Grocery List <Link to="/grocerylist">Grocery List</Link>
       </div>
