@@ -102,7 +102,25 @@ async function addGroceryToFridge(itemName, maxQuantity, currentQuantity, groupN
 
 }
 
+async function removeGroceryFromFridge(itemName, groupID) {
+    const fridge = await getFridge(groupID)
+    let presentGroceries = fridge.data.groceries;
+    console.log(presentGroceries)
+    const ind = presentGroceries.findIndex(g => g.itemName === itemName)
+    console.log(ind)
+    if (ind === -1) {
+        alert('this grocery is not in this fridge')
+        return null;
+    }
 
-export { Fridge, FridgeConverter, addNewFridge, getFridge, addGroceryToFridge }
+    //remove from fridge
+    presentGroceries.splice(ind, ind + 1)
+    await updateDoc(doc(db, "fridges", fridge.id), {
+        groceries: presentGroceries
+    })
+
+}
+
+export { Fridge, FridgeConverter, addNewFridge, getFridge, addGroceryToFridge, removeGroceryFromFridge }
 
 

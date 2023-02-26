@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFridge, addGroceryToFridge } from "../../backend/custom_classes/fridge";
+import { getFridge, addGroceryToFridge, removeGroceryFromFridge } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 
@@ -36,13 +36,23 @@ function Fridge() {
         setupFridge();
     }, [currentUser])
 
+    async function handleDelete(e) {
+        e.preventDefault();
+        console.log(e.target.id)
+        await removeGroceryFromFridge(e.target.id, currentUser.groupID)
+
+        const curItems = fridgeItems
+        const updatedItems = curItems.filter(groc => groc.itemName !== e.target.id)
+        console.log(updatedItems)
+        setFridgeItems(updatedItems)
+    }
     async function handleSubmit(e) {
         e.preventDefault();
 
         //check if grocery already in the fridge, if yes, alert and return
         //otherwise, add into the fridge and change state
         const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID);
-
+        console.log(newGrocery)
         if (newGrocery) {
             let curItems = [...fridgeItems];
             curItems.push(newGrocery)
@@ -78,6 +88,11 @@ function Fridge() {
                                 <td>{groc.currentQuantity}</td>
                                 <td>{groc.maxQuantity}</td>
                                 <td>{groc.whereToBuy}</td>
+                                <td>
+                                    <form id={groc.itemName} method="post" onSubmit={handleDelete}>
+                                        <button>Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                         )
                     })
