@@ -41,7 +41,8 @@ async function getFridge(groupName) {
 
     if (groupName == null) {
         alert("not in a group yet :(")
-        return null;
+        return null
+
     }
     const q = query(fridgeRef, where("groupName", "==", groupName))
 

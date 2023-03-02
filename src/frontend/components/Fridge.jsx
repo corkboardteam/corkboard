@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getFridge, addGroceryToFridge, removeGroceryFromFridge } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
+import { GroupClass } from "../../backend/custom_classes/groupClass";
+import { Link } from "react-router-dom";
 
 function Fridge() {
 
@@ -12,9 +14,20 @@ function Fridge() {
 
         async function setupFridge() {
             if (Object.keys(currentUser).includes("groupID")) {
-                console.log(currentUser)
+
                 const { groupID } = currentUser
+                if (groupID === null) {
+                    console.log('null')
+                    return;
+                }
                 const curFridge = await getFridge(groupID)
+                if (curFridge === null) {
+                    console.log(null)
+                    return;
+                }
+                const curGroup = new GroupClass(groupID, curFridge.id)
+
+                const groupData = await curGroup.data()
 
                 const grocs = curFridge.data.groceries
 
@@ -28,10 +41,9 @@ function Fridge() {
                     const extendedGroc = { ...doc, id: grocDetail.id, price: grocDetail.data.price, priceUnit: grocDetail.data.priceUnit, groceryUnit: grocDetail.data.groceryUnit }
                     extendedGrocs.push(extendedGroc);
                 }
-                console.log(extendedGrocs)
                 setFridgeItems(extendedGrocs);
-                console.log(curFridge.data.users)
-                setUsers(curFridge.data.users);
+                setUsers(groupData.members);
+
             }
         }
 
@@ -54,13 +66,20 @@ function Fridge() {
 
         //check if grocery already in the fridge, if yes, alert and return
         //otherwise, add into the fridge and change state
-        const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID, e.target.whereToBuy.value);
-        console.log(newGrocery)
-        if (newGrocery) {
-            let curItems = [...fridgeItems];
-            curItems.push(newGrocery)
-            setFridgeItems(curItems)
+        const { groupID } = currentUser
+        if (groupID === null) {
+            alert('Not in a group yet. Please join a group first')
 
+        }
+        else {
+            const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID, e.target.whereToBuy.value);
+            console.log(newGrocery)
+            if (newGrocery) {
+                let curItems = [...fridgeItems];
+                curItems.push(newGrocery)
+                setFridgeItems(curItems)
+
+            }
         }
         e.target.itemName.value = '';
         e.target.limit.value = null;
@@ -70,7 +89,10 @@ function Fridge() {
 
     return (
         <div>
-            <div>Room ID: {currentUser.groupID}</div>
+            {currentUser.groupID ? <div>Room ID: {currentUser.groupID}</div>
+                : <div>You're not in a group yet. Join a group <Link to="/group">here</Link></div>}
+
+
             <ul>
                 {users.map((usr, ind) => {
                     return <li key={usr}>User {ind + 1}: {usr}</li>;
