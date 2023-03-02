@@ -40,18 +40,15 @@ function GroceryList() {
             <table>
                 <tr>
                     <th>Item</th>
-                    <th>Stock</th>
-                    <th>Limit</th>
-                    <th>Where to buy</th>
+                    <th>Price</th>
+
                 </tr>
                 {
                     allGroceries.map((groc) => {
                         return (
                             <tr key={groc.id}>
                                 <td>{groc.data.itemName}</td>
-                                <td>{groc.data.price}</td>
-                                <td>{groc.data.limit}</td>
-                                <td>{groc.data.storeName}</td>
+                                <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit}` : "N/A"}</td>
                             </tr>
                         )
                     })

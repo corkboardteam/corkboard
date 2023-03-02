@@ -23,10 +23,12 @@ function Fridge() {
 
                     const name = doc.itemName
                     const grocDetail = await getSpecificGrocery(name);
+                    console.log(grocDetail)
 
-                    const extendedGroc = { ...doc, whereToBuy: grocDetail.data.storeName, id: grocDetail.id }
+                    const extendedGroc = { ...doc, id: grocDetail.id, price: grocDetail.data.price, priceUnit: grocDetail.data.priceUnit }
                     extendedGrocs.push(extendedGroc);
                 }
+                console.log(extendedGrocs)
                 setFridgeItems(extendedGrocs);
                 setUsers(curFridge.data.users);
             }
@@ -51,7 +53,7 @@ function Fridge() {
 
         //check if grocery already in the fridge, if yes, alert and return
         //otherwise, add into the fridge and change state
-        const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID);
+        const newGrocery = await addGroceryToFridge(e.target.itemName.value, e.target.limit.value, e.target.quantity.value, currentUser.groupID, e.target.whereToBuy.value);
         console.log(newGrocery)
         if (newGrocery) {
             let curItems = [...fridgeItems];
@@ -62,6 +64,7 @@ function Fridge() {
         e.target.itemName.value = '';
         e.target.limit.value = null;
         e.target.quantity.value = null;
+        e.target.whereToBuy.value = null;
     }
 
     return (
@@ -78,6 +81,7 @@ function Fridge() {
                     <th>Stock</th>
                     <th>Limit</th>
                     <th>Where to buy</th>
+                    <th>Estimated Cost</th>
                 </tr>
                 {
                     fridgeItems.map((groc) => {
@@ -88,6 +92,10 @@ function Fridge() {
                                 <td>{groc.currentQuantity}</td>
                                 <td>{groc.maxQuantity}</td>
                                 <td>{groc.whereToBuy}</td>
+                                <td>{groc.price >= 0 ?
+                                    `${groc.price} ${groc.priceUnit} per unit item` :
+                                    "N/A"}</td>
+                                <td></td>
                                 <td>
                                     <form id={groc.itemName} method="post" onSubmit={handleDelete}>
                                         <button>Delete</button>
@@ -107,6 +115,8 @@ function Fridge() {
                 <input type="number" id="limit" name="limit"></input>
                 <label for="quantity">Quantity to buy </label>
                 <input type="number" id="quantity" name="quantity"></input>
+                <label for="whereToBuy">Store</label>
+                <input type="text" id="whereToBuy" name="whereToBuy"></input>
                 <button type="submit">+</button>
             </form>
         </div>
