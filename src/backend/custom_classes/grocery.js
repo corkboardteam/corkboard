@@ -3,11 +3,12 @@ import { collection, doc, setDoc, getDocs, query, where } from "firebase/firesto
 import axios from "axios";
 
 class Grocery {
-    constructor(groceryName, price, priceUnit) {
+    constructor(groceryName, price, priceUnit, groceryUnit) {
         this.itemName = groceryName;
         this.price = price;
         // this.storeName = storeName;
         this.priceUnit = priceUnit
+        this.groceryUnit = groceryUnit
     }
 }
 
@@ -17,22 +18,23 @@ const GroceryConverter = {
             itemName: grocery.itemName,
             price: grocery.price,
             priceUnit: grocery.priceUnit,
+            groceryUnit: grocery.groceryUnit
         };
     },
     fromFirestore: (snapshot, options) => {
         const data = snapshot.data(options);
-        return new Grocery(data.itemName, data.price, data.priceUnit)
+        return new Grocery(data.itemName, data.price, data.priceUnit, data.groceryUnit)
     }
 };
 
 async function addGroceryItem(itemName, price, storeName) {
-    async function getGroceryIDFromApi(itemName) {
+    async function getGroceryDataFromApi(itemName) {
         try {
             const res = await axios.get(`https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&query=${itemName}&number=1&metaInformation=true`)
             if (res.data.length === 0)
                 return null
             else
-                return res.data[0].id
+                return res.data[0]
         }
         catch (error) {
             console.error("An error happened while getting data from the database")
@@ -43,16 +45,30 @@ async function addGroceryItem(itemName, price, storeName) {
     }
 
     async function getPriceFromApi(itemName) {
-        const id = await getGroceryIDFromApi(itemName)
-        if (id === null)
+        const data = await getGroceryDataFromApi(itemName)
+        if (data === null)
             return null
 
+        const id = data.id
+
         try {
-            const price = await axios.get(`https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&amount=1`)
+            const possibleUnits = data.possibleUnits;
+            let groceryUnit = "serving"
+            if (possibleUnits.includes("bag")) {
+                groceryUnit = "bag"
+            }
+            else if (possibleUnits.includes("fruit")) {
+                groceryUnit = "fruit"
+            }
+            else if (possibleUnits.includes("package")) {
+                groceryUnit = "package"
+            }
+
+            const price = await axios.get(`https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&amount=1&unit=${groceryUnit}`)
             console.log(price)
             const estimatedCost = price.data.estimatedCost; //{value: some value, unit: US cents, some other currency}
             console.log(estimatedCost)
-            return estimatedCost
+            return { ...estimatedCost, groceryUnit: groceryUnit }
         }
         catch (error) {
             console.error("There was some trouble connecting to the grocery database")
@@ -61,11 +77,12 @@ async function addGroceryItem(itemName, price, storeName) {
     }
 
     const productPrice = await getPriceFromApi(itemName)
+    console.log(productPrice)
     let newGrocery;
     if (productPrice === null)
-        newGrocery = new Grocery(itemName, -1, "");
+        newGrocery = new Grocery(itemName, -1, "", "");
     else
-        newGrocery = new Grocery(itemName, productPrice.value, productPrice.unit);
+        newGrocery = new Grocery(itemName, productPrice.value, productPrice.unit, productPrice.groceryUnit);
 
     const ref = doc(collection(db, "groceries")).withConverter(GroceryConverter)
     await setDoc(ref, newGrocery);

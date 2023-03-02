@@ -25,11 +25,12 @@ function Fridge() {
                     const grocDetail = await getSpecificGrocery(name);
                     console.log(grocDetail)
 
-                    const extendedGroc = { ...doc, id: grocDetail.id, price: grocDetail.data.price, priceUnit: grocDetail.data.priceUnit }
+                    const extendedGroc = { ...doc, id: grocDetail.id, price: grocDetail.data.price, priceUnit: grocDetail.data.priceUnit, groceryUnit: grocDetail.data.groceryUnit }
                     extendedGrocs.push(extendedGroc);
                 }
                 console.log(extendedGrocs)
                 setFridgeItems(extendedGrocs);
+                console.log(curFridge.data.users)
                 setUsers(curFridge.data.users);
             }
         }
@@ -93,7 +94,7 @@ function Fridge() {
                                 <td>{groc.maxQuantity}</td>
                                 <td>{groc.whereToBuy}</td>
                                 <td>{groc.price >= 0 ?
-                                    `${groc.price} ${groc.priceUnit} per unit item` :
+                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                     "N/A"}</td>
                                 <td></td>
                                 <td>
