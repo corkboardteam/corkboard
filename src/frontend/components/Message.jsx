@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function Message(props) {
-  const { message, onVoteMessage, onAddComment } = props;
+  const { message, onVoteMessage, onAddComment, onDeleteMessage } = props;
   const [newComment, setNewComment] = useState("");
 
   function handleNewComment(event) {
@@ -20,6 +20,7 @@ function Message(props) {
         <button onClick={() => onVoteMessage(message.id, "upvote")}>Upvote</button>
         <span>{message.votes}</span>
         <button onClick={() => onVoteMessage(message.id, "downvote")}>Downvote</button>
+        <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
       </div>
       <div>
         <input type="text" value={newComment} onChange={handleNewComment} />
