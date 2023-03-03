@@ -41,7 +41,8 @@ async function getFridge(groupName) {
 
     if (groupName == null) {
         alert("not in a group yet :(")
-        return null;
+        return null
+
     }
     const q = query(fridgeRef, where("groupName", "==", groupName))
 
@@ -90,7 +91,8 @@ async function addGroceryToFridge(itemName, maxQuantity, currentQuantity, groupN
             currentQuantity: currentQuantity,
             whereToBuy: storeName,
             price: grocery.data.price ? grocery.data.price : "undefined",
-            priceUnit: grocery.data.priceUnit ? grocery.data.priceUnit : "undefined"
+            priceUnit: grocery.data.priceUnit ? grocery.data.priceUnit : "undefined",
+            groceryUnit: grocery.data.groceryUnit ? grocery.data.groceryUnit : "undefined"
         };
 
 

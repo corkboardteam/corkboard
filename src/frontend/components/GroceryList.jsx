@@ -48,7 +48,7 @@ function GroceryList() {
                         return (
                             <tr key={groc.id}>
                                 <td>{groc.data.itemName}</td>
-                                <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit}` : "N/A"}</td>
+                                <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit} per ${groc.data.groceryUnit}` : "N/A"}</td>
                             </tr>
                         )
                     })

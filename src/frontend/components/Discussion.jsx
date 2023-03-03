@@ -71,6 +71,11 @@ const Discussion = () => {
         setMessages(newMessages);
     }
 
+    async function handleDeleteMessage(id) {
+        const newMessages = messages.filter((message) => message.id !== id);
+        setMessages(newMessages);
+    }
+
     function Comment(props) {
         const { comment } = props;
 
@@ -96,6 +101,7 @@ const Discussion = () => {
                 message={message}
                 onVoteMessage={handleVoteMessage}
                 onAddComment={handleAddComment}
+                onDeleteMessage={handleDeleteMessage}
                 />
                 <ul>
                 {message.comments.map((comment) => (
