@@ -52,6 +52,8 @@ export const AuthProvider = ({ children }) => {
       console.log('Signed up successfully');
 
     } catch (error) {
+      if (password.length < 6)
+        alert("Password should be at least 6 characters");
       console.error('Error signing up', error);
       throw error;
     }
@@ -149,6 +151,8 @@ export const AuthProvider = ({ children }) => {
       console.log('Email updated successfully');
 
     } catch (error) {
+      if (!currPassword)
+        alert("Enter current password to change email");
       console.error('Error updating email:', error);
       throw error;
     }
@@ -160,9 +164,15 @@ export const AuthProvider = ({ children }) => {
       const credential = EmailAuthProvider.credential(user.email, currPassword);
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
-      console.log('Password updated successfully');
+      alert('Password updated successfully');
 
     } catch (error) {
+      if (!currPassword) {
+        alert("Enter current password to set new password");
+      }
+      else if (newPassword.length < 6) {
+        alert("New password should be at least 6 characters");
+      }
       console.error('Error updating password:', error);
       throw error;
     }
@@ -193,6 +203,7 @@ export const AuthProvider = ({ children }) => {
         await updateProfile({ phoneNumber: formattedNumber });
         console.log('Phone number updated successfully');
       } else {
+        alert('Enter a valid phone number')
         throw new Error('Not a valid phone number');
       }
     } catch (error) {
@@ -220,8 +231,6 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   }
-
-
 
   const value = {
     currentUser,
