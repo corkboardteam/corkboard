@@ -11,7 +11,8 @@ import Fridge from './frontend/components/Fridge'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/authContext'
 import Protected from './backend/Protected'
-import Discusion from './frontend/components/Discussion'
+import Discussion from './frontend/components/Discussion'
+import Calendar from './frontend/components/Calendar'
 
 
 function App() {
@@ -27,7 +28,8 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/grocerylist' element={<Protected><GroceryList /></Protected>} />
           <Route path='/fridge' element={<Protected><Fridge /></Protected>} />
-          <Route path='/discussion' element={<Protected><Discusion /></Protected>} />
+          <Route path='/discussion' element={<Protected><Discussion /></Protected>} />
+          <Route path='/calendar' element={<Protected><Calendar /></Protected>} />
         </Routes>
       </AuthProvider>
     </Container>
