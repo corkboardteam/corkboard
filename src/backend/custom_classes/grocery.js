@@ -6,7 +6,6 @@ class Grocery {
     constructor(groceryName, price, priceUnit, groceryUnit) {
         this.itemName = groceryName;
         this.price = price;
-        // this.storeName = storeName;
         this.priceUnit = priceUnit
         this.groceryUnit = groceryUnit
     }
@@ -65,9 +64,12 @@ async function addGroceryItem(itemName, price, storeName) {
             }
 
             const price = await axios.get(`https://api.spoonacular.com/food/ingredients/${id}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&amount=1&unit=${groceryUnit}`)
-            console.log(price)
+            if (groceryUnit === "serving") {
+                const servingData = `(${price.data.nutrition.weightPerServing.amount} ${price.data.nutrition.weightPerServing.unit} per serving)`
+                groceryUnit = groceryUnit + servingData;
+            }
             const estimatedCost = price.data.estimatedCost; //{value: some value, unit: US cents, some other currency}
-            console.log(estimatedCost)
+
             return { ...estimatedCost, groceryUnit: groceryUnit }
         }
         catch (error) {
@@ -77,12 +79,16 @@ async function addGroceryItem(itemName, price, storeName) {
     }
 
     const productPrice = await getPriceFromApi(itemName)
-    console.log(productPrice)
     let newGrocery;
     if (productPrice === null)
         newGrocery = new Grocery(itemName, -1, "", "");
-    else
-        newGrocery = new Grocery(itemName, productPrice.value, productPrice.unit, productPrice.groceryUnit);
+    else {
+        if (productPrice.value > 100)
+            newGrocery = new Grocery(itemName, (productPrice.value / 100).toFixed(2), /*productPrice.unit*/"US Dollars", productPrice.groceryUnit);
+        else
+            newGrocery = new Grocery(itemName, productPrice.value, productPrice.unit, productPrice.groceryUnit);
+
+    }
 
     const ref = doc(collection(db, "groceries")).withConverter(GroceryConverter)
     await setDoc(ref, newGrocery);
