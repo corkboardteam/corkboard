@@ -33,7 +33,7 @@ const Discussion = () => {
         const newMessages = [
         ...messages,
         {
-            id: messages.length,
+            id: Math.random().toString(36),
             text: newMessage,
             votes: 0,
             comments: [],
@@ -89,6 +89,9 @@ const Discussion = () => {
 
     return (
         <div>
+        <div className="w-100 text-center mt-2">
+        Go back to <Link to="/dashboard">dashboard</Link>
+        </div>
         <h1>Discussion</h1>
         <div>
             <input type="text" value={newMessage} onChange={handleNewMessage} />
