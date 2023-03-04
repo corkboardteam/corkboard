@@ -83,7 +83,7 @@ async function addGroceryItem(itemName, price, storeName) {
     if (productPrice === null)
         newGrocery = new Grocery(itemName, -1, "", "");
     else {
-        if (productPrice.value > 100)
+        if (productPrice.value > 10)
             newGrocery = new Grocery(itemName, (productPrice.value / 100).toFixed(2), /*productPrice.unit*/"US Dollars", productPrice.groceryUnit);
         else
             newGrocery = new Grocery(itemName, productPrice.value, productPrice.unit, productPrice.groceryUnit);
