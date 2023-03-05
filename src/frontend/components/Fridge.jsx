@@ -27,9 +27,7 @@ function Fridge() {
                     return;
                 }
                 const curGroup = new GroupClass(groupID, curFridge.id)
-
                 const groupData = await curGroup.data()
-
                 const grocs = curFridge.data.groceries
                 const editStates = {}
                 const extendedGrocs = []
@@ -46,11 +44,8 @@ function Fridge() {
                 setFridgeItems(extendedGrocs);
                 setUsers(groupData.members);
                 setShowEdit(editStates)
-
             }
         }
-
-
         setupFridge();
     }, [currentUser])
 

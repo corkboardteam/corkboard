@@ -3,10 +3,25 @@ import { db } from '../firebase'
 import { getSpecificGrocery, addGroceryItem } from './grocery';
 
 class Fridge {
-    constructor(groupName, users, groceries) {
+    constructor(groupName, users, groceries, trips) {
         this.groupName = groupName; //should be a string containing username
         this.users = users; //should be an array of userIDs
         this.groceries = groceries; //should be an array of grocery IDs mapping to current quantity and max limit
+        this.trips = trips
+
+        /*
+        trip should look something like an array of objects
+        [
+            {
+                userID: string
+                date: string
+                toBuy: [
+                    groceryName,
+                    groceryName2,
+                ]
+            },
+        ]
+        */
     }
 }
 
@@ -15,19 +30,20 @@ const FridgeConverter = {
         return {
             groupName: fridge.groupName,
             users: fridge.users,
-            groceries: fridge.groceries
+            groceries: fridge.groceries,
+            trips: fridge.trips
         };
     },
     fromFirestore: (snapshot, options) => {
         const data = snapshot.data(options);
-        return new Fridge(data.groupName, data.users, data.groceries)
+        return new Fridge(data.groupName, data.users, data.groceries, data.trips)
     }
 };
 
 async function addNewFridge(groupName, user) {
     //when initializing Fridge, we should add the creater of the fridge group to the user array
     //there shouldn't be any groceries yet
-    const newFridge = new Fridge(groupName, [user], []);
+    const newFridge = new Fridge(groupName, [user], [], []);
 
     //tbd: do we want to have firebase autogenerate userIDs or let users define their own
     //or do we want to use the groupName as a fridge's id value
