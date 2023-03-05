@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge } from "../../backend/custom_classes/fridge";
+import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
 import { Link } from "react-router-dom";
 
 function Fridge() {
+    let checkedItems = [];
 
+    const [showCheckBox, setShowCheckBox] = useState(false)
     const [fridgeItems, setFridgeItems] = useState([]);
     const [showEdit, setShowEdit] = useState({})
     const [users, setUsers] = useState([])
@@ -44,6 +46,7 @@ function Fridge() {
                 setFridgeItems(extendedGrocs);
                 setUsers(groupData.members);
                 setShowEdit(editStates)
+                checkedItems = [];
             }
         }
         setupFridge();
@@ -124,6 +127,29 @@ function Fridge() {
         e.target.whereToBuy.value = null;
     }
 
+    async function handleCheckedItems(e) {
+        e.preventDefault()
+        console.log(e)
+
+        await addTripToFridge(checkedItems, currentUser.groupID, currentUser.uid)
+        checkedItems = []
+        setShowCheckBox(false)
+    }
+
+    async function handleCheckboxChange(e) {
+
+        console.log(e.target.checked)
+        if (e.target.checked) {
+            console.log(e.target.name)
+            checkedItems.push(e.target.name)
+        }
+        else {
+            checkedItems = checkedItems.filter((groc) => groc !== e.target.name)
+        }
+
+        console.log(checkedItems)
+    }
+
     return (
         <div>
             {currentUser.groupID ? <div>Room ID: {currentUser.groupID}</div>
@@ -137,15 +163,34 @@ function Fridge() {
             </ul>
 
             {
+                // forms for editing each grocery item in the table 
                 fridgeItems.map((groc) => {
                     return (
-                        <form method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
+                        <form key={groc.itemName} method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
                         </form>
                     )
                 })
             }
+            {
+                // handles submitting check groceries
+                <form method="post" id="submit-checked-groceries"
+                    name="submitCheckedGroceries"
+                    onSubmit={handleCheckedItems}></form>
+            }
+
+            {
+                showCheckBox ?
+                    <div>Check items you'll purchase and click done to save.
+                        <br></br>
+                        <button form="submit-checked-groceries">Done</button>
+                    </div> :
+                    <form method="post" onSubmit={(e) => { e.preventDefault(); setShowCheckBox(true) }}>
+                        <button>Plan grocery trip</button>
+                    </form>
+            }
             <table>
                 <tr>
+                    {showCheckBox ? <th>Select</th> : null}
                     <th>Item</th>
                     <th>Stock</th>
                     <th>Limit</th>
@@ -157,6 +202,7 @@ function Fridge() {
                         const showEditCur = showEdit[groc.itemName]
                         return (
                             <tr key={groc.id}>
+                                {showCheckBox ? <td> <input type="checkbox" name={`${groc.itemName}`} form="submit-checked-groceries" onChange={handleCheckboxChange} /> </td> : null}
                                 <td>{groc.itemName}</td>
 
 
@@ -205,7 +251,7 @@ function Fridge() {
                 <input type="text" id="itemName" name="itemName"></input>
                 <label for="limit">Stock Limit</label>
                 <input type="number" id="limit" name="limit"></input>
-                <label for="quantity">Quantity to buy </label>
+                <label for="quantity">Quantity in stock </label>
                 <input type="number" id="quantity" name="quantity"></input>
                 <label for="whereToBuy">Store</label>
                 <input type="text" id="whereToBuy" name="whereToBuy"></input>

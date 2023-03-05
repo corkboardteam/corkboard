@@ -131,6 +131,7 @@ async function addGroceryToFridge(itemName, maxQuantity, currentQuantity, groupN
 async function removeGroceryFromFridge(itemName, groupID) {
     const fridge = await getFridge(groupID)
     let presentGroceries = fridge.data.groceries;
+    let presentTrips = fridge.data.trips
     console.log(presentGroceries)
     const ind = presentGroceries.findIndex(g => g.itemName === itemName)
     console.log(ind)
@@ -139,10 +140,19 @@ async function removeGroceryFromFridge(itemName, groupID) {
         return null;
     }
 
+    presentTrips.forEach((element) => {
+        const ind = element.toBuy.findIndex(b => b === itemName)
+        if (ind !== -1)
+            element.toBuy.splice(ind, ind + 1)
+    })
+
+    presentTrips = presentTrips.filter((element) => element.toBuy.length > 0)
+
     //remove from fridge
     presentGroceries.splice(ind, ind + 1)
     await updateDoc(doc(db, "fridges", fridge.id), {
-        groceries: presentGroceries
+        groceries: presentGroceries,
+        trips: presentTrips
     })
 
 }
@@ -171,6 +181,19 @@ async function editGroceryInFridge(itemName, updatedLimit, updatedAmount, update
     return presentGroceries[ind]
 }
 
+async function addTripToFridge(items, groupID, userID, date = "default date") {
+    const fridge = await getFridge(groupID)
+    const newTrip = {
+        userID: userID,
+        date: date,
+        toBuy: items
+    }
+    await updateDoc(doc(db, "fridges", fridge.id), {
+        trips: arrayUnion(newTrip)
+    })
+}
+
+
 export {
     Fridge,
     FridgeConverter,
@@ -178,7 +201,8 @@ export {
     getFridge,
     addGroceryToFridge,
     removeGroceryFromFridge,
-    editGroceryInFridge
+    editGroceryInFridge,
+    addTripToFridge
 }
 
 
