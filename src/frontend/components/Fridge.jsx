@@ -4,6 +4,9 @@ import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
 import { Link } from "react-router-dom";
+import React from "react";
+
+
 
 function Fridge() {
     let checkedItems = [];
@@ -12,6 +15,7 @@ function Fridge() {
     const [fridgeItems, setFridgeItems] = useState([]);
     const [showEdit, setShowEdit] = useState({})
     const [users, setUsers] = useState([])
+    const [currentTrips, setCurrentTrips] = useState([])
     const { currentUser } = UserAuth();
     useEffect(() => {
 
@@ -25,7 +29,6 @@ function Fridge() {
                 }
                 const curFridge = await getFridge(groupID)
                 if (curFridge === null) {
-
                     return;
                 }
                 const curGroup = new GroupClass(groupID, curFridge.id)
@@ -33,16 +36,34 @@ function Fridge() {
                 const grocs = curFridge.data.groceries
                 const editStates = {}
                 const extendedGrocs = []
+
+
+                //get all groceries
                 for await (const doc of grocs) {
-
                     const name = doc.itemName
-                    editStates[name] = false
+                    editStates[name] = false //at the beginning, don't edit
                     const grocDetail = await getSpecificGrocery(name);
-
 
                     const extendedGroc = { ...doc, id: grocDetail.id, price: grocDetail.data.price, priceUnit: grocDetail.data.priceUnit, groceryUnit: grocDetail.data.groceryUnit }
                     extendedGrocs.push(extendedGroc);
                 }
+
+                const allTrips = curFridge.data.trips;
+                let allTripsInfo = []
+                allTrips.forEach((element) => {
+                    //get grocery information from extendedGrocs and remove corresponding entry
+                    let curTripInfo = { userID: element.userID, date: element.date, toBuy: [] }
+                    const tripGrocs = element.toBuy;
+
+                    tripGrocs.forEach((g) => {
+                        const ind = extendedGrocs.findIndex((grocs) => grocs.itemName === g)
+                        curTripInfo.toBuy.push(extendedGrocs[ind])
+                        extendedGrocs.splice(ind, ind + 1)
+                    })
+                    allTripsInfo.push(curTripInfo)
+                })
+
+                setCurrentTrips(allTripsInfo)
                 setFridgeItems(extendedGrocs);
                 setUsers(groupData.members);
                 setShowEdit(editStates)
@@ -130,10 +151,31 @@ function Fridge() {
     async function handleCheckedItems(e) {
         e.preventDefault()
         console.log(e)
+        if (checkedItems.length === 0) {
+            setShowCheckBox(false)
+            return
+        }
 
         await addTripToFridge(checkedItems, currentUser.groupID, currentUser.uid)
-        checkedItems = []
         setShowCheckBox(false)
+        // needs to handle changing currentGroceries and trips
+        const updatedTrips = [...currentTrips]
+        let groceryInfo = []
+
+        const groceries = [...fridgeItems]
+        checkedItems.forEach((element) => {
+            console.log(element)
+            const ind = groceries.findIndex((g) => g.itemName === element)
+            console.log(ind)
+            groceryInfo.push(groceries[ind])
+            groceries.splice(ind, ind + 1)
+        })
+        console.log(groceryInfo)
+        console.log(groceries)
+        updatedTrips.push({ userID: currentUser.uid, date: "place holder", toBuy: groceryInfo })
+        setFridgeItems(groceries)
+        setCurrentTrips(updatedTrips)
+        checkedItems = []
     }
 
     async function handleCheckboxChange(e) {
@@ -197,6 +239,29 @@ function Fridge() {
                     <th>Where to buy</th>
                     <th>Estimated Cost</th>
                 </tr>
+                {
+                    currentTrips.map((trip) => {
+                        return (
+                            <tbody style={{ border: '5px solid red' }}>
+                                <tr><td colSpan={5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td> </tr>
+                                {
+                                    trip.toBuy.map((groc) => {
+                                        return <tr>
+                                            {showCheckBox ? <td></td> : null}
+                                            <td>{groc.itemName}</td>
+                                            <td>{groc.currentQuantity}</td>
+                                            <td>{groc.maxQuantity}</td>
+                                            <td>{groc.whereToBuy}</td>
+                                            <td>{groc.price >= 0 ?
+                                                `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                "N/A"}</td>
+                                        </tr>
+                                    })
+                                }
+                            </tbody>
+                        )
+                    })
+                }
                 {
                     fridgeItems.map((groc) => {
                         const showEditCur = showEdit[groc.itemName]
