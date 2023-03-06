@@ -183,15 +183,43 @@ async function editGroceryInFridge(itemName, updatedLimit, updatedAmount, update
 
 async function addTripToFridge(items, groupID, userID, date = "default date") {
     const fridge = await getFridge(groupID)
+
+
+    const newTripRef = doc(collection(db, "trips"))
     const newTrip = {
         userID: userID,
         date: date,
-        toBuy: items
+        toBuy: items,
+        tripID: newTripRef.id
     }
+    console.log(newTrip)
     await updateDoc(doc(db, "fridges", fridge.id), {
         trips: arrayUnion(newTrip)
     })
+
+    return newTrip
+
 }
+
+async function removeTripFromFridge(tripID, groupID, uid) {
+    console.log(tripID)
+    const fridge = await getFridge(groupID)
+    const trips = fridge.data.trips
+    const deletedTrip = trips.filter((t) => t.tripID === tripID && t.userID === uid)
+    if (deletedTrip.length === 0) {
+        alert("You can't cancel a grocery trip you didn't start")
+        return false;
+    }
+
+    const newTrips = trips.filter((t) => t.tripID !== tripID)
+    console.log(newTrips)
+    await updateDoc(doc(db, "fridges", fridge.id), {
+        trips: newTrips
+    })
+    return true;
+}
+
+
 
 
 export {
@@ -202,7 +230,8 @@ export {
     addGroceryToFridge,
     removeGroceryFromFridge,
     editGroceryInFridge,
-    addTripToFridge
+    addTripToFridge,
+    removeTripFromFridge
 }
 
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge } from "../../backend/custom_classes/fridge";
+import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge, removeTripFromFridge } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
@@ -52,14 +52,12 @@ function Fridge() {
                 let allTripsInfo = []
                 allTrips.forEach((element) => {
                     //get grocery information from extendedGrocs and remove corresponding entry
-                    let curTripInfo = { userID: element.userID, date: element.date, toBuy: [] }
+                    let curTripInfo = { userID: element.userID, date: element.date, toBuy: [], tripID: element.tripID }
                     const tripGrocs = element.toBuy;
 
                     tripGrocs.forEach((g) => {
-                        console.log(g)
+
                         const ind = extendedGrocs.findIndex((grocs) => grocs.itemName === g)
-                        console.log(ind)
-                        console.log(extendedGrocs[ind])
                         curTripInfo.toBuy.push(extendedGrocs[ind])
                         extendedGrocs.splice(ind, 1)
                     })
@@ -153,13 +151,12 @@ function Fridge() {
 
     async function handleCheckedItems(e) {
         e.preventDefault()
-        console.log(e)
         if (checkedItems.length === 0) {
             setShowCheckBox(false)
             return
         }
 
-        await addTripToFridge(checkedItems, currentUser.groupID, currentUser.uid)
+        const newTrip = await addTripToFridge(checkedItems, currentUser.groupID, currentUser.uid)
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
@@ -174,7 +171,7 @@ function Fridge() {
             groceries.splice(ind, 1)
         })
 
-        updatedTrips.push({ userID: currentUser.uid, date: "place holder", toBuy: groceryInfo })
+        updatedTrips.push({ userID: currentUser.uid, date: newTrip.date, toBuy: groceryInfo, tripID: newTrip.tripID })
         setFridgeItems(groceries)
         setCurrentTrips(updatedTrips)
         checkedItems = []
@@ -182,16 +179,30 @@ function Fridge() {
 
     async function handleCheckboxChange(e) {
 
-        console.log(e.target.checked)
         if (e.target.checked) {
-            console.log(e.target.name)
             checkedItems.push(e.target.name)
         }
         else {
             checkedItems = checkedItems.filter((groc) => groc !== e.target.name)
         }
 
-        console.log(checkedItems)
+    }
+
+    async function handleCancelTrip(tripID) {
+        if (!await removeTripFromFridge(tripID, currentUser.groupID, currentUser.uid))
+            return;
+
+        const ind = currentTrips.findIndex((t) => t.tripID === tripID)
+        const newItems = [...fridgeItems]
+        const curTrip = currentTrips[ind]
+        curTrip.toBuy.forEach((g) => {
+            newItems.push(g)
+        })
+        const newTrips = [...currentTrips]
+        newTrips.splice(ind, 1)
+
+        setFridgeItems(newItems)
+        setCurrentTrips(newTrips)
     }
 
     return (
@@ -240,15 +251,19 @@ function Fridge() {
                     <th>Limit</th>
                     <th>Where to buy</th>
                     <th>Estimated Cost</th>
+                    <th></th>
                 </tr>
                 {
                     currentTrips.map((trip) => {
                         return (
-                            <tbody style={{ border: '5px solid red' }}>
-                                <tr><td colSpan={5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td> </tr>
+                            <tbody key={trip.tripID} style={{ border: '5px solid red' }}>
+                                <tr>
+                                    <td colSpan={5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td>
+                                    <td><button onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</button></td>
+                                </tr>
                                 {
                                     trip.toBuy.map((groc) => {
-                                        console.log(groc)
+
                                         return <tr>
                                             {showCheckBox ? <td></td> : null}
                                             <td>{groc.itemName}</td>
@@ -293,7 +308,7 @@ function Fridge() {
                                 <td>{groc.price >= 0 ?
                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                     "N/A"}</td>
-                                <td></td>
+
                                 <td>
                                     <form id={groc.itemName} method="post" onSubmit={handleDelete}>
                                         <button>Delete</button>
