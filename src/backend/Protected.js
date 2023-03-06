@@ -6,8 +6,9 @@ const Protected = ({ children }) => {
     const { currentUser } = UserAuth();
     if (!currentUser) {
         console.log('Protected page, Login to access all pages'); // for devs
-        return <Navigate to ='/' />
-    }
+        console.log(currentUser);
+        return <Navigate to ='/Login' />
+    } 
   return children;
 }
 

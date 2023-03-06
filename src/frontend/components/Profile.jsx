@@ -30,7 +30,7 @@ const Profile = () => {
         setError('');
         await updateDisplayName(newDisplayName);
         setNewDisplayName(newDisplayName);
-        navigate('/profile');
+        navigate('/Profile');
      } catch (error) {
       setError('Failed to update display name:', error);
      } 
@@ -45,7 +45,7 @@ const Profile = () => {
       setError('');
       await updateProfilePicture(newPhotoURL);
       setNewPhotoURL(newPhotoURL);
-      navigate('/profile');
+      navigate('/Profile');
 
     } catch (error) {
       setError('Failed to update profile picture:', error);
@@ -60,7 +60,7 @@ const Profile = () => {
       setLoading(true);
       setError('');
       await updatePhoneNumber(newPhoneNumber);
-      navigate('/profile');
+      navigate('/Profile');
     } catch (error) {
       setError('Failed to update phone number:', error);
     }
@@ -74,7 +74,7 @@ const Profile = () => {
       setLoading(true);
       setError('');
       await changeEmail(newEmail, currentPassword);
-      navigate('/profile');
+      navigate('/Profile');
       setNewEmail(newEmail);
     } catch (error) {
       setError('Failed to update email:', error);
@@ -93,7 +93,7 @@ const Profile = () => {
       setCurrentPassword('');
       setNewPassword('');
       setEditingPassword(false);
-      navigate('/profile');
+      navigate('/Profile');
     } catch (error) {
       setError('Failed to update password:', error);
     } 
@@ -120,7 +120,7 @@ const Profile = () => {
       console.log('once');
       await updateProfile({ groupID: newGroupID });
       setNewGroupID('');
-      navigate('/profile');
+      navigate('/Profile');
       
     } catch (error) {
       setError('Failed to join group:', error);
@@ -133,7 +133,7 @@ const Profile = () => {
       await group.leaveGroup(currentUser);
       await updateProfile({ groupID: null });
       setNewGroupID('');
-      navigate('/profile');
+      navigate('/Profile');
     } catch (error) {
       setError('Failed to leave group');
     }
@@ -206,7 +206,7 @@ return (
             </div>
         </div>
           <div className="w-100 text-center mt-2">
-            <Link to="/dashboard">Back to Dashboard</Link>
+            <Link to="/">Back to Dashboard</Link>
           </div>
       </div>
     </div>

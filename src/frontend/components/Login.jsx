@@ -13,7 +13,7 @@ const Login = () => {
 
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/dashboard');
+      navigate('/');
     } 
     console.log(currentUser)
   },[currentUser, navigate]);
@@ -73,12 +73,12 @@ const handleGoogleLogin = async (e) => {
             <button disabled={loading} className="btn btn-primary w-100 mt-4" type="submit">Login</button>
           </form>
           <div className="w-100 text-center mt-3">
-            <Link to="/forgot-password">Forgot Password?</Link>
+            <Link to="/ForgotPassword">Forgot Password?</Link>
           </div>
         </div>
       </div>
       <div className="w-100 text-center mt-2">
-        Don't have an account? <Link to="/signup">Sign Up</Link>
+        Don't have an account? <Link to="/Signup">Sign Up</Link>
       </div>
     </div>
     </>
