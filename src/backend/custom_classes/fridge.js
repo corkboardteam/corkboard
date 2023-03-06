@@ -143,13 +143,13 @@ async function removeGroceryFromFridge(itemName, groupID) {
     presentTrips.forEach((element) => {
         const ind = element.toBuy.findIndex(b => b === itemName)
         if (ind !== -1)
-            element.toBuy.splice(ind, ind + 1)
+            element.toBuy.splice(ind, 1)
     })
 
     presentTrips = presentTrips.filter((element) => element.toBuy.length > 0)
 
     //remove from fridge
-    presentGroceries.splice(ind, ind + 1)
+    presentGroceries.splice(ind, 1)
     await updateDoc(doc(db, "fridges", fridge.id), {
         groceries: presentGroceries,
         trips: presentTrips

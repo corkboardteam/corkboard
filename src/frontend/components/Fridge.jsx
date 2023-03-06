@@ -56,9 +56,12 @@ function Fridge() {
                     const tripGrocs = element.toBuy;
 
                     tripGrocs.forEach((g) => {
+                        console.log(g)
                         const ind = extendedGrocs.findIndex((grocs) => grocs.itemName === g)
+                        console.log(ind)
+                        console.log(extendedGrocs[ind])
                         curTripInfo.toBuy.push(extendedGrocs[ind])
-                        extendedGrocs.splice(ind, ind + 1)
+                        extendedGrocs.splice(ind, 1)
                     })
                     allTripsInfo.push(curTripInfo)
                 })
@@ -164,14 +167,13 @@ function Fridge() {
 
         const groceries = [...fridgeItems]
         checkedItems.forEach((element) => {
-            console.log(element)
+
             const ind = groceries.findIndex((g) => g.itemName === element)
-            console.log(ind)
+
             groceryInfo.push(groceries[ind])
-            groceries.splice(ind, ind + 1)
+            groceries.splice(ind, 1)
         })
-        console.log(groceryInfo)
-        console.log(groceries)
+
         updatedTrips.push({ userID: currentUser.uid, date: "place holder", toBuy: groceryInfo })
         setFridgeItems(groceries)
         setCurrentTrips(updatedTrips)
@@ -246,6 +248,7 @@ function Fridge() {
                                 <tr><td colSpan={5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td> </tr>
                                 {
                                     trip.toBuy.map((groc) => {
+                                        console.log(groc)
                                         return <tr>
                                             {showCheckBox ? <td></td> : null}
                                             <td>{groc.itemName}</td>
