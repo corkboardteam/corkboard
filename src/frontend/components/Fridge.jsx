@@ -258,7 +258,7 @@ function Fridge() {
                         return (
                             <tbody key={trip.tripID} style={{ border: '5px solid red' }}>
                                 <tr>
-                                    <td colSpan={5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td>
+                                    <td colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></td>
                                     <td><button onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</button></td>
                                 </tr>
                                 {
