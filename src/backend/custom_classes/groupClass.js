@@ -27,7 +27,6 @@ class GroupClass {
 
   async createGroup(user, groupName) {
     try {
-      console.log('in createGroup');
       const exists = await this.exists();
       if (!exists) {
         const fridgeID = await addNewFridge(this.uid, user.uid);
