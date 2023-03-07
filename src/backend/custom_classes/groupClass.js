@@ -42,6 +42,7 @@ class GroupClass {
         }
         await setDoc(this.groupRef, groupData);
         console.log("Group Created:", groupData);
+        console.log(user);
 
         return true;
       }

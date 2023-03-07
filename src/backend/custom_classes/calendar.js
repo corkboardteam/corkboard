@@ -22,7 +22,7 @@ export function addEventToPrivateCalendar(eventData, accessToken) {
 }
 
 export function getPrivateCalendarEvents(accessToken) {
-    return axios.get(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${Event.eventId}`, {
+    return axios.get('http://calendar.zoho.com/api/v1/calendars', {
         headers: {
         'Authorization': 'Bearer ' + accessToken,
         'Content-Type': 'application/json'

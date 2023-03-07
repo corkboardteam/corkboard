@@ -12,6 +12,7 @@ import { AuthProvider } from './backend/authContext'
 import Protected from './backend/Protected'
 import Discusion from './frontend/components/Discussion'
 import Navbar from './frontend/components/Navbar'
+import Calendar from './frontend/components/Calendar'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
