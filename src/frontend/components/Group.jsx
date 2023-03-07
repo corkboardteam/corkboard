@@ -14,7 +14,7 @@ const Group = () => {
 
   useEffect(() => {
     if (currentUser.groupID != null) {
-      navigate('/dashboard');
+      navigate('/');
     }
     console.log(currentUser);
   }, [currentUser, navigate])
@@ -29,7 +29,7 @@ const Group = () => {
       const group = new GroupClass(joinGroupID);
       await group.joinGroup(currentUser);
       await updateProfile({ groupID: joinGroupID });
-      navigate('/dashboard');
+      navigate('/');
 
     } catch (error) {
       setError(error.message);
@@ -50,7 +50,7 @@ const Group = () => {
       await group.createGroup(currentUser, groupName);
       const groupData = await group.data();
       await updateProfile({ groupID: groupData.uid });
-      navigate('/dashboard');
+      navigate('/');
 
     } catch (error) {
       setError(error.message);
@@ -84,22 +84,11 @@ const Group = () => {
             placeholder="Enter Group Name"
           />
         </div>
-        {/* <div className="mb-3">
-            <label htmlFor="groupDesc" className="form-label">Group Description</label>
-            <textarea className="form-control" id="groupDesc" rows="3"
-              value={groupDesc}
-              onChange={(e) => setgroupDesc(e.target.value)}
-              placeholder="Enter Group Description"
-            ></textarea>
-          </div> */}
         <button className="btn btn-primary" type="submit" disabled={loading}>
           Create Group
         </button>
       </form>
       <div className="alert alert-danger" role="alert">{error}</div>
-      <div className="w-100 text-center mt-2">
-        Join or create a group later? <Link to="/dashboard">Dashboard</Link>
-      </div>
     </div>
   );
 };

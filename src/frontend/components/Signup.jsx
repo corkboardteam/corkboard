@@ -14,7 +14,7 @@ const Signup = () => {
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/dashboard');
+      navigate('/');
     } 
     console.log(currentUser);
   }, [currentUser, navigate]);
@@ -26,7 +26,7 @@ const Signup = () => {
 					setError('');
 					setLoading(true);
 					await signUp(email, password);
-					navigate('/dashboard');
+					navigate('/');
 
 			} catch(error) {
 					setError('Failed to create an account')
@@ -70,7 +70,7 @@ const Signup = () => {
         </div>
       </div>
       <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/">Login</Link>
+        Already have an account? <Link to="/Login">Login</Link>
       </div>
     </>
 	) 

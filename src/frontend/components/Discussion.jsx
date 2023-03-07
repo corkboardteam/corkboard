@@ -12,7 +12,7 @@ const Discussion = () => {
 
     useEffect(() => {
         if (currentUser.groupID == null) {
-            navigate('/group');
+            navigate('/Group');
           }
           console.log(currentUser);
         const storedMessages = localStorage.getItem(`discussions_${currentUser.groupID}`);
@@ -90,7 +90,7 @@ const Discussion = () => {
     return (
         <div>
         <div className="w-100 text-center mt-2">
-        Go back to <Link to="/dashboard">dashboard</Link>
+        Go back to <Link to="/"> Dashboard</Link>
         </div>
         <h1>Discussion</h1>
         <div>
