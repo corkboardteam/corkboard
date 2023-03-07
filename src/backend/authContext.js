@@ -24,12 +24,7 @@ export const AuthProvider = ({ children }) => {
         if (exists) {
           const userData = await currUser.data();
           setCurrentUser(userData);
-        } else {
-          const currUser = new User();
-          const userData = await currUser.data();
-          await setDoc(currUser.userRef, userData);
-          setCurrentUser(userData);
-        }
+        } 
       }
       setLoading(false);
     });
