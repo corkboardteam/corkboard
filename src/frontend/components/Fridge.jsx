@@ -241,10 +241,10 @@ function Fridge() {
                 showCheckBox ?
                     <div>Check items you'll purchase and click done to save.
                         <br></br>
-                        <button form="submit-checked-groceries">Done</button>
+                        <Button variant="outlined" type="submit" form="submit-checked-groceries">Done</Button>
                     </div> :
-                    <form method="post" onSubmit={(e) => { e.preventDefault(); setShowCheckBox(true) }}>
-                        <button>Plan grocery trip</button>
+                    <form style={{ marginBottom: '3%' }} method="post" onSubmit={(e) => { e.preventDefault(); setShowCheckBox(true) }}>
+                        <Button variant="outlined" type="submit">Plan grocery trip</Button>
                     </form>
             }
             <TableContainer>
@@ -266,7 +266,7 @@ function Fridge() {
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
                                         <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></TableCell>
-                                        <TableCell><button onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</button></TableCell>
+                                        <TableCell><Button size="small" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button></TableCell>
                                     </TableRow>
                                     {
                                         trip.toBuy.map((groc) => {
@@ -292,7 +292,7 @@ function Fridge() {
                             const showEditCur = showEdit[groc.itemName]
                             return (
                                 <TableRow key={groc.id}>
-                                    {showCheckBox ? <TableCell> <input type="checkbox" name={`${groc.itemName}`} form="submit-checked-groceries" onChange={handleCheckboxChange} /> </TableCell> : null}
+                                    {showCheckBox ? <TableCell > <input type="checkbox" name={`${groc.itemName}`} form="submit-checked-groceries" onChange={handleCheckboxChange} /> </TableCell> : null}
                                     <TableCell>{groc.itemName}</TableCell>
 
 
@@ -316,16 +316,16 @@ function Fridge() {
                                         `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                         "N/A"}</TableCell>
 
-                                    <TableCell>
+                                    <TableCell >
                                         <form id={groc.itemName} method="post" onSubmit={handleDelete}>
-                                            <button>Delete</button>
+                                            <Button size="small" variant="outlined" type="submit">Delete</Button>
                                         </form>
                                         {
                                             !showEditCur ?
                                                 <form method="post" id={`toggle-${groc.itemName}-edit`} onSubmit={handleToggle}>
-                                                    <button>Edit</button>
+                                                    <Button size="small" variant="outlined" type="submit" >Edit</Button>
                                                 </form> :
-                                                <button form={`edit-${groc.itemName}-form`}>Submit</button>
+                                                <Button size="small" variant="outlined" type="submit" form={`edit-${groc.itemName}-form`}>Submit</Button>
 
                                         }
                                     </TableCell>
