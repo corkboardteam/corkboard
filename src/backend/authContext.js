@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
         if (exists) {
           const userData = await currUser.data();
           setCurrentUser(userData);
-        } 
+        }
       }
       setLoading(false);
     });
@@ -75,9 +75,17 @@ export const AuthProvider = ({ children }) => {
       const provider = new GoogleAuthProvider();
       const userCred = await signInWithPopup(auth, provider);
       const user = new User(userCred.user);
-      const userData = await user.data();
-      setDoc(user.userRef, userData);
-      setCurrentUser(userData);
+      const exists = await user.exists();
+      if (!exists) {
+        user.createUser();
+        const userData = await user.data();
+        setCurrentUser(userData);
+      } else {
+        const userData = await user.data();
+        setDoc(user.userRef, userData);
+        setCurrentUser(userData);
+      } 
+      console.log(currentUser)
       console.log('User logged in with Google');
     } catch (error) {
       console.error('Error logging in with Google', error);

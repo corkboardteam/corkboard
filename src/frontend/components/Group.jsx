@@ -46,7 +46,6 @@ const Group = () => {
       const groupID = await generateGroupUID()
       console.log(groupID);
       const group = new GroupClass(groupID);
-      console.log('in handleCreateGroup');
       await group.createGroup(currentUser, groupName);
       const groupData = await group.data();
       await updateProfile({ groupID: groupData.uid });
