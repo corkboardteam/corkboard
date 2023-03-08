@@ -15,10 +15,10 @@ class Fridge {
             {
                 userID: string
                 date: string
-                toBuy: [
-                    groceryName,
-                    groceryName2,
-                ]
+                toBuy: {
+                    groceryName: num
+                    groceryName2: num2
+                }
             },
         ]
         */
