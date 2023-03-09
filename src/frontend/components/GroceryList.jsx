@@ -1,34 +1,48 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { addGroceryItem, getAllGroceries } from "../../backend/custom_classes/grocery";
+import { UserAuth } from "../../backend/authContext";
+import User from "../../backend/custom_classes/user";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 function GroceryList() {
 
-    const [allGroceries, setAllGroceries] = React.useState([]);
-
+    const [currentTrips, setCurrentTrips] = React.useState({});
+    const { currentUser } = UserAuth();
     useEffect(() => {
-        async function checkGroceries() {
-            const groceries = await getAllGroceries();
-            setAllGroceries(groceries)
+        // async function checkGroceries() {
+        //     const groceries = await getAllGroceries();
+        //     setAllGroceries(groceries)
+        // }
+        // checkGroceries();
+        async function getAllTrips() {
+            const curUser = new User(currentUser)
+            const userData = await curUser.data()
+            const tripData = userData.trips
+            console.log(tripData)
+
+            setCurrentTrips(tripData)
+
         }
-        checkGroceries();
+
+        getAllTrips()
     }, []) // [] makes sure useEffect only runs on mount, avoids infinitely reading from database
 
-    async function addGroceryToDB(e) {
-        e.preventDefault()
-        await addGroceryItem(e.target.itemName.value, e.target.price.value, e.target.storeName.value)
-        const newGroceries = await getAllGroceries();
-        setAllGroceries(newGroceries)
+    // async function addGroceryToDB(e) {
+    //     e.preventDefault()
+    //     await addGroceryItem(e.target.itemName.value, e.target.price.value, e.target.storeName.value)
+    //     const newGroceries = await getAllGroceries();
+    //     setAllGroceries(newGroceries)
 
-        e.target.itemName.value = '';
-        e.target.price.value = '';
-        e.target.storeName.value = '';
-    }
+    //     e.target.itemName.value = '';
+    //     e.target.price.value = '';
+    //     e.target.storeName.value = '';
+    // }
 
     return (
         <body>
             {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
-            <form method="post" onSubmit={addGroceryToDB}>
+            {/* <form method="post" onSubmit={addGroceryToDB}>
                 <label for="itemName">Item Name: </label>
                 <input type="text" id="itemName" name="itemName"></input>
                 <label for="price">Price: </label>
@@ -36,24 +50,59 @@ function GroceryList() {
                 <label for="storeName">Store Name: </label>
                 <input type="text" id="storeName" name="storeName"></input>
                 <button type="submit">+</button>
-            </form>
-            <table>
-                <tr>
-                    <th>Item</th>
-                    <th>Price</th>
-
-                </tr>
+    </form> */}
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Item</TableCell>
+                        <TableCell>Quantity to Buy</TableCell>
+                        <TableCell>Limit</TableCell>
+                        <TableCell>Where to buy</TableCell>
+                        <TableCell>Estimated Cost</TableCell>
+                        <TableCell></TableCell>
+                    </TableRow>
+                </TableHead>
                 {
-                    allGroceries.map((groc) => {
+                    //this part renders all the grocery runs scheduled
+                    Object.values(currentTrips).map((trip) => {
                         return (
-                            <tr key={groc.id}>
-                                <td>{groc.data.itemName}</td>
-                                <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit} per ${groc.data.groceryUnit}` : "N/A"}</td>
-                            </tr>
+                            <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
+                                <TableRow>
+                                    <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.uid} on {trip.date}</small></TableCell>
+
+                                </TableRow>
+                                {
+                                    trip.toBuy.map((groc) => {
+
+                                        return <TableRow>
+
+                                            <TableCell>{groc.itemName}</TableCell>
+                                            <TableCell>To buy: {groc.quantityToBuy}</TableCell>
+                                            <TableCell>{groc.maxQuantity}</TableCell>
+                                            <TableCell>{groc.whereToBuy}</TableCell>
+                                            <TableCell>{groc.price >= 0 ?
+                                                `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                "N/A"}</TableCell>
+                                        </TableRow>
+                                    })
+                                }
+                            </TableBody>
                         )
                     })
                 }
-            </table>
+
+                {
+                    //     allGroceries.map((groc) => {
+                    //         return (
+                    //             <tr key={groc.id}>
+                    //                 <td>{groc.data.itemName}</td>
+                    //                 <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit} per ${groc.data.groceryUnit}` : "N/A"}</td>
+                    //             </tr>
+                    //         )
+                    //     })
+                    // }
+                }
+            </Table>
         </body>
 
     );
