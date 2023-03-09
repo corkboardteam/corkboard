@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import { Link, useNavigate } from 'react-router-dom'
 import { GoogleButton } from 'react-google-button'
 import { UserAuth } from '../../backend/authContext';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const { currentUser, login, googleLogin } = UserAuth();
-	const [error, setError] = useState('');
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
 
+const Login =() => {
+  const { currentUser, login, googleLogin } = UserAuth();
+	const navigate = useNavigate();
+  
   useEffect(() => {
     if (currentUser != null) {
       navigate('/');
@@ -20,69 +26,118 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+    await login(email, password);
+    navigate('/');
 
-    try {
-        setError('');
-        setLoading(true);
-        await login(email, password);
-
-    } catch(error) {
-        setError('Failed to login')
-        console.log(error.message);
-    }
-    setLoading(false);
-}
-
-const handleGoogleLogin = async (e) => {
-  e.preventDefault()
-  try {
-    setError('');
-    setLoading(true);
-    await googleLogin();
+    console.log(email, password);
     
-  } catch (error) {
-    setError(error);
-    console.log(error)
+  };
+
+  const handleGoogleLogin = async (e) => {
+    e.preventDefault();
+    await googleLogin();
   }
-  setLoading(false);
-  
-}
 
   return (
-    <>
-    <div style={{ flexDirection: "column", alignItems: "center"  }}>
-      <h1 className='text-center text-3xl font-bold mt-4' >
-        Welcome to Corkboard!
-      </h1>
-      <div className="card" style={{ maxWidth: "600px" }}>
-        <div className="card-body">
-        {error && <div className="alert alert-danger">{error}</div>}
-         <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem", marginTop: "2rem" }}>
-            <GoogleButton onClick={handleGoogleLogin} />
-          </div>
-          <h2 className="text-center mb-4">Login</h2>
-          <form onSubmit={handleLogin}>   
-            <div className="form-group mb-4" id="email">
-              <label htmlFor="email" className="form-label">Email</label>
-              <input onChange={(e) => setEmail(e.target.value)} type="email" className="form-control" placeholder='Email' required />
-            </div>
-            <div className="form-group" id="password">
-              <label htmlFor="password" className="form-label">Password</label>
-              <input onChange={(e) => setPassword(e.target.value)} type="password" className="form-control" placeholder='Password' required />
-            </div>
-            <button disabled={loading} className="btn btn-primary w-100 mt-4" type="submit">Login</button>
-          </form>
-          <div className="w-100 text-center mt-3">
-            <Link to="/ForgotPassword">Forgot Password?</Link>
-          </div>
-        </div>
-      </div>
-      <div className="w-100 text-center mt-2">
-        Don't have an account? <Link to="/Signup">Sign Up</Link>
-      </div>
-    </div>
-    </>
-  ) 
+    <Box sx={{ backgroundColor: '#f5f5f5',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Grid container component="main" sx={{ 
+      mr: 2,
+      mt: 4,
+      mb: 4,
+      px: 14,
+      py: 8,
+      fontFamily: 'Kaleko 205 Medium',
+      color: 'inherit',
+      textDecoration: 'none',}}>
+        <CssBaseline />
+        <Grid item xs={8} p={4} sm={16} md={5} component={Paper} elevation={8} square>
+          <Box
+            sx={{
+              my: 4,
+              mx: 'auto',
+              p: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 2, p: 1 }}>
+              <GoogleButton onClick={handleGoogleLogin} />
+            </Box>
+            <Typography component="h1" variant="h6" fontFamily='Kaleko 205 Medium'fontWeight='normal'>
+              or
+            </Typography>
+            <Box component="form" noValidate onSubmit={handleLogin} sx={{ mt: 1, fontWeight: "bold" }}>
+              Email*
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Enter your email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+              Password*
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Create a password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 4 }}
+              >
+                Log in
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link to="/ForgotPassword" href="#" variant="body2">
+                    {"Forgot password?"}
+                  </Link>
+                </Grid>
+                <Grid item>
+                  Don't have an account? 
+                  <Link to="/Signup" href="#" variant="body2">
+                    {"Sign up"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      <Grid
+        item
+        xs={false}
+        sm={4}
+        md={7}
+        sx={{
+          backgroundImage: 'url(https://media.angi.com/s3fs-public/open-fridge-fruit-vegetables.jpeg?impolicy=leadImage)',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+          backgroundSize: '110% 100%',
+          backgroundPosition: 'center',
+        }}
+      />
+      </Grid>
+    </Box>
+  )
 }
 
 export default Login

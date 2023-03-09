@@ -3,7 +3,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { UserAuth } from "../../backend/authContext"
 
 const Dashboard = () => {
-  const [error, setError] = useState('');
+  const { currentUser } = UserAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/Login');
+    } 
+    console.log(currentUser);
+  }, [currentUser, navigate]);
 
   return (
   

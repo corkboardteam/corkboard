@@ -19,7 +19,24 @@ import { UserAuth } from '../../backend/authContext';
 const pages = ['Fridge', 'GroceryList', 'Discussion'];
 const settings = ['Profile', 'Logout'];
 
-function Navbar() {
+const styles = {
+
+  customButton: {
+    fontWeight: 'bold', mr: 2,
+    width: '100px',
+    height: 'fit-content',
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+    '&:hover': {
+      boxShadow: 'none',
+    },
+    padding: '5px 5px',
+    fontWeight: 'bold',
+    fontSize: '1rem',
+    borderRadius: '50px'
+  },
+}
+
+const Navbar = () => {
   const { currentUser, logout } = UserAuth();
   const [anchorNav, setAnchorNav] = useState(null);
   const [anchorUser, setAnchorUser] = useState(null);
@@ -58,15 +75,16 @@ function Navbar() {
               mr: 2,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'Kaleko 205 Medium',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
+              fontWeight: 'bold',
+              fontSize: '1.6rem',
+              letterSpacing: '.2rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
           >
             Corkboard
           </Typography>
-
+          {currentUser && (
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -96,7 +114,7 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {currentUser && pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
                     <Link style={{ textDecoration: "none", color: "black" }} to={page}>
@@ -107,6 +125,7 @@ function Navbar() {
               ))}
             </Menu>
           </Box>
+          )}
           <KitchenIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -117,7 +136,7 @@ function Navbar() {
               display: { xs: 'flex', md: 'none' },
               flexGrow: 1,
               fontFamily: 'Kaleko 205 Medium', 
-              fontWeight: 700,
+              fontWeight: 'bold',
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
@@ -125,12 +144,12 @@ function Navbar() {
           >
             Corkboard
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, flexDirection: 'row-reverse', ml: 2 }}>
+            {currentUser && pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, mr: 4, px: 3, fontSize: '1rem', color: 'white', display: 'block' }}
               >
                 <Link style={{ textDecoration: "none", color: "white" }} to={page}>
                   {page}
@@ -139,46 +158,55 @@ function Navbar() {
               </Button>
             ))}
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 2 }}>
-                <Avatar alt="User Profile" src="" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">
-                    {setting === "Logout" ? (
-                      <Link style={{ textDecoration: "none", color: "black" }} onClick={handleLogout}>
-                        {setting}
-                      </Link>
-                    ) : (
-                      <Link style={{ textDecoration: "none", color: "black" }} to={setting}>
-                        {setting}
-                      </Link>
-                    )}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {currentUser ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 2 }}>
+                  <Avatar alt="User Profile" src=''/>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">
+                      {setting === "Logout" ? (
+                        <Link style={{ textDecoration: "none", color: "black" }} onClick={handleLogout}>
+                          {setting}
+                        </Link>
+                      ) : (
+                        <Link style={{ textDecoration: "none", color: "black" }} to={setting}>
+                          {setting}
+                        </Link>
+                      )}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>) : (
+              <Box sx={{ flexGrow: 0 }}>
+                <Button  component={Link} to="/Login" color="inherit" sx={{ ...styles.customButton }}>
+                  Log in
+                </Button>
+                <Button  variant="contained" component={Link} to="/Signup" color="inherit" sx={{ ...styles.customButton }}>
+                  Sign up
+                </Button>
+              </Box>
+            )}
         </Toolbar>
     </AppBar>
   );
