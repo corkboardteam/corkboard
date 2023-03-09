@@ -65,7 +65,7 @@ function Calendar() {
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
-        dateFormat="dd/MM/yyyy"
+        dateFormat="MM/dd/yyyy"
       />
       {selectedDate && (
         <p>You selected {selectedDate.toLocaleDateString()}</p>

@@ -3,7 +3,9 @@ import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFr
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
-import Calendar from "./Calendar";
+//import Calendar from "./Calendar"
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from "react-router-dom";
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
@@ -21,6 +23,7 @@ function Fridge() {
     const [showEdit, setShowEdit] = useState({}) //if we want to edit a grocery item
     const [users, setUsers] = useState([]) //users associated with the fridge/group
     const [currentTrips, setCurrentTrips] = useState([]) //current trips planned
+    const [selectedDate, setSelectedDate] = useState(null);
     const { currentUser } = UserAuth();
     useEffect(() => {
 
@@ -206,6 +209,10 @@ function Fridge() {
         }
         setCheckedItems(newCheckedItems)
     }
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+      };
 
     async function handleCompleteTrip(trip) {
         const bought = trip.toBuy
@@ -403,12 +410,18 @@ function Fridge() {
                                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                                     "N/A"}</TableCell>
                                                 <TableCell>
-                                                    <Calendar />
+                                                     <DatePicker
+                                                        selected={selectedDate}
+                                                        onChange={handleDateChange}
+                                                        dateFormat="MM/dd/yyyy"
+                                                        className="custom-datepicker"
+                                                    />
                                                     <TextField title="Please select a date for your trip " fullWidth
                                                         label="Select Date" required size="small"
-                                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "submit-checked-groceries" }}
+                                                        
                                                         id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
                                                     ></TextField>
+                                                    {/* <Calendar /> */}
                                                 </TableCell>
                                             </TableRow> :
                                             null
