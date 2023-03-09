@@ -13,12 +13,12 @@ import { UserAuth } from '../../backend/authContext';
 
 
 const Signup =() => {
-  const { currentUser, signUp } = UserAuth();
+  const { currentUser, signUp, updateDisplayName } = UserAuth();
 	const navigate = useNavigate();
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/');
+      navigate('/Dashboard');
     } 
     console.log(currentUser);
   }, [currentUser, navigate]);
@@ -28,8 +28,9 @@ const Signup =() => {
     const data = new FormData(e.currentTarget);
     const email = data.get('email');
     const password = data.get('password');
-    await signUp(email, password);
-    navigate('/');
+    const name = data.get('name');
+    await signUp(email, password, name);
+    navigate('/Dashboard');
 
     console.log(email, password);
   };

@@ -33,9 +33,10 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const signUp = async (email, password) => {
+  const signUp = async (email, password, name) => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      userCred.user.displayName = name;
       const user = new User(userCred.user);
       const exists = await user.exists();
       if (!exists) {
