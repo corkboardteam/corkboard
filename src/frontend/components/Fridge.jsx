@@ -3,6 +3,7 @@ import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFr
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
+import Calendar from "./Calendar";
 import { Link } from "react-router-dom";
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
@@ -401,6 +402,14 @@ function Fridge() {
                                                 <TableCell>{groc.price >= 0 ?
                                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                                     "N/A"}</TableCell>
+                                                <TableCell>
+                                                    <Calendar />
+                                                    <TextField title="Please select a date for your trip " fullWidth
+                                                        label="Select Date" required size="small"
+                                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "submit-checked-groceries" }}
+                                                        id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
+                                                    ></TextField>
+                                                </TableCell>
                                             </TableRow> :
                                             null
                                     }
