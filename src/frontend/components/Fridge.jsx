@@ -284,10 +284,13 @@ function Fridge() {
                     name="submitCheckedGroceries"
                     onSubmit={handleCheckedItems}></form>
             }
+            {
+                <form method="post" id="addGroceries" name="addGroceries" onSubmit={handleSubmit}></form>
+            }
 
             {
                 showCheckBox ?
-                    <div>Check items you'll purchase and click done to save.
+                    <div>Select items to purchase and click done to add them to your grocery list {'\u0028'}highlighted at the top of the fridge{'\u0029'}.
                         <br></br>
                         <Button variant="outlined" type="submit" form="submit-checked-groceries">Done</Button>
                     </div> :
@@ -308,6 +311,30 @@ function Fridge() {
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
+                        {showCheckBox ? null : 
+                            <TableRow>
+                                <TableCell>
+                                    <TextField 
+                                    fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
+                                    inputProps={{ form: "addGroceries" }}></TextField></TableCell>
+                                <TableCell>
+                                    <TextField title="Please enter a number " 
+                                    fullWidth label="Stock Limit" required size="small" 
+                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="limit" name="limit"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField fullWidth title="Please enter a number " label="Quantity in stock" 
+                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="quantity" name="quantity"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{form: "addGroceries"}}></TextField>
+                                </TableCell>
+                                <TableCell>N/A</TableCell>
+                                <TableCell >
+                                    <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                                </TableCell>
+                            </TableRow>
+                        }
                     {
                         //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
@@ -413,8 +440,13 @@ function Fridge() {
             </TableContainer>
 
             {/* This part is the form for adding groceries */}
+            {/*
             <Box
                 sx={{
+                    display: 'grid',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '80%',
                     mt: '15px',
                     mb: '15px'
                 }}>
@@ -442,7 +474,7 @@ function Fridge() {
 
                     </Grid>
                 </form>
-            </Box>
+            </Box>*/}
         </div>
     );
 }
