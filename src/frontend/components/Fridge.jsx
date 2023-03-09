@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge, removeTripFromFridge } from "../../backend/custom_classes/fridge";
+import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge, removeTripFromFridge, updateAllGroceries } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
@@ -55,7 +55,6 @@ function Fridge() {
                 const allTrips = curFridge.data.trips;
                 let allTripsInfo = []
                 allTrips.forEach((element) => {
-                    //get grocery information from extendedGrocs and remove corresponding entry
                     let curTripInfo = { userID: element.userID, date: element.date, toBuy: [], tripID: element.tripID }
                     const tripGrocs = element.toBuy;
 
@@ -207,6 +206,38 @@ function Fridge() {
         setCheckedItems(newCheckedItems)
     }
 
+    async function handleCompleteTrip(trip) {
+        const bought = trip.toBuy
+        let groceryNames = new Map()
+
+        bought.forEach((g) => {
+            const itemName = g.itemName
+            const toBuy = g.quantityToBuy
+            groceryNames.set(itemName, toBuy)
+        })
+
+        const newGroceryInfo = [...fridgeItems]
+        const forDB = []
+
+        newGroceryInfo.forEach((gn) => {
+            const itemName = gn.itemName
+            if (groceryNames.has(itemName)) {
+                //change the current amount of things
+
+                const quantity = parseInt(gn.currentQuantity) + parseInt(groceryNames.get(itemName))
+                gn.currentQuantity = (quantity).toString()
+            }
+            const copy = { ...gn }
+            delete copy.id
+            forDB.push(copy)
+        })
+
+        await updateAllGroceries(currentUser.groupID, forDB)
+        setFridgeItems(newGroceryInfo)
+        await handleCancelTrip(trip.tripID)
+
+    }
+
     async function handleCancelTrip(tripID) {
         if (!await removeTripFromFridge(tripID, currentUser.groupID, currentUser.uid))
             return;
@@ -284,7 +315,8 @@ function Fridge() {
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
                                         <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></TableCell>
-                                        <TableCell><Button size="small" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button></TableCell>
+                                        <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button>
+                                            <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
                                     </TableRow>
                                     {
                                         trip.toBuy.map((groc) => {
