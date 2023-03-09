@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge, removeTripFromFridge } from "../../backend/custom_classes/fridge";
+import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFridge, addTripToFridge, removeTripFromFridge, updateAllGroceries } from "../../backend/custom_classes/fridge";
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
@@ -13,13 +13,13 @@ import Grid from "@mui/material/Grid";
 
 
 function Fridge() {
-    let checkedItems = [];
 
-    const [showCheckBox, setShowCheckBox] = useState(false)
-    const [fridgeItems, setFridgeItems] = useState([]);
-    const [showEdit, setShowEdit] = useState({})
-    const [users, setUsers] = useState([])
-    const [currentTrips, setCurrentTrips] = useState([])
+    const [checkedItems, setCheckedItems] = useState(new Set());
+    const [showCheckBox, setShowCheckBox] = useState(false) //if we want to show checkbox for choosing grocery run
+    const [fridgeItems, setFridgeItems] = useState([]); //list of all items in the fridge and information
+    const [showEdit, setShowEdit] = useState({}) //if we want to edit a grocery item
+    const [users, setUsers] = useState([]) //users associated with the fridge/group
+    const [currentTrips, setCurrentTrips] = useState([]) //current trips planned
     const { currentUser } = UserAuth();
     useEffect(() => {
 
@@ -55,16 +55,19 @@ function Fridge() {
                 const allTrips = curFridge.data.trips;
                 let allTripsInfo = []
                 allTrips.forEach((element) => {
-                    //get grocery information from extendedGrocs and remove corresponding entry
                     let curTripInfo = { userID: element.userID, date: element.date, toBuy: [], tripID: element.tripID }
                     const tripGrocs = element.toBuy;
 
-                    tripGrocs.forEach((g) => {
-
+                    for (const g in tripGrocs) {
                         const ind = extendedGrocs.findIndex((grocs) => grocs.itemName === g)
-                        curTripInfo.toBuy.push(extendedGrocs[ind])
-                        extendedGrocs.splice(ind, 1)
-                    })
+                        const groc = { ...extendedGrocs[ind] }
+                        delete groc.currentQuantity;
+                        groc["quantityToBuy"] = tripGrocs[g]
+
+                        curTripInfo.toBuy.push(groc)
+                        //          extendedGrocs.splice(ind, 1)
+
+                    }
                     allTripsInfo.push(curTripInfo)
                 })
 
@@ -72,7 +75,7 @@ function Fridge() {
                 setFridgeItems(extendedGrocs);
                 setUsers(groupData.members);
                 setShowEdit(editStates)
-                checkedItems = [];
+
             }
         }
         setupFridge();
@@ -155,40 +158,83 @@ function Fridge() {
 
     async function handleCheckedItems(e) {
         e.preventDefault()
-        if (checkedItems.length === 0) {
+        if (checkedItems.size === 0) {
             setShowCheckBox(false)
             return
         }
 
-        const newTrip = await addTripToFridge(checkedItems, currentUser.groupID, currentUser.uid)
+        let items = {}
+        const len = e.target.length
+        const elements = e.target.elements
+        for (let i = 1; i < len; i++) {
+            items[elements[i].getAttribute("name").match("quantityToBuy(.*)")[1]] = elements[i].value
+        }
+
+        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid)
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
         let groceryInfo = []
+        // const groceries = [...fridgeItems]
 
-        const groceries = [...fridgeItems]
-        checkedItems.forEach((element) => {
+        for (const key in items) {
+            const value = items[key]
 
-            const ind = groceries.findIndex((g) => g.itemName === element)
+            const ind = fridgeItems.findIndex((g) => g.itemName === key)
+            const info = { ...fridgeItems[ind] }
+            delete info.currentQuantity;
+            info["quantityToBuy"] = value
 
-            groceryInfo.push(groceries[ind])
-            groceries.splice(ind, 1)
-        })
+            groceryInfo.push(info)
+            // groceries.splice(ind, 1)
+        }
 
         updatedTrips.push({ userID: currentUser.uid, date: newTrip.date, toBuy: groceryInfo, tripID: newTrip.tripID })
-        setFridgeItems(groceries)
+        // setFridgeItems(groceries)
         setCurrentTrips(updatedTrips)
-        checkedItems = []
+        setCheckedItems(new Set())
     }
 
     async function handleCheckboxChange(e) {
-
+        const newCheckedItems = new Set(checkedItems)
         if (e.target.checked) {
-            checkedItems.push(e.target.name)
+            newCheckedItems.add(e.target.name)
         }
         else {
-            checkedItems = checkedItems.filter((groc) => groc !== e.target.name)
+            newCheckedItems.delete(e.target.name)
         }
+        setCheckedItems(newCheckedItems)
+    }
+
+    async function handleCompleteTrip(trip) {
+        const bought = trip.toBuy
+        let groceryNames = new Map()
+
+        bought.forEach((g) => {
+            const itemName = g.itemName
+            const toBuy = g.quantityToBuy
+            groceryNames.set(itemName, toBuy)
+        })
+
+        const newGroceryInfo = [...fridgeItems]
+        const forDB = []
+
+        newGroceryInfo.forEach((gn) => {
+            const itemName = gn.itemName
+            if (groceryNames.has(itemName)) {
+                //change the current amount of things
+
+                const quantity = parseInt(gn.currentQuantity) + parseInt(groceryNames.get(itemName))
+                gn.currentQuantity = (quantity).toString()
+            }
+            const copy = { ...gn }
+            delete copy.id
+            forDB.push(copy)
+        })
+
+        await updateAllGroceries(currentUser.groupID, forDB)
+        setFridgeItems(newGroceryInfo)
+        await handleCancelTrip(trip.tripID)
 
     }
 
@@ -197,15 +243,15 @@ function Fridge() {
             return;
 
         const ind = currentTrips.findIndex((t) => t.tripID === tripID)
-        const newItems = [...fridgeItems]
+        // const newItems = [...fridgeItems]
         const curTrip = currentTrips[ind]
-        curTrip.toBuy.forEach((g) => {
-            newItems.push(g)
-        })
+        // curTrip.toBuy.forEach((g) => {
+        //     newItems.push(g)
+        // })
         const newTrips = [...currentTrips]
         newTrips.splice(ind, 1)
 
-        setFridgeItems(newItems)
+        // setFridgeItems(newItems)
         setCurrentTrips(newTrips)
     }
 
@@ -225,8 +271,10 @@ function Fridge() {
                 // forms for editing each grocery item in the table 
                 fridgeItems.map((groc) => {
                     return (
-                        <form key={groc.itemName} method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
-                        </form>
+                        <div>
+                            <form key={groc.itemName} method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
+                            </form>
+                        </div>
                     )
                 })
             }
@@ -261,12 +309,14 @@ function Fridge() {
                         </TableRow>
                     </TableHead>
                     {
+                        //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
                             return (
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
                                         <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></TableCell>
-                                        <TableCell><Button size="small" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button></TableCell>
+                                        <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button>
+                                            <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
                                     </TableRow>
                                     {
                                         trip.toBuy.map((groc) => {
@@ -274,7 +324,7 @@ function Fridge() {
                                             return <TableRow>
                                                 {showCheckBox ? <TableCell></TableCell> : null}
                                                 <TableCell>{groc.itemName}</TableCell>
-                                                <TableCell>{groc.currentQuantity}</TableCell>
+                                                <TableCell>To buy: {groc.quantityToBuy}</TableCell>
                                                 <TableCell>{groc.maxQuantity}</TableCell>
                                                 <TableCell>{groc.whereToBuy}</TableCell>
                                                 <TableCell>{groc.price >= 0 ?
@@ -288,54 +338,81 @@ function Fridge() {
                         })
                     }
                     {
+                        //this part lists all the items currently in a fridge
                         fridgeItems.map((groc) => {
                             const showEditCur = showEdit[groc.itemName]
+                            const showGroceryTripInputCur = checkedItems.has(groc.itemName)
                             return (
-                                <TableRow key={groc.id}>
-                                    {showCheckBox ? <TableCell > <input type="checkbox" name={`${groc.itemName}`} form="submit-checked-groceries" onChange={handleCheckboxChange} /> </TableCell> : null}
-                                    <TableCell>{groc.itemName}</TableCell>
+                                <TableBody>
+                                    <TableRow key={groc.id}>
+                                        {showCheckBox ? <TableCell > <input type="checkbox" name={`${groc.itemName}`} onChange={handleCheckboxChange} /> </TableCell> : null}
+
+                                        <TableCell>{groc.itemName}</TableCell>
 
 
-                                    <TableCell>{showEditCur ?
-                                        <input type="number" id="quantity" name="quantity" form={`edit-${groc.itemName}-form`}
-                                            defaultValue={groc.currentQuantity}></input>
-                                        : groc.currentQuantity}</TableCell>
+                                        <TableCell>{showEditCur ?
+                                            <input type="number" id="quantity" name="quantity" form={`edit-${groc.itemName}-form`}
+                                                defaultValue={groc.currentQuantity}></input>
+                                            : groc.currentQuantity}</TableCell>
 
-                                    <TableCell>{showEditCur ?
-                                        <input type="number" id="limit" name="limit" form={`edit-${groc.itemName}-form`}
-                                            defaultValue={groc.maxQuantity}></input>
-                                        : groc.maxQuantity}</TableCell>
-                                    <TableCell>{showEditCur ?
-                                        <input type="text" id="whereToBuy" name="whereToBuy" form={`edit-${groc.itemName}-form`}
-                                            defaultValue={groc.whereToBuy}></input>
-                                        : groc.whereToBuy}</TableCell>
+                                        <TableCell>{showEditCur ?
+                                            <input type="number" id="limit" name="limit" form={`edit-${groc.itemName}-form`}
+                                                defaultValue={groc.maxQuantity}></input>
+                                            : groc.maxQuantity}</TableCell>
+                                        <TableCell>{showEditCur ?
+                                            <input type="text" id="whereToBuy" name="whereToBuy" form={`edit-${groc.itemName}-form`}
+                                                defaultValue={groc.whereToBuy}></input>
+                                            : groc.whereToBuy}</TableCell>
 
 
 
-                                    <TableCell>{groc.price >= 0 ?
-                                        `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                        "N/A"}</TableCell>
+                                        <TableCell>{groc.price >= 0 ?
+                                            `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                            "N/A"}</TableCell>
 
-                                    <TableCell >
-                                        <form id={groc.itemName} method="post" onSubmit={handleDelete}>
-                                            <Button size="small" variant="outlined" type="submit">Delete</Button>
-                                        </form>
-                                        {
-                                            !showEditCur ?
-                                                <form method="post" id={`toggle-${groc.itemName}-edit`} onSubmit={handleToggle}>
-                                                    <Button size="small" variant="outlined" type="submit" >Edit</Button>
-                                                </form> :
-                                                <Button size="small" variant="outlined" type="submit" form={`edit-${groc.itemName}-form`}>Submit</Button>
+                                        <TableCell >
+                                            <form id={groc.itemName} method="post" onSubmit={handleDelete}>
+                                                <Button size="small" variant="outlined" type="submit">Delete</Button>
+                                            </form>
+                                            {
+                                                !showEditCur ?
+                                                    <form method="post" id={`toggle-${groc.itemName}-edit`} onSubmit={handleToggle}>
+                                                        <Button size="small" variant="outlined" type="submit" >Edit</Button>
+                                                    </form> :
+                                                    <Button size="small" variant="outlined" type="submit" form={`edit-${groc.itemName}-form`}>Submit</Button>
 
-                                        }
-                                    </TableCell>
-                                </TableRow>
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                    {
+                                        showGroceryTripInputCur ?
+                                            <TableRow>
+                                                <TableCell></TableCell>
+                                                <TableCell>{groc.itemName}</TableCell>
+                                                <TableCell>
+                                                    <TextField title="Please enter a number " fullWidth
+                                                        label="Quantity to Buy" required size="small"
+                                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "submit-checked-groceries" }}
+                                                        id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
+                                                    ></TextField>
+                                                </TableCell>
+                                                <TableCell>{groc.maxQuantity}</TableCell>
+                                                <TableCell>{groc.whereToBuy}</TableCell>
+                                                <TableCell>{groc.price >= 0 ?
+                                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                    "N/A"}</TableCell>
+                                            </TableRow> :
+                                            null
+                                    }
+                                </TableBody>
                             )
+
                         })
                     }
                 </Table>
             </TableContainer>
 
+            {/* This part is the form for adding groceries */}
             <Box
                 sx={{
                     mt: '15px',

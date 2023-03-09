@@ -15,10 +15,10 @@ class Fridge {
             {
                 userID: string
                 date: string
-                toBuy: [
-                    groceryName,
-                    groceryName2,
-                ]
+                toBuy: {
+                    groceryName: num
+                    groceryName2: num2
+                }
             },
         ]
         */
@@ -181,6 +181,14 @@ async function editGroceryInFridge(itemName, updatedLimit, updatedAmount, update
     return presentGroceries[ind]
 }
 
+
+async function updateAllGroceries(groupID, newGroceries) {
+    const fridge = await getFridge(groupID)
+    await updateDoc(doc(db, "fridges", fridge.id), {
+        groceries: newGroceries
+    })
+}
+
 async function addTripToFridge(items, groupID, userID, date = "default date") {
     const fridge = await getFridge(groupID)
 
@@ -230,6 +238,7 @@ export {
     addGroceryToFridge,
     removeGroceryFromFridge,
     editGroceryInFridge,
+    updateAllGroceries,
     addTripToFridge,
     removeTripFromFridge
 }
