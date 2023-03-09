@@ -20,6 +20,7 @@
     "react-google-button": "^0.7.2",
     "react-router-dom": "^6.8.1",
     "react-scripts": "^5.0.1",
+    "react-social-login-buttons": "^3.6.1",
     "styled-components": "^5.3.8",
     "web-vitals": "^2.1.4"
   },

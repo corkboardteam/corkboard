@@ -7,10 +7,11 @@ import Group from './frontend/components/Group'
 import Profile from './frontend/components/Profile'
 import ForgotPassword from './frontend/components/ForgotPassword'
 import Fridge from './frontend/components/Fridge'
-import { Routes, Route } from 'react-router-dom'
+import { useLocation, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './backend/authContext'
 import Protected from './backend/Protected'
 import Discusion from './frontend/components/Discussion'
+import LandingPage from './frontend/components/LandingPage'
 import Navbar from './frontend/components/Navbar'
 import Calendar from './frontend/components/Calendar'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -24,15 +25,38 @@ const theme = createTheme({
       main: '#DFE9EB',
     },
   },
+  typography: {
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+
+    // button: {
+    
+    // },
+    
+  },
+    
 });
 
 function App() {
+  const location = useLocation();
+
   return (
       <AuthProvider>
         <ThemeProvider theme={theme}>
-          <Navbar/>
+          {location.pathname !== '/Login' && location.pathname !== '/Signup' && <Navbar />}
           <Routes>
-            <Route path='/' element={<Dashboard />} />
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/Dashboard' element={<Dashboard />} />
             <Route path='/Login' element={<Login />} />
             <Route path='/Signup' element={<Signup />} />
             <Route path='/Group' element={<Protected><Group /></Protected>} />

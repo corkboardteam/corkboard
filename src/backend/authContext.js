@@ -47,9 +47,8 @@ export const AuthProvider = ({ children }) => {
       console.log('Signed up successfully');
 
     } catch (error) {
-      if (password.length < 6)
-        alert("Password should be at least 6 characters");
       console.error('Error signing up', error);
+      alert(error);
       throw error;
     }
   };
@@ -65,6 +64,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       console.error('Error logging in:', error);
+      alert(error);
       throw error;
     }
   };
@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }) => {
       console.log('User logged in with Google');
     } catch (error) {
       console.error('Error logging in with Google', error);
+      alert(error);
       throw error;
     }
 
@@ -101,6 +102,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       console.error('Error logging out:', error);
+      alert(error);
       throw error;
     }
   };
@@ -140,6 +142,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       console.error('Error logging out:', error);
+      alert(error);
       throw error;
     }
   };
@@ -154,9 +157,8 @@ export const AuthProvider = ({ children }) => {
       console.log('Email updated successfully');
 
     } catch (error) {
-      if (!currPassword)
-        alert("Enter current password to change email");
       console.error('Error updating email:', error);
+      alert(error);
       throw error;
     }
   }
@@ -170,13 +172,8 @@ export const AuthProvider = ({ children }) => {
       alert('Password updated successfully');
 
     } catch (error) {
-      if (!currPassword) {
-        alert("Enter current password to set new password");
-      }
-      else if (newPassword.length < 6) {
-        alert("New password should be at least 6 characters");
-      }
       console.error('Error updating password:', error);
+      alert(error);
       throw error;
     }
   }
@@ -194,6 +191,7 @@ export const AuthProvider = ({ children }) => {
 
     } catch (error) {
       console.error('Error updating profile:', error);
+      alert(error);
       throw error;
     }
   };
@@ -211,6 +209,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error updating phone number', error);
+      alert(error);
       throw error;
     }
   };
@@ -221,6 +220,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updated display name');
     } catch (error) {
       console.error('Error setting display name:', error);
+      alert(error);
       throw error;
     }
   }
@@ -231,6 +231,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updated profile picture');
     } catch (error) {
       console.error('Error setting profile picture:', error);
+      alert(error);
       throw error;
     }
   }

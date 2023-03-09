@@ -90,7 +90,7 @@ const Discussion = () => {
     return (
         <div>
         <div className="w-100 text-center mt-2">
-        Go back to <Link to="/"> Dashboard</Link>
+        Go back to <Link to="/Dashboard"> Dashboard</Link>
         </div>
         <h1>Discussion</h1>
         <div>
