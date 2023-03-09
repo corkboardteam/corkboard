@@ -1,4 +1,4 @@
-import {doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 class User {
@@ -11,7 +11,8 @@ class User {
       photoURL: user.photoURL,
       phoneNumber: user.phoneNumber,
       fridge: null,
-      groupID: null
+      groupID: null,
+      trips: user.trips
     };
   }
 
@@ -34,6 +35,15 @@ class User {
     } catch (error) {
       console.error('Error creating new user', error)
       throw error;
+    }
+  }
+
+  async updateUser(newUserInfo) {
+    try {
+      await setDoc(this.userRef, newUserInfo)
+    }
+    catch (error) {
+      console.error(error)
     }
   }
 }

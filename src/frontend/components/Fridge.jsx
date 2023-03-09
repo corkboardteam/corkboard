@@ -4,6 +4,7 @@ import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
 import { Link } from "react-router-dom";
+import User from "../../backend/custom_classes/user";
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -171,6 +172,7 @@ function Fridge() {
         }
 
         const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid)
+        console.log(newTrip)
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
@@ -193,6 +195,29 @@ function Fridge() {
         // setFridgeItems(groceries)
         setCurrentTrips(updatedTrips)
         setCheckedItems(new Set())
+
+        //then we update the user so that the user also has a list of trips associated with him/her
+        const tripID = newTrip.tripID
+        const usr = new User(currentUser);
+        const trips = (await usr.data()).trips;
+        console.log(trips)
+
+        console.log(groceryInfo)
+
+        let userTrips = { ...trips }
+        let updatedUser = { ...currentUser }
+
+        userTrips[tripID] = { date: "groceryInfo.date", toBuy: groceryInfo }
+        updatedUser['trips'] = userTrips
+        console.log(updatedUser)
+        console.log(currentUser)
+
+        const newUser = new User(updatedUser)
+        await newUser.updateUser(updatedUser)
+
+
+
+
     }
 
     async function handleCheckboxChange(e) {
@@ -253,6 +278,11 @@ function Fridge() {
 
         // setFridgeItems(newItems)
         setCurrentTrips(newTrips)
+
+        const usr = new User(currentUser)
+        const usrData = await usr.data()
+        delete usrData.trips[tripID]
+        await usr.updateUser(usrData)
     }
 
     return (
