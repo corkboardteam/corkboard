@@ -19,7 +19,7 @@ const Login =() => {
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/');
+      navigate('/Dashboard');
     } 
     console.log(currentUser)
   },[currentUser, navigate]);
@@ -30,7 +30,7 @@ const Login =() => {
     const email = data.get('email');
     const password = data.get('password');
     await login(email, password);
-    navigate('/');
+    navigate('/Dashboard');
 
     console.log(email, password);
     

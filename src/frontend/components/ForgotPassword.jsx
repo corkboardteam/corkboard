@@ -13,7 +13,7 @@ const ForgotPassword = () => {
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/');
+      navigate('/Dashboard');
     } 
     console.log(currentUser)
   },[currentUser, navigate]);
@@ -51,12 +51,12 @@ const ForgotPassword = () => {
             </button>
           </form>
           <div className="w-100 text-center mt-3">
-            <Link to="/login">Login</Link>
+            <Link to="/Login">Login</Link>
           </div>
         </div>
       </div>
       <div className="w-100 text-center mt-2">
-        Need an account? <Link to="/signup">Sign Up</Link>
+        Need an account? <Link to="/Signup">Sign Up</Link>
       </div>
     </>
   )

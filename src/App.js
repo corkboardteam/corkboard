@@ -54,8 +54,8 @@ function App() {
         <ThemeProvider theme={theme}>
           {location.pathname !== '/Login' && location.pathname !== '/Signup' && <Navbar />}
           <Routes>
-            <Route path='/LandingPage' element={<LandingPage />} />
-            <Route path='/' element={<Dashboard />} />
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/Dashboard' element={<Dashboard />} />
             <Route path='/Login' element={<Login />} />
             <Route path='/Signup' element={<Signup />} />
             <Route path='/Group' element={<Protected><Group /></Protected>} />
