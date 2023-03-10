@@ -22,7 +22,7 @@ function Fridge() {
     const [showCheckBox, setShowCheckBox] = useState(false) //if we want to show checkbox for choosing grocery run
     const [fridgeItems, setFridgeItems] = useState([]); //list of all items in the fridge and information
     const [showEdit, setShowEdit] = useState({}) //if we want to edit a grocery item
-    const [users, setUsers] = useState([]) //users associated with the fridge/group
+    const [users, setUsers] = useState({}) //users associated with the fridge/group
     const [currentTrips, setCurrentTrips] = useState([]) //current trips planned
     const [selectedDate, setSelectedDate] = useState(null);
     const { currentUser } = UserAuth();
@@ -78,7 +78,26 @@ function Fridge() {
 
                 setCurrentTrips(allTripsInfo)
                 setFridgeItems(extendedGrocs);
-                setUsers(groupData.members);
+
+                let members = {};
+                for (let i = 0; i < groupData.members.length; i++) {
+                    const data = await new User({
+                        uid: groupData.members[i],
+                        email: "",
+                        displayName: "",
+                        photoURL: "",
+                        phoneNumber: ""
+                    }).data()
+                    console.log(data)
+
+                    members[data.uid] = data.displayName ? data.displayName : data.email
+
+                }
+                console.log(members)
+
+
+
+                setUsers(members);
                 setShowEdit(editStates)
 
             }
@@ -301,8 +320,8 @@ function Fridge() {
 
 
             <ul>
-                {users.map((usr, ind) => {
-                    return <li key={usr}>User {ind + 1}: {usr}</li>;
+                {Object.keys(users).map((usr, ind) => {
+                    return <li key={usr}>User {ind + 1}: {users[usr]}</li>;
                 })}
             </ul>
 
@@ -380,7 +399,7 @@ function Fridge() {
                             return (
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
-                                        <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {trip.userID} on {trip.date}</small></TableCell>
+                                        <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {users[trip.userID]} on {trip.date}</small></TableCell>
                                         <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button>
                                             <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
                                     </TableRow>

@@ -68,7 +68,7 @@ function GroceryList() {
                         return (
                             <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                 <TableRow>
-                                    <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.uid} on {trip.date}</small></TableCell>
+                                    <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</small></TableCell>
 
                                 </TableRow>
                                 {
