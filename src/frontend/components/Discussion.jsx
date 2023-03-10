@@ -36,6 +36,8 @@ const Discussion = () => {
             id: Math.random().toString(36),
             text: newMessage,
             votes: 0,
+            upvoted: false,
+            downvoted: false,
             comments: [],
         },
         ];
@@ -47,9 +49,21 @@ const Discussion = () => {
         const newMessages = messages.map((message) => {
         if (message.id === id) {
             if (voteType === "upvote") {
-            return { ...message, votes: message.votes + 1 };
+                if (message.upvoted) {  //undoing upvoted state
+                    message.upvoted = false;
+                    return { ...message, votes: message.votes - 1};
+                } else {    //adding an upvote
+                    message.upvoted = true;
+                    return { ...message, votes: message.votes + 1};
+                }
             } else if (voteType === "downvote") {
-            return { ...message, votes: message.votes - 1 };
+                if (message.downvoted) {  //undoing downvoted state
+                    message.downvoted = false;
+                    return { ...message, votes: message.votes + 1};
+                } else {    //adding a downvote
+                    message.downvoted = true;
+                    return { ...message, votes: message.votes - 1};
+                }
             }
         }
         return message;

@@ -144,7 +144,7 @@ const Navbar = () => {
           >
             Corkboard
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, flexDirection: 'row-reverse', ml: 2 }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', ml: 2 }}>
             {currentUser && pages.map((page) => (
               <Button
                 key={page}
