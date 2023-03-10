@@ -93,6 +93,11 @@ function Fridge() {
 
         setShowEdit(newEdit)
     }
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+      }; 
+
     async function handleEdit(e) {
         e.preventDefault()
 
@@ -174,7 +179,7 @@ function Fridge() {
             items[elements[i].getAttribute("name").match("quantityToBuy(.*)")[1]] = elements[i].value
         }
 
-        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid)
+        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid, selectedDate.toLocaleDateString())
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
@@ -210,9 +215,6 @@ function Fridge() {
         setCheckedItems(newCheckedItems)
     }
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-      };
 
     async function handleCompleteTrip(trip) {
         const bought = trip.toBuy
@@ -437,18 +439,14 @@ function Fridge() {
                                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                                     "N/A"}</TableCell>
                                                 <TableCell>
+                                                    <p>Select Date</p>
                                                      <DatePicker
                                                         selected={selectedDate}
                                                         onChange={handleDateChange}
                                                         dateFormat="MM/dd/yyyy"
                                                         className="custom-datepicker"
                                                     />
-                                                    <TextField title="Please select a date for your trip " fullWidth
-                                                        label="Select Date" required size="small"
-                                                        
-                                                        id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
-                                                    ></TextField>
-                                                    {/* <Calendar /> */}
+
                                                 </TableCell>
                                             </TableRow> :
                                             null
