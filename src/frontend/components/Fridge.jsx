@@ -3,7 +3,11 @@ import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFr
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
+//import Calendar from "./Calendar"
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from "react-router-dom";
+import User from "../../backend/custom_classes/user";
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import TextField from '@mui/material/TextField';
@@ -20,6 +24,7 @@ function Fridge() {
     const [showEdit, setShowEdit] = useState({}) //if we want to edit a grocery item
     const [users, setUsers] = useState([]) //users associated with the fridge/group
     const [currentTrips, setCurrentTrips] = useState([]) //current trips planned
+    const [selectedDate, setSelectedDate] = useState(null);
     const { currentUser } = UserAuth();
     useEffect(() => {
 
@@ -89,6 +94,11 @@ function Fridge() {
 
         setShowEdit(newEdit)
     }
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
     async function handleEdit(e) {
         e.preventDefault()
 
@@ -170,7 +180,7 @@ function Fridge() {
             items[elements[i].getAttribute("name").match("quantityToBuy(.*)")[1]] = elements[i].value
         }
 
-        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid)
+        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid, selectedDate.toLocaleDateString())
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
@@ -193,6 +203,29 @@ function Fridge() {
         // setFridgeItems(groceries)
         setCurrentTrips(updatedTrips)
         setCheckedItems(new Set())
+
+        //then we update the user so that the user also has a list of trips associated with him/her
+        const tripID = newTrip.tripID
+        const usr = new User(currentUser);
+        const trips = (await usr.data()).trips;
+        console.log(trips)
+
+        console.log(groceryInfo)
+
+        let userTrips = { ...trips }
+        let updatedUser = { ...currentUser }
+
+        userTrips[tripID] = { date: newTrip.date, toBuy: groceryInfo }
+        updatedUser['trips'] = userTrips
+        console.log(updatedUser)
+        console.log(currentUser)
+
+        const newUser = new User(updatedUser)
+        await newUser.updateUser(updatedUser)
+
+
+
+
     }
 
     async function handleCheckboxChange(e) {
@@ -205,6 +238,7 @@ function Fridge() {
         }
         setCheckedItems(newCheckedItems)
     }
+
 
     async function handleCompleteTrip(trip) {
         const bought = trip.toBuy
@@ -253,6 +287,11 @@ function Fridge() {
 
         // setFridgeItems(newItems)
         setCurrentTrips(newTrips)
+
+        const usr = new User(currentUser)
+        const usrData = await usr.data()
+        delete usrData.trips[tripID]
+        await usr.updateUser(usrData)
     }
 
     return (
@@ -284,10 +323,13 @@ function Fridge() {
                     name="submitCheckedGroceries"
                     onSubmit={handleCheckedItems}></form>
             }
+            {
+                <form method="post" id="addGroceries" name="addGroceries" onSubmit={handleSubmit}></form>
+            }
 
             {
                 showCheckBox ?
-                    <div>Check items you'll purchase and click done to save.
+                    <div>Select items to purchase and click done to add them to your grocery list {'\u0028'}highlighted at the top of the fridge{'\u0029'}.
                         <br></br>
                         <Button variant="outlined" type="submit" form="submit-checked-groceries">Done</Button>
                     </div> :
@@ -308,6 +350,30 @@ function Fridge() {
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
+                    {showCheckBox ? null :
+                        <TableRow>
+                            <TableCell>
+                                <TextField
+                                    fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
+                                    inputProps={{ form: "addGroceries" }}></TextField></TableCell>
+                            <TableCell>
+                                <TextField title="Please enter a number "
+                                    fullWidth label="Stock Limit" required size="small"
+                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="limit" name="limit"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField fullWidth title="Please enter a number " label="Quantity in stock"
+                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="quantity" name="quantity"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
+                            </TableCell>
+                            <TableCell>N/A</TableCell>
+                            <TableCell >
+                                <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                            </TableCell>
+                        </TableRow>
+                    }
                     {
                         //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
@@ -401,6 +467,16 @@ function Fridge() {
                                                 <TableCell>{groc.price >= 0 ?
                                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                                     "N/A"}</TableCell>
+                                                <TableCell>
+                                                    <p>Select Date</p>
+                                                    <DatePicker
+                                                        selected={selectedDate}
+                                                        onChange={handleDateChange}
+                                                        dateFormat="MM/dd/yyyy"
+                                                        className="custom-datepicker"
+                                                    />
+
+                                                </TableCell>
                                             </TableRow> :
                                             null
                                     }
@@ -413,8 +489,13 @@ function Fridge() {
             </TableContainer>
 
             {/* This part is the form for adding groceries */}
+            {/*
             <Box
                 sx={{
+                    display: 'grid',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '80%',
                     mt: '15px',
                     mb: '15px'
                 }}>
@@ -442,7 +523,7 @@ function Fridge() {
 
                     </Grid>
                 </form>
-            </Box>
+            </Box>*/}
         </div>
     );
 }
