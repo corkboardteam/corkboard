@@ -338,8 +338,8 @@ function Fridge() {
 
     return (
         <div>
-            {currentUser.groupID ? <div>Room ID: {currentUser.groupID}</div>
-                : <div>You're not in a group yet. Join a group <Link to="/group">here</Link></div>}
+            {currentUser.groupID ? <h2>Room ID: {currentUser.groupID}</h2>
+                : <h2>You're not in a group yet. Join a group <Link to="/group">here</Link></h2>}
 
 
             <ul>
@@ -380,6 +380,7 @@ function Fridge() {
                     </form>
             }
             <TableContainer>
+                
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -398,24 +399,24 @@ function Fridge() {
                                 <TextField
                                     fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
                                     inputProps={{ form: "addGroceries" }}></TextField></TableCell>
-                            <TableCell>
-                                <TextField title="Please enter a number "
-                                    fullWidth label="Stock Limit" required size="small"
-                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="limit" name="limit"></TextField>
-                            </TableCell>
-                            <TableCell>
-                                <TextField fullWidth title="Please enter a number " label="Quantity in stock"
-                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="quantity" name="quantity"></TextField>
-                            </TableCell>
-                            <TableCell>
-                                <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
-                            </TableCell>
-                            <TableCell>N/A</TableCell>
-                            <TableCell >
-                                <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
-                            </TableCell>
-                        </TableRow>
-                    }
+                                <TableCell>
+                                    <TextField fullWidth title="Please enter a number " label="Quantity in stock" 
+                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="quantity" name="quantity"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField title="Please enter a number " 
+                                        fullWidth label="Stock Limit" required size="small" 
+                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="limit" name="limit"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{form: "addGroceries"}}></TextField>
+                                </TableCell>
+                                <TableCell>N/A</TableCell>
+                                <TableCell >
+                                    <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                                </TableCell>
+                            </TableRow>
+                        }
                     {
                         //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
