@@ -13,6 +13,7 @@ import Protected from './backend/Protected'
 import Discusion from './frontend/components/Discussion'
 import LandingPage from './frontend/components/LandingPage'
 import Navbar from './frontend/components/Navbar'
+import Calendar from './frontend/components/Calendar'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -64,8 +65,11 @@ function App() {
             <Route path='/GroceryList' element={<Protected><GroceryList /></Protected>} />
             <Route path='/Fridge' element={<Protected><Fridge /></Protected>} />
             <Route path='/Discussion' element={<Protected><Discusion /></Protected>} />
+            <Route path='/Calendar' element={<Protected><Calendar /></Protected>} />
+
           </Routes>
         </ThemeProvider>
+        
       </AuthProvider>
   );
 }

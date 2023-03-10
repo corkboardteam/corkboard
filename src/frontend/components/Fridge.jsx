@@ -3,6 +3,9 @@ import { getFridge, addGroceryToFridge, removeGroceryFromFridge, editGroceryInFr
 import { getSpecificGrocery } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import { GroupClass } from "../../backend/custom_classes/groupClass";
+//import Calendar from "./Calendar"
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from "react-router-dom";
 import User from "../../backend/custom_classes/user";
 import React from "react";
@@ -21,6 +24,7 @@ function Fridge() {
     const [showEdit, setShowEdit] = useState({}) //if we want to edit a grocery item
     const [users, setUsers] = useState([]) //users associated with the fridge/group
     const [currentTrips, setCurrentTrips] = useState([]) //current trips planned
+    const [selectedDate, setSelectedDate] = useState(null);
     const { currentUser } = UserAuth();
     useEffect(() => {
 
@@ -90,6 +94,11 @@ function Fridge() {
 
         setShowEdit(newEdit)
     }
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
     async function handleEdit(e) {
         e.preventDefault()
 
@@ -171,8 +180,7 @@ function Fridge() {
             items[elements[i].getAttribute("name").match("quantityToBuy(.*)")[1]] = elements[i].value
         }
 
-        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid)
-        console.log(newTrip)
+        const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid, selectedDate.toLocaleDateString())
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
@@ -230,6 +238,7 @@ function Fridge() {
         }
         setCheckedItems(newCheckedItems)
     }
+
 
     async function handleCompleteTrip(trip) {
         const bought = trip.toBuy
@@ -341,30 +350,30 @@ function Fridge() {
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
-                        {showCheckBox ? null : 
-                            <TableRow>
-                                <TableCell>
-                                    <TextField 
+                    {showCheckBox ? null :
+                        <TableRow>
+                            <TableCell>
+                                <TextField
                                     fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
                                     inputProps={{ form: "addGroceries" }}></TextField></TableCell>
-                                <TableCell>
-                                    <TextField title="Please enter a number " 
-                                    fullWidth label="Stock Limit" required size="small" 
-                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="limit" name="limit"></TextField>
-                                </TableCell>
-                                <TableCell>
-                                    <TextField fullWidth title="Please enter a number " label="Quantity in stock" 
-                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="quantity" name="quantity"></TextField>
-                                </TableCell>
-                                <TableCell>
-                                    <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{form: "addGroceries"}}></TextField>
-                                </TableCell>
-                                <TableCell>N/A</TableCell>
-                                <TableCell >
-                                    <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
-                                </TableCell>
-                            </TableRow>
-                        }
+                            <TableCell>
+                                <TextField title="Please enter a number "
+                                    fullWidth label="Stock Limit" required size="small"
+                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="limit" name="limit"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField fullWidth title="Please enter a number " label="Quantity in stock"
+                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="quantity" name="quantity"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
+                            </TableCell>
+                            <TableCell>N/A</TableCell>
+                            <TableCell >
+                                <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                            </TableCell>
+                        </TableRow>
+                    }
                     {
                         //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
@@ -458,6 +467,16 @@ function Fridge() {
                                                 <TableCell>{groc.price >= 0 ?
                                                     `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
                                                     "N/A"}</TableCell>
+                                                <TableCell>
+                                                    <p>Select Date</p>
+                                                    <DatePicker
+                                                        selected={selectedDate}
+                                                        onChange={handleDateChange}
+                                                        dateFormat="MM/dd/yyyy"
+                                                        className="custom-datepicker"
+                                                    />
+
+                                                </TableCell>
                                             </TableRow> :
                                             null
                                     }
