@@ -77,6 +77,7 @@ function Fridge() {
                 })
 
                 setCurrentTrips(allTripsInfo)
+                console.log(allTripsInfo)
                 setFridgeItems(extendedGrocs);
 
                 let members = {};
@@ -144,6 +145,14 @@ function Fridge() {
 
     async function handleDelete(e) {
         e.preventDefault();
+        for (let i = 0; i < currentTrips.length; i++) {
+            const tripBuy = currentTrips[i].toBuy
+            if (tripBuy.filter((item) => item.itemName === e.target.id).length !== 0) {
+                alert("There's a scheduled grocery trip that will purchase the item you wish to delete. Please cancel that trip first")
+                return;
+            }
+        }
+
 
         await removeGroceryFromFridge(e.target.id, currentUser.groupID)
 
@@ -260,6 +269,12 @@ function Fridge() {
 
 
     async function handleCompleteTrip(trip) {
+        console.log(trip)
+        console.log(currentUser.uid)
+        if (trip.userID !== currentUser.uid) {
+            alert("You can't complete a trip you didn't start!")
+            return;
+        }
         const bought = trip.toBuy
         let groceryNames = new Map()
 
@@ -279,19 +294,27 @@ function Fridge() {
 
                 const quantity = parseInt(gn.currentQuantity) + parseInt(groceryNames.get(itemName))
                 gn.currentQuantity = (quantity).toString()
+                groceryNames.delete(itemName) // shouldn't have duplicate names in the firdge anyway
             }
             const copy = { ...gn }
             delete copy.id
             forDB.push(copy)
         })
 
+
+        //if doesn't have this grocery in the list, add 
         await updateAllGroceries(currentUser.groupID, forDB)
         setFridgeItems(newGroceryInfo)
-        await handleCancelTrip(trip.tripID)
+        await handleCancelTrip(trip)
 
     }
 
-    async function handleCancelTrip(tripID) {
+    async function handleCancelTrip(trip) {
+        const tripID = trip.tripID
+        if (trip.userID !== currentUser.uid) {
+            alert("You can't cancel a trip you didn't start")
+            return;
+        }
         if (!await removeTripFromFridge(tripID, currentUser.groupID, currentUser.uid))
             return;
 
@@ -400,7 +423,7 @@ function Fridge() {
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
                                         <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {users[trip.userID]} on {trip.date}</small></TableCell>
-                                        <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip.tripID)}>Cancel trip</Button>
+                                        <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip)}>Cancel trip</Button>
                                             <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
                                     </TableRow>
                                     {

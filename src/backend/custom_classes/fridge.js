@@ -140,11 +140,13 @@ async function removeGroceryFromFridge(itemName, groupID) {
         return null;
     }
 
-    presentTrips.forEach((element) => {
-        const ind = element.toBuy.findIndex(b => b === itemName)
-        if (ind !== -1)
-            element.toBuy.splice(ind, 1)
-    })
+    // presentTrips.forEach((element) => {
+    //     console.log(element.toBuy)
+    //     delete element.toBuy[itemName]
+    //     // const ind = element.toBuy.findIndex(b => b === itemName)
+    //     // if (ind !== -1)
+    //     //     element.toBuy.splice(ind, 1)
+    // })
 
     presentTrips = presentTrips.filter((element) => element.toBuy.length > 0)
 
@@ -214,10 +216,10 @@ async function removeTripFromFridge(tripID, groupID, uid) {
     const fridge = await getFridge(groupID)
     const trips = fridge.data.trips
     const deletedTrip = trips.filter((t) => t.tripID === tripID && t.userID === uid)
-    if (deletedTrip.length === 0) {
-        alert("You can't cancel a grocery trip you didn't start")
-        return false;
-    }
+    // if (deletedTrip.length === 0) {
+    //     alert("You can't cancel a grocery trip you didn't start")
+    //     return false;
+    // }
 
     const newTrips = trips.filter((t) => t.tripID !== tripID)
     console.log(newTrips)
