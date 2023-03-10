@@ -215,7 +215,7 @@ function Fridge() {
         let userTrips = { ...trips }
         let updatedUser = { ...currentUser }
 
-        userTrips[tripID] = { date: "groceryInfo.date", toBuy: groceryInfo }
+        userTrips[tripID] = { date: newTrip.date, toBuy: groceryInfo }
         updatedUser['trips'] = userTrips
         console.log(updatedUser)
         console.log(currentUser)
