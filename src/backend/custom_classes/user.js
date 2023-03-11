@@ -12,7 +12,7 @@ class User {
       phoneNumber: user.phoneNumber,
       fridge: null,
       groupID: null,
-      trips: null
+      trips: user.trips
     };
   }
 

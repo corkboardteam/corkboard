@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       userCred.user.displayName = name;
+      userCred.user.trips = []
       const user = new User(userCred.user);
       const exists = await user.exists();
       if (!exists) {
