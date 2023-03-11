@@ -3,11 +3,17 @@ import { useState, useEffect } from "react";
 import { addGroceryItem, getAllGroceries } from "../../backend/custom_classes/grocery";
 import { UserAuth } from "../../backend/authContext";
 import User from "../../backend/custom_classes/user";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from "@mui/material/DialogActions";
+
 
 function GroceryList() {
 
     const [currentTrips, setCurrentTrips] = React.useState({});
+    const [openDialog, setOpenDialig] = React.useState(false);
+    const [shopWith, setShopWith] = useState([])
+
     const { currentUser } = UserAuth();
     useEffect(() => {
         // async function checkGroceries() {
@@ -38,9 +44,62 @@ function GroceryList() {
     //     e.target.price.value = '';
     //     e.target.storeName.value = '';
     // }
+    async function handleFindPeopleToShopWith(date) {
+        console.log(date)
+        const usr = new User(currentUser)
+        const allUsers = await usr.getAllUsers()
+        console.log(allUsers)
+        console.log(typeof (allUsers[16].trips))
+
+        let usersWithSameDate = []
+        allUsers.forEach((usr) => {
+            if (usr.trips) {
+                for (const trip in usr.trips) {
+                    if (usr.trips[trip].date === date)
+                        usersWithSameDate.push({ displayName: usr.displayName, email: usr.email })
+                }
+            }
+        })
+        usersWithSameDate = usersWithSameDate.filter((u) => u.email !== currentUser.email)
+        console.log(usersWithSameDate)
+
+        setShopWith(usersWithSameDate)
+        setOpenDialig(true)
+    }
+
+    function handleCloseDialog() {
+        setOpenDialig(false)
+        // setShopWith([])
+    }
 
     return (
         <body>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                {
+                    shopWith.length === 0 ?
+                        <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping on this date</div> :
+                        <div className="dialog-div">
+                            We found the following users who are going grocery shopping on the same date as you!
+                            Shoot them an email :)
+
+                            <ul>
+                                {
+                                    shopWith.map((usr) => {
+                                        return (
+                                            <li key={usr.email}>
+                                                {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                        </div>
+                }
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
+                </DialogActions>
+
+            </Dialog>
             {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
             {/* <form method="post" onSubmit={addGroceryToDB}>
                 <label for="itemName">Item Name: </label>
@@ -69,7 +128,12 @@ function GroceryList() {
                             <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                 <TableRow>
                                     <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</small></TableCell>
-
+                                    <TableCell>
+                                        <Button variant="outlined"
+                                            onClick={() => handleFindPeopleToShopWith(trip.date)}>
+                                            Find people to shop with!
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                                 {
                                     trip.toBuy.map((groc) => {

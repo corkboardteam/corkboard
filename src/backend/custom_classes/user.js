@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase';
 
 class User {
@@ -45,6 +45,20 @@ class User {
     catch (error) {
       console.error(error)
     }
+  }
+
+
+  async getAllUsers() {
+
+    const querySnapshot = await getDocs(collection(db, "users"));
+
+    let users = []
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data())
+
+    });
+
+    return users
   }
 }
 
