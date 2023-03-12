@@ -130,8 +130,8 @@ function Fridge() {
         const newQuantity = e.target.quantity.value
         const newStore = e.target.whereToBuy.value
 
-        if (e.target.limit.value === "0" || e.target.quantity.value === "0") {
-            alert("Your current stock or stock limit can't be zero!")
+        if (parseInt(e.target.limit.value) <= 0 || parseInt(e.target.quantity.value) <= 0) {
+            alert("Your current stock or stock limit should be positive")
             return;
         }
 
@@ -186,13 +186,13 @@ function Fridge() {
 
         if (e.target.limit.value === "0" || e.target.quantity.value === "0") {
             alert("Your current stock or stock limit can't be zero!")
-            resetSubmitForm(e)
+            //resetSubmitForm(e)
             return;
         }
 
         if (parseInt(e.target.limit.value) < parseInt(e.target.quantity.value)) {
             alert("Your current stock shouldn't be bigger than your stock limit!")
-            resetSubmitForm(e)
+            // resetSubmitForm(e)
             return;
         }
         //check if grocery already in the fridge, if yes, alert and return
@@ -433,12 +433,22 @@ function Fridge() {
                                     inputProps={{ form: "addGroceries" }}></TextField></TableCell>
                             <TableCell>
                                 <TextField fullWidth title="Please enter a number " label="Quantity in stock"
-                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="quantity" name="quantity"></TextField>
+                                    required size="small" inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*',
+                                        form: "addGroceries",
+                                        title: "Please enter a positive number"
+                                    }} id="quantity" name="quantity"></TextField>
                             </TableCell>
                             <TableCell>
                                 <TextField title="Please enter a number "
                                     fullWidth label="Stock Limit" required size="small"
-                                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "addGroceries" }} id="limit" name="limit"></TextField>
+                                    inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*',
+                                        form: "addGroceries",
+                                        title: "Please enter a positive number"
+                                    }} id="limit" name="limit"></TextField>
                             </TableCell>
                             <TableCell>
                                 <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
@@ -533,7 +543,12 @@ function Fridge() {
                                                 <TableCell>
                                                     <TextField title="Please enter a number " fullWidth
                                                         label="Quantity to Buy" required size="small"
-                                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "submit-checked-groceries" }}
+                                                        inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                            form: "submit-checked-groceries",
+                                                            title: "Please enter a positive number"
+                                                        }}
                                                         id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
                                                     ></TextField>
                                                 </TableCell>
