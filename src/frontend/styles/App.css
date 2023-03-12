@@ -125,3 +125,7 @@ h2 {
 .dialog-div {
   padding: 5%
 }
+
+ul>li {
+  margin-left: 10px;
+}

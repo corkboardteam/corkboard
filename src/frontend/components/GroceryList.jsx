@@ -6,6 +6,7 @@ import User from "../../backend/custom_classes/user";
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from "@mui/material/DialogActions";
+import DatePicker from 'react-datepicker';
 
 
 function GroceryList() {
@@ -13,6 +14,10 @@ function GroceryList() {
     const [currentTrips, setCurrentTrips] = React.useState({});
     const [openDialog, setOpenDialig] = React.useState(false);
     const [shopWith, setShopWith] = useState([])
+    const [selectedStartDate, setSelectedStartDate] = useState("")
+    const [selectedEndDate, setSelectedEndDate] = useState("")
+    const [displayDateRange, setDisplayDateRange] = useState(false)
+    const [usersInDateRange, setUsersInDateRange] = useState({})
 
     const { currentUser } = UserAuth();
     useEffect(() => {
@@ -79,6 +84,73 @@ function GroceryList() {
         // setShopWith([])
     }
 
+    function handleCloseDisplayDateRange() {
+        setDisplayDateRange(false)
+        setSelectedEndDate("")
+        setSelectedStartDate("")
+    }
+
+    function handleStartDateChange(date) {
+        setSelectedStartDate(date)
+    }
+
+    function handleEndDateChange(date) {
+        setSelectedEndDate(date)
+    }
+
+    async function handleSetDateRange() {
+        const usr = new User(currentUser)
+        const allUsers = await usr.getAllUsers()
+        const startDate = new Date(selectedStartDate)
+        const endDate = new Date(selectedEndDate)
+        let withinRange = []
+
+        allUsers.forEach((usr) => {
+            if (usr.trips) {
+                for (const trip in usr.trips) {
+                    const tripDate = new Date(usr.trips[trip].date)
+                    if (tripDate.getTime() >= startDate.getTime() && tripDate.getTime() <= endDate.getTime())
+                        withinRange.push({ displayName: usr.displayName, email: usr.email, date: usr.trips[trip].date })
+                }
+            }
+        })
+        withinRange = withinRange.filter((u) => u.email !== currentUser.email)
+
+        let dateToUsers = {}
+
+        withinRange.forEach((trip) => {
+            if (dateToUsers.hasOwnProperty(trip.date)) {
+                dateToUsers[trip.date].push({ displayName: trip.displayName, email: trip.email })
+            }
+            else {
+                dateToUsers[trip.date] = []
+                dateToUsers[trip.date].push({ displayName: trip.displayName, email: trip.email })
+            }
+        })
+
+        console.log(dateToUsers)
+        const uniqUsersAll = { ...dateToUsers }
+
+        Object.keys(dateToUsers).forEach((key) => {
+            const uniq = new Set()
+            let uniqUsers = []
+            dateToUsers[key].forEach((user) => {
+                if (!uniq.has(user.email)) {
+                    uniq.add(user.email)
+                    uniqUsers.push(user)
+                }
+            })
+            uniqUsersAll[key] = uniqUsers
+        })
+
+        console.log(uniqUsersAll)
+
+        setUsersInDateRange(uniqUsersAll)
+
+        setDisplayDateRange(true)
+
+    }
+
     return (
         <body>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -104,6 +176,46 @@ function GroceryList() {
                 }
                 <DialogActions>
                     <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
+                </DialogActions>
+
+            </Dialog>
+
+
+            <Dialog open={displayDateRange} onClose={handleCloseDisplayDateRange}>
+                {
+                    Object.keys(usersInDateRange).length === 0 ?
+                        <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping within this date range</div> :
+                        <div className="dialog-div">
+                            We found the following users going shopping between <b>{`${new Date(selectedStartDate).toLocaleDateString('en-us',
+                                { weekday: "long", year: "numeric", month: "short", day: "numeric" })}`}</b> and <b>{`${new Date(selectedEndDate).toLocaleDateString('en-us',
+                                    { weekday: "long", year: "numeric", month: "short", day: "numeric" })}`}</b>! Shoot them an email :)
+                            <ul>
+                                {
+                                    Object.keys(usersInDateRange).
+                                        sort((date1, date2) => (new Date(date1)) - (new Date(date2))).map((date) => {
+                                            return (
+                                                <li>On {date}:
+                                                    <ul>
+                                                        {
+                                                            usersInDateRange[date].map((usr) => {
+                                                                return (
+                                                                    <li key={`${usr.email}${date}`}>
+                                                                        {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
+                                                                    </li>
+                                                                )
+                                                            })
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            )
+                                        })
+                                }
+                            </ul>
+
+                        </div>
+                }
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleCloseDisplayDateRange}>Close</Button>
                 </DialogActions>
 
             </Dialog>
@@ -174,6 +286,31 @@ function GroceryList() {
                     // }
                 }
             </Table>
+
+            <div>
+                Or, search for trips happening between a specific date range (inclusive)!
+                <div>
+                    Start date
+                    <DatePicker
+                        selected={selectedStartDate}
+                        onChange={handleStartDateChange}
+                        dateFormat="MM/dd/yyyy"
+                        className="custom-datepicker"
+                    />
+                </div>
+                <div>
+                    End date
+                    <DatePicker
+                        selected={selectedEndDate}
+                        onChange={handleEndDateChange}
+                        dateFormat="MM/dd/yyyy"
+                        className="custom-datepicker"
+                    />
+                </div>
+
+                <Button onClick={handleSetDateRange}>Start Search!</Button>
+
+            </div>
         </body>
 
     );
