@@ -61,9 +61,16 @@ function GroceryList() {
             }
         })
         usersWithSameDate = usersWithSameDate.filter((u) => u.email !== currentUser.email)
-        console.log(usersWithSameDate)
+        const uniq = new Set()
+        let uniqUsers = []
+        usersWithSameDate.forEach((user) => {
+            if (!uniq.has(user.email)) {
+                uniq.add(user.email)
+                uniqUsers.push(user)
+            }
+        })
 
-        setShopWith(usersWithSameDate)
+        setShopWith(uniqUsers)
         setOpenDialig(true)
     }
 
