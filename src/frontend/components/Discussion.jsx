@@ -45,6 +45,7 @@ const Discussion = () => {
         setNewMessage("");
     }
 
+    //THIS IS BUGGY WHEN SWITCHED TO A DIFFERENT USER
     async function handleVoteMessage(id, voteType) {
         const newMessages = messages.map((message) => {
         if (message.id === id) {
@@ -90,6 +91,12 @@ const Discussion = () => {
         setMessages(newMessages);
     }
 
+    async function handleKeyPress(event) {
+        if(event.key === 'Enter'){
+          handleAddMessage();
+        }
+      }
+
     function Comment(props) {
         const { comment } = props;
 
@@ -106,13 +113,14 @@ const Discussion = () => {
         <div className="w-100 text-center mt-2">
         Go back to <Link to="/Dashboard"> Dashboard</Link>
         </div>
-        <h1>Discussion</h1>
+        <h1>Discussion Board</h1>
         <div>
-            <input type="text" value={newMessage} onChange={handleNewMessage} />
-            <button onClick={handleAddMessage}>Add Message</button>
+            <center><input type="text" id="floatingInput" placeholder="Start a new thread!" value={newMessage} onChange={handleNewMessage} onKeyDown={handleKeyPress}/></center>
         </div>
+        
         <ul>
             {messages.map((message) => (
+            <h2>
             <li key={message.id}>
                 <Message
                 message={message}
@@ -128,6 +136,7 @@ const Discussion = () => {
                 ))}
                 </ul>
             </li>
+            </h2>
             ))}
         </ul>
         </div>
