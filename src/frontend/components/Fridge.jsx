@@ -84,11 +84,12 @@ function Fridge() {
                 let members = {};
                 for (let i = 0; i < groupData.members.length; i++) {
                     const data = await new User({
-                        uid: groupData.members[i],
+                        uid: groupData.members[i].uid,
                         email: "",
                         displayName: "",
                         photoURL: "",
-                        phoneNumber: ""
+                        phoneNumber: "",
+                        trips: []
                     }).data()
                     console.log(data)
 

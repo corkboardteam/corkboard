@@ -54,7 +54,6 @@ function GroceryList() {
         const usr = new User(currentUser)
         const allUsers = await usr.getAllUsers()
         console.log(allUsers)
-        console.log(typeof (allUsers[16].trips))
 
         let usersWithSameDate = []
         allUsers.forEach((usr) => {
