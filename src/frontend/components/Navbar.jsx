@@ -1,4 +1,4 @@
-import { useState, cloneElement, Fragment } from 'react';
+import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -41,6 +41,7 @@ const Navbar = () => {
   const [anchorNav, setAnchorNav] = useState(null);
   const [anchorUser, setAnchorUser] = useState(null);
   const navigate = useNavigate();
+  const gradient = 'linear-gradient(30deg, #BBC4EB 60%, #DFE9EB 95%)'; 
 
   const handleOpenNavMenu = (e) => {
     setAnchorNav(e.currentTarget);
@@ -63,7 +64,7 @@ const Navbar = () => {
   }
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" sx={{ background: gradient }}>
       <CssBaseline />
         <Toolbar>
           <KitchenIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -149,9 +150,9 @@ const Navbar = () => {
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, mr: 4, px: 3, fontSize: '1rem', color: 'white', display: 'block' }}
+                sx={{ my: 2, mr: 4, px: 3, fontSize: '1rem', color: 'black', display: 'block' }}
               >
-                <Link style={{ textDecoration: "none", color: "white" }} to={page}>
+                <Link style={{ textDecoration: "none", color: "black" }} to={page}>
                   {page}
                 </Link>
                 
@@ -162,7 +163,7 @@ const Navbar = () => {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 2 }}>
-                  <Avatar alt="User Profile" src=''/>
+                  <Avatar alt="User Profile" src={currentUser.photoURL}/>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -202,7 +203,7 @@ const Navbar = () => {
                 <Button  component={Link} to="/Login" color="inherit" sx={{ ...styles.customButton }}>
                   Log in
                 </Button>
-                <Button  variant="contained" component={Link} to="/Signup" color="inherit" sx={{ ...styles.customButton }}>
+                <Button  variant="contained" component={Link} to="/Signup" color="primary" sx={{ ...styles.customButton }}>
                   Sign up
                 </Button>
               </Box>

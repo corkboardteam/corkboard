@@ -36,11 +36,11 @@ const Signup =() => {
   };
 
   return (
-    <Box sx={{ backgroundColor: '#f5f5f5',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box sx={{ backgroundColor: '#DFE9EB',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Grid container component="main" sx={{ 
       mr: 2,
       mt: 4,
-      mb: 4,
+      mb: 10,
       px: 14,
       py: 8,
       fontFamily: 'Kaleko 205 Medium',

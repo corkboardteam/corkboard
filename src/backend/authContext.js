@@ -171,8 +171,7 @@ export const AuthProvider = ({ children }) => {
       const credential = EmailAuthProvider.credential(user.email, currPassword);
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
-      alert('Password updated successfully');
-
+      
     } catch (error) {
       console.error('Error updating password:', error);
       alert(error);

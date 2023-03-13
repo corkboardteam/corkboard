@@ -45,7 +45,7 @@ const ForgotPassword =() => {
       <CssBaseline />
       <Grid container component="main" sx={{ 
       mt: 4,
-      mb: 4,
+      mb: 10,
       px: 14,
       py: 8,
       justifyContent: 'center',
@@ -67,7 +67,7 @@ const ForgotPassword =() => {
             Forgot Password?
           </Typography>
 
-          <Typography component="h2" variant="body1" fontFamily='Kaleko 205 Medium'fontWeight='normal'>
+          <Typography component="h3" variant="body1" fontFamily='Kaleko 205 Medium'fontWeight='normal' >
             Enter the email you used to sign up and we'll send you instructions to reset your password!
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, pt: 4, fontWeight: "bold" }}>

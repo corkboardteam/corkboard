@@ -30,13 +30,18 @@ class GroupClass {
       const exists = await this.exists();
       if (!exists) {
         const fridgeID = await addNewFridge(this.uid, user.uid);
+        const member = {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+        }; 
         const groupData = {
-          ownerID: user.uid,
+          owner: member,
           uid: this.uid,
           name: groupName,
           desc: null,
           fridge: fridgeID,
-          members: arrayUnion(user.uid),
+          members: arrayUnion(member),
           totalMembers: 1
         }
         await setDoc(this.groupRef, groupData);
@@ -61,11 +66,17 @@ class GroupClass {
       if (exists) {
         const data = await this.data();
         const members = data.members;
-        if (members.includes(user.uid)) {
+        const userIsMember = members.some(member => member.uid === user.uid);
+        if (userIsMember) {
           throw new Error('User is already a member of this group');
         }
+        const member = {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+        }; 
         await updateDoc(this.groupRef, {
-          members: arrayUnion(user.uid),
+          members: arrayUnion(member),
           totalMembers: increment(1)
         });
 
@@ -90,27 +101,35 @@ class GroupClass {
       }
       const data = await this.data();
       const members = data.members;
+      const userIsMember = members.some(member => member.uid === user.uid);
+      const member = {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+      };
+
       // check if user is a member of the group
-      if (!members.includes(user.uid)) {
+      if (!userIsMember) {
         throw new Error('User is not a member of this group');
       }
-
+      
       if (data.ownerID === user.uid) {
         // select a random member to be the new owner if owner leaves
         const newOwnerIndex = Math.floor(Math.random() * members.length);
-        const newOwnerUid = members[newOwnerIndex];
+        const newOwner = members[newOwnerIndex];
+        
         await updateDoc(this.groupRef, {
-          members: arrayRemove(user.uid),
+          members: arrayRemove(member),
           totalMembers: data.totalMembers - 1,
-          owner: newOwnerUid
+          owner: newOwner
         });
         console.log('Left group: ' + data.name, data);
         return true;
 
         // check if user is the last member in group, if they are leave and delete group
-      } else if (data.totalMembers === 1 && members.includes(user.uid)) {
+      } else if (data.totalMembers === 1 && userIsMember) {
         await updateDoc(this.groupRef, {
-          members: arrayRemove(user.uid),
+          members: arrayRemove(member),
           totalMembers: data.totalMembers - 1
         });
 
@@ -121,7 +140,7 @@ class GroupClass {
         // leave group normally
       } else {
         await updateDoc(this.groupRef, {
-          members: arrayRemove(user.uid),
+          members: arrayRemove(member),
           totalMembers: data.totalMembers - 1
         });
         console.log('Left group: ' + data.name, data);
@@ -139,8 +158,6 @@ class GroupClass {
       if (user.uid !== this.ownerID) {
         throw new Error('You do not have permissions to edit group info')
       }
-      // const groupDoc = await getDoc(this.groupRef);
-      // const groupData = groupDoc.data();
       const newGroupData = {
         name: newName,
         desc: newDesc
@@ -164,8 +181,14 @@ class GroupClass {
         throw new Error('Group does not exist');
       }
       const data = await this.data();
+      const member = {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+      };
+      
       // const groupData = groupDoc.data();
-      if (data.ownerID !== user.uid) {
+      if (data.owner !== member) {
         throw new Error('You are not the owner of this group');
       }
       await deleteDoc(this.groupRef);
@@ -179,6 +202,7 @@ class GroupClass {
   }
 
 }
+
 
 
 async function generateGroupUID() {

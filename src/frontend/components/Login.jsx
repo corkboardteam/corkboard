@@ -1,13 +1,5 @@
 import React, { useEffect } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import { Button, CssBaseline, TextField, FormControlLabel, Checkbox, Paper, Box, Grid, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom'
 import { GoogleButton } from 'react-google-button'
 import { UserAuth } from '../../backend/authContext';
@@ -23,6 +15,7 @@ const Login =() => {
     } 
     console.log(currentUser)
   },[currentUser, navigate]);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -42,11 +35,11 @@ const Login =() => {
   }
 
   return (
-    <Box sx={{ backgroundColor: '#f5f5f5',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box sx={{ backgroundColor: '#DFE9EB',position: 'relative', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Grid container component="main" sx={{ 
       mr: 2,
       mt: 4,
-      mb: 4,
+      mb: 12,
       px: 14,
       py: 8,
       fontFamily: 'Kaleko 205 Medium',
