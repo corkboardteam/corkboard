@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from "@mui/material/Grid";
+import { type } from "@testing-library/user-event/dist/type";
 
 
 function Fridge() {
@@ -129,6 +130,16 @@ function Fridge() {
         const newQuantity = e.target.quantity.value
         const newStore = e.target.whereToBuy.value
 
+        if (parseInt(e.target.limit.value) <= 0 || parseInt(e.target.quantity.value) <= 0) {
+            alert("Your current stock or stock limit should be positive")
+            return;
+        }
+
+        if (parseInt(e.target.limit.value) < parseInt(e.target.quantity.value)) {
+            alert("Your current stock shouldn't be bigger than your stock limit!")
+            return;
+        }
+
         const updatedItem = await editGroceryInFridge(itemName, newLimit, newQuantity, newStore, currentUser.groupID)
         if (updatedItem) {
             const newGroceries = [...fridgeItems]
@@ -164,9 +175,26 @@ function Fridge() {
         setFridgeItems(updatedItems)
         setShowEdit(updatedEdit)
     }
+    function resetSubmitForm(e) {
+        e.target.itemName.value = '';
+        e.target.limit.value = null;
+        e.target.quantity.value = null;
+        e.target.whereToBuy.value = null;
+    }
     async function handleSubmit(e) {
         e.preventDefault();
 
+        if (e.target.limit.value === "0" || e.target.quantity.value === "0") {
+            alert("Your current stock or stock limit can't be zero!")
+            //resetSubmitForm(e)
+            return;
+        }
+
+        if (parseInt(e.target.limit.value) < parseInt(e.target.quantity.value)) {
+            alert("Your current stock shouldn't be bigger than your stock limit!")
+            // resetSubmitForm(e)
+            return;
+        }
         //check if grocery already in the fridge, if yes, alert and return
         //otherwise, add into the fridge and change state
         const { groupID } = currentUser
@@ -205,6 +233,10 @@ function Fridge() {
         const len = e.target.length
         const elements = e.target.elements
         for (let i = 1; i < len; i++) {
+            if (elements[i].value === "0") {
+                alert("Please only enter a positive number here")
+                return;
+            }
             items[elements[i].getAttribute("name").match("quantityToBuy(.*)")[1]] = elements[i].value
         }
 
@@ -380,7 +412,7 @@ function Fridge() {
                     </form>
             }
             <TableContainer>
-                
+
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -399,24 +431,34 @@ function Fridge() {
                                 <TextField
                                     fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
                                     inputProps={{ form: "addGroceries" }}></TextField></TableCell>
-                                <TableCell>
-                                    <TextField fullWidth title="Please enter a number " label="Quantity in stock" 
-                                    required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="quantity" name="quantity"></TextField>
-                                </TableCell>
-                                <TableCell>
-                                    <TextField title="Please enter a number " 
-                                        fullWidth label="Stock Limit" required size="small" 
-                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form:"addGroceries" }} id="limit" name="limit"></TextField>
-                                </TableCell>
-                                <TableCell>
-                                    <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{form: "addGroceries"}}></TextField>
-                                </TableCell>
-                                <TableCell>N/A</TableCell>
-                                <TableCell >
-                                    <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
-                                </TableCell>
-                            </TableRow>
-                        }
+                            <TableCell>
+                                <TextField fullWidth title="Please enter a number " label="Quantity in stock"
+                                    required size="small" inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*',
+                                        form: "addGroceries",
+                                        title: "Please enter a positive number"
+                                    }} id="quantity" name="quantity"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField title="Please enter a number "
+                                    fullWidth label="Stock Limit" required size="small"
+                                    inputProps={{
+                                        inputMode: 'numeric',
+                                        pattern: '[0-9]*',
+                                        form: "addGroceries",
+                                        title: "Please enter a positive number"
+                                    }} id="limit" name="limit"></TextField>
+                            </TableCell>
+                            <TableCell>
+                                <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
+                            </TableCell>
+                            <TableCell>N/A</TableCell>
+                            <TableCell >
+                                <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                            </TableCell>
+                        </TableRow>
+                    }
                     {
                         //this part renders all the grocery runs scheduled
                         currentTrips.map((trip) => {
@@ -501,7 +543,12 @@ function Fridge() {
                                                 <TableCell>
                                                     <TextField title="Please enter a number " fullWidth
                                                         label="Quantity to Buy" required size="small"
-                                                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', form: "submit-checked-groceries" }}
+                                                        inputProps={{
+                                                            inputMode: 'numeric',
+                                                            pattern: '[0-9]*',
+                                                            form: "submit-checked-groceries",
+                                                            title: "Please enter a positive number"
+                                                        }}
                                                         id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
                                                     ></TextField>
                                                 </TableCell>
