@@ -30,6 +30,7 @@ function GroceryList() {
             const curUser = new User(currentUser)
             const userData = await curUser.data()
             const tripData = userData.trips
+            //tripData.sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
             console.log(tripData)
 
             setCurrentTrips(tripData)
@@ -241,36 +242,38 @@ function GroceryList() {
                 </TableHead>
                 {
                     //this part renders all the grocery runs scheduled
-                    Object.values(currentTrips).map((trip) => {
-                        return (
-                            <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
-                                <TableRow>
-                                    <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</small></TableCell>
-                                    <TableCell>
-                                        <Button variant="outlined"
-                                            onClick={() => handleFindPeopleToShopWith(trip.date)}>
-                                            Find people to shop with!
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                                {
-                                    trip.toBuy.map((groc) => {
+                    Object.values(currentTrips)
+                        .sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
+                        .map((trip) => {
+                            return (
+                                <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
+                                    <TableRow>
+                                        <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</small></TableCell>
+                                        <TableCell>
+                                            <Button variant="outlined"
+                                                onClick={() => handleFindPeopleToShopWith(trip.date)}>
+                                                Find people to shop with!
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                    {
+                                        trip.toBuy.map((groc) => {
 
-                                        return <TableRow>
+                                            return <TableRow>
 
-                                            <TableCell>{groc.itemName}</TableCell>
-                                            <TableCell>To buy: {groc.quantityToBuy}</TableCell>
-                                            <TableCell>{groc.maxQuantity}</TableCell>
-                                            <TableCell>{groc.whereToBuy}</TableCell>
-                                            <TableCell>{groc.price >= 0 ?
-                                                `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                                "N/A"}</TableCell>
-                                        </TableRow>
-                                    })
-                                }
-                            </TableBody>
-                        )
-                    })
+                                                <TableCell>{groc.itemName}</TableCell>
+                                                <TableCell>To buy: {groc.quantityToBuy}</TableCell>
+                                                <TableCell>{groc.maxQuantity}</TableCell>
+                                                <TableCell>{groc.whereToBuy}</TableCell>
+                                                <TableCell>{groc.price >= 0 ?
+                                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                    "N/A"}</TableCell>
+                                            </TableRow>
+                                        })
+                                    }
+                                </TableBody>
+                            )
+                        })
                 }
 
                 {

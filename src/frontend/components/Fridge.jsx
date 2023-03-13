@@ -59,6 +59,9 @@ function Fridge() {
                 }
 
                 const allTrips = curFridge.data.trips;
+
+                allTrips.sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
+
                 let allTripsInfo = []
                 allTrips.forEach((element) => {
                     let curTripInfo = { userID: element.userID, date: element.date, toBuy: [], tripID: element.tripID }
@@ -262,6 +265,7 @@ function Fridge() {
 
         updatedTrips.push({ userID: currentUser.uid, date: newTrip.date, toBuy: groceryInfo, tripID: newTrip.tripID })
         // setFridgeItems(groceries)
+        updatedTrips.sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
         setCurrentTrips(updatedTrips)
         setCheckedItems(new Set())
 
