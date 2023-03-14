@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import Message from "./Message.jsx";
 import { UserAuth } from '../../backend/authContext';
+import Avatar from '@mui/material/Avatar';
 
 const Discussion = () => {
     //const { groupID } = groupID;
@@ -36,9 +37,10 @@ const Discussion = () => {
             id: Math.random().toString(36),
             text: newMessage,
             votes: 0,
-            upvoted: false,
-            downvoted: false,
+            upvoted: {},
+            downvoted: {},
             comments: [],
+            //SOMETHING FOR USER PROFILES
         },
         ];
         setMessages(newMessages);
@@ -49,20 +51,24 @@ const Discussion = () => {
     async function handleVoteMessage(id, voteType) {
         const newMessages = messages.map((message) => {
         if (message.id === id) {
+            if (!currentUser.uid in message.upvoted || !currentUser.uid in message.downvoted){
+                message.upvoted[currentUser.uid] = false;
+                message.downvoted[currentUser.uid] = false;
+            }
             if (voteType === "upvote") {
-                if (message.upvoted) {  //undoing upvoted state
-                    message.upvoted = false;
+                if (message.upvoted[currentUser.uid]) {  //undoing upvoted state
+                    message.upvoted[currentUser.uid] = false;
                     return { ...message, votes: message.votes - 1};
                 } else {    //adding an upvote
-                    message.upvoted = true;
+                    message.upvoted[currentUser.uid] = true;
                     return { ...message, votes: message.votes + 1};
                 }
             } else if (voteType === "downvote") {
                 if (message.downvoted) {  //undoing downvoted state
-                    message.downvoted = false;
+                    message.downvoted[currentUser.uid] = false;
                     return { ...message, votes: message.votes + 1};
                 } else {    //adding a downvote
-                    message.downvoted = true;
+                    message.downvoted[currentUser.uid] = true;
                     return { ...message, votes: message.votes - 1};
                 }
             }
@@ -72,14 +78,17 @@ const Discussion = () => {
         setMessages(newMessages);
     }
 
-    async function handleAddComment(id, text) {
+    async function handleAddComment(id, text, event) {
+        
         const newMessages = messages.map((message) => {
         if (message.id === id) {
             const newComments = [
             ...message.comments,
             { id: message.comments.length, text: text },
             ];
-            return { ...message, comments: newComments };
+            if(event.key === "Enter"){
+                return { ...message, comments: newComments };
+            }
         }
         return message;
         });
@@ -120,7 +129,10 @@ const Discussion = () => {
         
         <ul>
             {messages.map((message) => (
-            <h2>
+            <h3>
+                <div id="avatar-container">
+                <Avatar alt="User Profile" src={currentUser.photoURL}/>
+                </div>
             <li key={message.id}>
                 <Message
                 message={message}
@@ -136,9 +148,12 @@ const Discussion = () => {
                 ))}
                 </ul>
             </li>
-            </h2>
+            
+            </h3>
+            
             ))}
-        </ul>
+            
+         </ul>
         </div>
     );
 }
