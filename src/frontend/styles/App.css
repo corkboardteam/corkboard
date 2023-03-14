@@ -86,14 +86,14 @@ button {
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 15px;
-  border-color: #ff9c09;
-  background-color: #f9a109;
+  border-color: #c9acff;
+  background-color: #c9acff;
   font-display: rgb(0, 0, 0);
   transition: all 0.2s ease-in-out;
 }
 
 button:hover {
-  background-color: #ff9c09;
+  background-color: #640088;
   color: #fff;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
@@ -128,4 +128,54 @@ h2 {
 
 ul>li {
   margin-left: 10px;
+}
+
+#floatingInput{
+  width: 60%;
+  position: relative;
+	display: inherit;
+	border-radius: 9999em;
+	margin: 50px 50px 50px 50px;
+	border: none;
+	outline: none;
+	padding: 0 .325em;
+	z-index: 1;
+
+  box-shadow: inset 0 0 0 3px #fff,
+    0 0 0 4px #fff,
+    3px -3px 15px #00bfff, 
+    -3px 3px 15px #da90ff;
+}
+
+h3{
+  display: flex;
+  position: relative;
+  padding: 2px 6px 6px -400px;
+  width: 60%;
+  align-items: center;
+  flex-direction: column;
+  margin: 20px auto;
+  border: 3px solid rgb(164, 165, 245);
+}
+
+#avatar-container {
+  display: flex;
+  position: relative;
+  align-items: flex-end;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+#vote-buttons {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  left: 0;
+  padding: 8px 4px 8px 8px;
+  position: absolute;
+  top: 0;
 }

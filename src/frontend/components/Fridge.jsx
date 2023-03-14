@@ -59,6 +59,9 @@ function Fridge() {
                 }
 
                 const allTrips = curFridge.data.trips;
+
+                allTrips.sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
+
                 let allTripsInfo = []
                 allTrips.forEach((element) => {
                     let curTripInfo = { userID: element.userID, date: element.date, toBuy: [], tripID: element.tripID }
@@ -84,11 +87,12 @@ function Fridge() {
                 let members = {};
                 for (let i = 0; i < groupData.members.length; i++) {
                     const data = await new User({
-                        uid: groupData.members[i],
+                        uid: groupData.members[i].uid,
                         email: "",
                         displayName: "",
                         photoURL: "",
-                        phoneNumber: ""
+                        phoneNumber: "",
+                        trips: []
                     }).data()
                     console.log(data)
 
@@ -261,6 +265,7 @@ function Fridge() {
 
         updatedTrips.push({ userID: currentUser.uid, date: newTrip.date, toBuy: groceryInfo, tripID: newTrip.tripID })
         // setFridgeItems(groceries)
+        updatedTrips.sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
         setCurrentTrips(updatedTrips)
         setCheckedItems(new Set())
 
@@ -465,7 +470,7 @@ function Fridge() {
                             return (
                                 <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
                                     <TableRow>
-                                        <TableCell colSpan={showCheckBox ? 6 : 5}><small>Grocery run initiated by {users[trip.userID]} on {trip.date}</small></TableCell>
+                                        <TableCell colSpan={showCheckBox ? 6 : 5}><medium>Grocery run initiated by {users[trip.userID]} on {trip.date}</medium></TableCell>
                                         <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip)}>Cancel trip</Button>
                                             <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
                                     </TableRow>
