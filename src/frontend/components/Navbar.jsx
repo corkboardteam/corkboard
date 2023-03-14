@@ -71,7 +71,7 @@ const Navbar = () => {
           <Typography
             variant="h6"
             noWrap
-            component={Link} to="/Dashboard"
+            component={Link} to="/Fridge"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -131,7 +131,7 @@ const Navbar = () => {
           <Typography
             variant="h5"
             noWrap
-            component={Link} to="/Dashboard"
+            component={Link} to="/Fridge"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },

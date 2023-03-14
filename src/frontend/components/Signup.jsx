@@ -18,7 +18,7 @@ const Signup =() => {
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/Dashboard');
+      navigate('/Fridge');
     } 
     console.log(currentUser);
   }, [currentUser, navigate]);
@@ -30,7 +30,7 @@ const Signup =() => {
     const password = data.get('password');
     const name = data.get('name');
     await signUp(email, password, name);
-    navigate('/Dashboard');
+    navigate('/Fridge');
 
     console.log(email, password);
   };

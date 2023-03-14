@@ -14,7 +14,7 @@ const Group = () => {
 
   useEffect(() => {
     if (currentUser.groupID != null) {
-      navigate('/Dashboard');
+      navigate('/Fridge');
     }
     console.log(currentUser);
   }, [currentUser, navigate])
@@ -29,7 +29,7 @@ const Group = () => {
       const group = new GroupClass(joinGroupID);
       await group.joinGroup(currentUser);
       await updateProfile({ groupID: joinGroupID });
-      navigate('/Dashboard');
+      navigate('/Fridge');
 
     } catch (error) {
       setError(error.message);
@@ -49,7 +49,7 @@ const Group = () => {
       await group.createGroup(currentUser, groupName);
       const groupData = await group.data();
       await updateProfile({ groupID: groupData.uid });
-      navigate('/Dashboard');
+      navigate('/Fridge');
 
     } catch (error) {
       setError(error.message);
