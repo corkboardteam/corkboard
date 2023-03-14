@@ -185,7 +185,7 @@ function GroceryList() {
                 {
                     Object.keys(usersInDateRange).length === 0 ?
                         <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping within this date range</div> :
-                        <div className="dialog-div">
+                        <div className="dialog-div user-trip-list">
                             We found the following users going shopping between <b>{selectedStartDate ? `${new Date(selectedStartDate).toLocaleDateString('en-us',
                                 { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b> and <b>{selectedEndDate ? `${new Date(selectedEndDate).toLocaleDateString('en-us',
                                     { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b>! Shoot them an email :)
