@@ -162,10 +162,10 @@ h3{
   display: flex;
   position: relative;
   align-items: flex-end;
-  flex-direction: row-reverse;
   justify-content: flex-end;
-  padding: 1rem;
+  padding: 14px 0px 14px 0px;
   gap: 1rem;
+  right: 0;
 }
 
 #vote-buttons {
@@ -178,4 +178,32 @@ h3{
   padding: 8px 4px 8px 8px;
   position: absolute;
   top: 0;
+}
+
+#delete{
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  right: 0;
+  padding: 8px 8px 8px 8px;
+  position: absolute;
+  top: 0;
+}
+
+#comment-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.msg-text {
+  padding: 1rem;
+  overflow-wrap: break-word;
+}
+
+h4 {
+  font-weight: normal;
+  font-size: 80%;  
 }
