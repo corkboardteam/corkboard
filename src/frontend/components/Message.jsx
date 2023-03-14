@@ -26,12 +26,12 @@ function Message(props) {
         <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
       </div>
       <div id="avatar-container">
-                <Avatar alt="Author Profile" src={message.authorID.photoURL}/>
-                </div>
-      <div id="comment-box">
-        <input type="text" placeholder="Add a comment here!" size="80"
+        <Avatar alt="Author Profile" src={message.authorID.photoURL}/>
+      </div>
+      <div id="comment-textfield">
+        <input type="text" placeholder="Type your comment here!" size="80"
         value={newComment} onChange={handleNewComment} />
-        <button onClick={handleAddComment}>Add Comment</button>
+        <button onClick={handleAddComment}>Add</button>
       </div>
     </div>
   );

@@ -85,13 +85,16 @@ const Discussion = () => {
     }
 
     async function handleAddComment(id, text, event) {
-
         const newMessages = messages.map((message) => {
         if (message.id === id) {
             //if(event.key === "Enter"){
             const newComments = [
             ...message.comments,
-            { id: message.comments.length, text: text },
+            { 
+                id: message.comments.length, 
+                text: text,
+                authorID_com: currentUser,
+            },
             ];
             return { ...message, comments: newComments };
             //}
@@ -127,28 +130,41 @@ const Discussion = () => {
         <div>
         <h1>Discussion Board</h1>
         <div>
-            <center><input type="text" id="floatingInput" placeholder="Start a new thread!" value={newMessage} onChange={handleNewMessage} onKeyDown={handleKeyPress}/></center>
+            <center><input type="text" id="floatingInput" placeholder="Start a new thread!" 
+            value={newMessage} onChange={handleNewMessage} onKeyDown={handleKeyPress}/></center>
         </div>
+        
         
         <ul>
             {messages.map((message) => (
             <h3>
-            <li key={message.id}>
-                <Message
-                message={message}
-                onVoteMessage={handleVoteMessage}
-                onAddComment={handleAddComment}
-                onDeleteMessage={handleDeleteMessage}
-                />
-                
-                <ul>
-                {message.comments.map((comment) => (
-                    <li key={comment.id}>
-                    <Comment comment={comment} />
-                    </li>
-                ))}
-                </ul>
-            </li>
+            
+                <li key={message.id}>
+                    <div className="message">
+                    <Message
+                    message={message}
+                    onVoteMessage={handleVoteMessage}
+                    onAddComment={handleAddComment}
+                    onDeleteMessage={handleDeleteMessage}
+                    />
+                    </div>
+                    
+                    <div className="comment-line" >
+                    <ul>
+                    {message.comments.map((comment) => (
+                        <li key={comment.id}>
+                        <Avatar 
+                            alt="Author Profile" 
+                            src={comment.authorID_com.photoURL} 
+                            sx={{width:25, height:25}}
+                        />
+                        <Comment comment={comment}/>
+                        </li>
+                    ))}
+                    </ul>
+                    </div>
+                </li>
+            
             </h3>
             ))}
          </ul>
