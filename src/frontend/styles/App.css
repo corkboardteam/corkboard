@@ -113,6 +113,7 @@ button:hover {
 
 h1 {
   text-align: center;
+  padding: 40px 0px 0px 0px;
 }
 
 h2 {
@@ -150,7 +151,7 @@ h2 {
 h3{
   display: flex;
   position: relative;
-  padding: 2px 6px 6px -400px;
+  padding: 2px 6px 6px 20px;
   width: 60%;
   align-items: center;
   flex-direction: column;
@@ -196,14 +197,19 @@ h3{
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding: 1rem;
 }
 
 .msg-text {
-  padding: 1rem;
+  padding: 2rem;
+  position: absolute;
+  justify-content: center;
   overflow-wrap: break-word;
 }
 
 h4 {
+  position: absolute;
   font-weight: normal;
   font-size: 80%;  
+  
 }

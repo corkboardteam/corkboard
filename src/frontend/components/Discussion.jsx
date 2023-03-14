@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import Message from "./Message.jsx";
 import { UserAuth } from '../../backend/authContext';
 import Avatar from '@mui/material/Avatar';
@@ -125,9 +125,6 @@ const Discussion = () => {
 
     return (
         <div>
-        <div className="w-100 text-center mt-2">
-        Go back to <Link to="/Fridge"> Fridge</Link>
-        </div>
         <h1>Discussion Board</h1>
         <div>
             <center><input type="text" id="floatingInput" placeholder="Start a new thread!" value={newMessage} onChange={handleNewMessage} onKeyDown={handleKeyPress}/></center>
@@ -136,7 +133,6 @@ const Discussion = () => {
         <ul>
             {messages.map((message) => (
             <h3>
-                
             <li key={message.id}>
                 <Message
                 message={message}
@@ -144,9 +140,7 @@ const Discussion = () => {
                 onAddComment={handleAddComment}
                 onDeleteMessage={handleDeleteMessage}
                 />
-                <div id="avatar-container">
-                <Avatar alt="Author Profile" src={message.authorID.photoURL}/>
-                </div>
+                
                 <ul>
                 {message.comments.map((comment) => (
                     <li key={comment.id}>
@@ -155,11 +149,8 @@ const Discussion = () => {
                 ))}
                 </ul>
             </li>
-            
             </h3>
-            
             ))}
-            
          </ul>
         </div>
     );
