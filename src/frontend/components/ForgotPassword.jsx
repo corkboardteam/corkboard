@@ -19,7 +19,7 @@ const ForgotPassword =() => {
   
   useEffect(() => {
     if (currentUser != null) {
-      navigate('/Dashboard');
+      navigate('/Fridge');
     } 
     console.log(currentUser)
   },[currentUser, navigate]);

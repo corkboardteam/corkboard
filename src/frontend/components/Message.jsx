@@ -15,16 +15,19 @@ function Message(props) {
 
   return (
     <div>
-      <div>{message.text}</div>
+      <div class="msg-text">{message.text}</div>
       <div id="vote-buttons">
         <button onClick={() => onVoteMessage(message.id, "upvote")}>↑</button>
         <span>{message.votes}</span>
         <button onClick={() => onVoteMessage(message.id, "downvote")}>↓</button>
       </div>
-      <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
-      <div>
-        <center><input type="text" id="floatingComment" placeholder="Add a comment here." value={newComment} onChange={handleNewComment} onKeyDown={handleAddComment}/></center>
-        
+      <div id="delete">
+        <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
+      </div>
+      <div id="comment-box">
+        <input type="text" placeholder="Add a comment here!" size="80"
+        value={newComment} onChange={handleNewComment} />
+        <button onClick={handleAddComment}>Add Comment</button>
       </div>
     </div>
   );
