@@ -1,6 +1,7 @@
 import '../styles/Calendar.css';
 import React, { useState, useEffect } from "react";
 import User from "../../backend/custom_classes/user";
+import { UserAuth } from "../../backend/authContext";
 import { getCalendar, addGroceryToCalendar, addTripToCalendar, removeTripFromCalendar } from "../../backend/custom_classes/calendar";
 
 
@@ -23,8 +24,15 @@ const Calendar = () => {
         "December",
     ];
     const [trips, setTrips] = useState([]);
+    const { currentUser } = UserAuth();
 
-    const renderCalendar = () => {
+    useEffect(() => {
+        const highlightedDates = ["03/14/2023", "03/17/2023", "03/20/2023"];
+        renderCalendar(highlightedDates);
+    }, [currYear, currMonth]);
+
+
+    const renderCalendar = (highlightedDates) => {
         const daysTag = document.querySelector(".days");
         const currentDate = document.querySelector(".current-date");
         let firstDayofMonth = new Date(currYear, currMonth, 1).getDay();
@@ -44,7 +52,24 @@ const Calendar = () => {
             currYear === new Date().getFullYear()
             ? "active"
             : "";
-        liTag += `<li class="${isToday}">${i}</li>`;
+        //const currentDateStr = `${currYear}-${currMonth + 1}-${i}`;
+        let isHighlighted = "";
+        highlightedDates.forEach((dateString) => {
+            const dateParts = dateString.split("/");
+            const year = parseInt(dateParts[2], 10);
+            const month = parseInt(dateParts[0], 10) - 1; // January is 0
+            const day = parseInt(dateParts[1], 10);
+            const date = new Date(year, month, day);
+            if (
+                date.getFullYear() === currYear &&
+                date.getMonth() === currMonth &&
+                date.getDate() === i
+            ) {
+                isHighlighted = "highlighted";
+            }
+        });
+        liTag += `<li class="${isToday} ${isHighlighted}">${i}</li>`;
+        //liTag += `<li class="${isToday}">${i}</li>`;
         }
 
         for (let i = lastDayofMonth; i < 6; i++) {
@@ -54,9 +79,7 @@ const Calendar = () => {
         daysTag.innerHTML = liTag;
     };
 
-    useEffect(() => {
-        renderCalendar();
-    }, [currYear, currMonth]);
+    
 
     const handlePrevNextClick = (event) => {
         const prevNextIcon = event.target.closest(".icons span");
@@ -76,10 +99,10 @@ const Calendar = () => {
         });
     };
 
-    const handleDateClick = (event) => {
-        const [clkDate, setClkDate] = useState(new Date());
+    // const handleDateClick = (event) => {
+    //     const [clkDate, setClkDate] = useState(new Date());
 
-    }
+    // }
 
     return (
         <div className="wrapper">
