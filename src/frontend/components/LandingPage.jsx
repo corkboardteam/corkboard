@@ -1,13 +1,24 @@
 import React from "react";
 import { CardContent, CardMedia, Container, Grid, styled, Typography, Paper } from "@mui/material/";
 import CssBaseline from '@mui/material/CssBaseline';
+import { pink } from '@mui/material/colors';
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import KitchenIcon from '@mui/icons-material/Kitchen';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 // // This page will introduce our web app and give an overview of the features. 
 // // It will also contain buttons for login and signup page which will redirect the user.
+function HomeIcon(props: SvgIconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+    </SvgIcon>
+  );
+}
+
 
 const HeroContainer = styled(Container)(({ theme }) => ({
   // backgroundImage: `url(${"https://www.newhomesource.com/learn/wp-content/uploads/2019/10/open-floor-plan.jpg.webp"})`,
-  height: "calc(100vh - 64px)",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
@@ -27,6 +38,11 @@ const HeroContainer = styled(Container)(({ theme }) => ({
 function LandingPage() {  
   return (
     <>
+    {/* <Container sx={{ border: 1 }}> */}
+    <Container>
+        <HomeIcon sx={{ color: pink[500], fontSize: 40, marginLeft: '150px', marginTop: '100px', transform: `rotate(-25deg)` }} />
+        <KitchenIcon color="primary" sx={{ fontSize: 40, position: 'absolute', right: '200px', marginTop: '90px', transform: `rotate(25deg)` }} />
+    </Container>
       <HeroContainer component={Paper} elevation={0} mb="4" maxWidth="false">
         <Typography variant="h2" fontWeight='bold' component="h1" >
           Welcome to Corkboard! 
@@ -36,11 +52,16 @@ function LandingPage() {
         </Typography>
       </HeroContainer>
       {/* <CssBaseline/> */}
+    <Container sx={{display: 'flex',  justifyContent: "center",}}>
+        <ListAltIcon color="success" sx={{ fontSize: 40, marginLeft: '-50px', marginTop: '50px', transform: `rotate(-25deg)` }} />
+    </Container>
       <Container maxWidth="false" sx={{backgroundColor:'white' }}>
       <CardMedia
               component="img"
               // image="https://www.tastingtable.com/img/gallery/the-clever-way-grocery-stores-stock-products/l-intro-1660768883.jpg"
               image={require("../assets/Screenshot 2023-03-13 214332.png")}
+              sx={{ border: 1,
+                transform: `scale(0.75)`, }}
             />
         
       </Container>
