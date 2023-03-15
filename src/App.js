@@ -17,16 +17,17 @@ import Calendar from './frontend/components/Calendar'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#BBC4EB',
-    },
-    secondary: {
-      main: '#DFE9EB',
-    },
-  },
+  // palette: {
+  //   primary: {
+  //     main: '#BBC4EB',
+  //   },
+  //   secondary: {
+  //     main: '#DFE9EB',
+  //   },
+  // },
   typography: {
     fontFamily: [
+      'Manrope',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
@@ -38,11 +39,6 @@ const theme = createTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(','),
-
-    // button: {
-    
-    // },
-    
   },
     
 });
