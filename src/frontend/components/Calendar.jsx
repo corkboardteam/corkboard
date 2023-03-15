@@ -27,9 +27,13 @@ const Calendar = () => {
     const { currentUser } = UserAuth();
 
     useEffect(() => {
-        const highlightedDates = ["03/14/2023", "03/17/2023", "03/20/2023"];
-        renderCalendar(highlightedDates);
-    }, [currYear, currMonth]);
+        getHighlightedDates().then((highlightedDates) => {
+            renderCalendar(highlightedDates);
+        });
+        // const highlightedDates = [];
+        // highlightedDates.push(getHighlightedDates());
+        // renderCalendar(highlightedDates);
+    }, [currYear, currMonth, currDate]);
 
 
     const renderCalendar = (highlightedDates) => {
@@ -98,6 +102,58 @@ const Calendar = () => {
         return nextMonth;
         });
     };
+
+    async function getHighlightedDates() {
+        const usr = new User(currentUser);
+        const allUsers = await usr.getAllUsers();
+        const startDate = new Date(currDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const endDate = new Date(currDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        let withinRange = [];
+        let tripDates = [];
+
+        allUsers.forEach((usr) => {
+            if (usr.trips) {
+                for (const trip in usr.trips) {
+                    const tripDate = new Date(usr.trips[trip].date)
+                    if (tripDate.getTime() >= startDate.getTime() && tripDate.getTime() <= endDate.getTime())
+                        withinRange.push({ displayName: usr.displayName, email: usr.email, date: usr.trips[trip].date })
+                        tripDates.push(usr.trips[trip].date)
+                }
+            }
+        })
+        withinRange = withinRange.filter((u) => u.email !== currentUser.email)
+
+        let dateToUsers = {}
+
+        withinRange.forEach((trip) => {
+            if (dateToUsers.hasOwnProperty(trip.date)) {
+                dateToUsers[trip.date].push({ displayName: trip.displayName, email: trip.email })
+            }
+            else {
+                dateToUsers[trip.date] = []
+                dateToUsers[trip.date].push({ displayName: trip.displayName, email: trip.email })
+            }
+        })
+
+        console.log(dateToUsers)
+        const uniqUsersAll = { ...dateToUsers }
+
+        Object.keys(dateToUsers).forEach((key) => {
+            const uniq = new Set()
+            let uniqUsers = []
+            dateToUsers[key].forEach((user) => {
+                if (!uniq.has(user.email)) {
+                    uniq.add(user.email)
+                    uniqUsers.push(user)
+                }
+            })
+            uniqUsersAll[key] = uniqUsers
+        })
+
+        console.log(uniqUsersAll)
+        return tripDates
+
+    }
 
     // const handleDateClick = (event) => {
     //     const [clkDate, setClkDate] = useState(new Date());

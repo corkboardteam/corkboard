@@ -94,5 +94,5 @@ header .current-date{
   background: #f2f2f2;
 }
 .highlighted::before {
-  background-color: #f9d9be;
+  background-color: #cfcdf489;
 }
