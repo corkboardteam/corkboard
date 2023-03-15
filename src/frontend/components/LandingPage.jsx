@@ -1,10 +1,12 @@
 import React from "react";
 import { CardContent, CardMedia, Container, Grid, styled, Typography, Paper } from "@mui/material/";
 import CssBaseline from '@mui/material/CssBaseline';
-import { pink } from '@mui/material/colors';
+import { pink , orange } from '@mui/material/colors';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import CreateIcon from '@mui/icons-material/Create';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 // // This page will introduce our web app and give an overview of the features. 
 // // It will also contain buttons for login and signup page which will redirect the user.
@@ -41,6 +43,7 @@ function LandingPage() {
     {/* <Container sx={{ border: 1 }}> */}
     <Container>
         <HomeIcon sx={{ color: pink[500], fontSize: 40, marginLeft: '150px', marginTop: '100px', transform: `rotate(-25deg)` }} />
+        <CreateIcon sx={{ color: orange[500], fontSize: 40, marginLeft: '250px', marginBottom: '70px' }} />
         <KitchenIcon color="primary" sx={{ fontSize: 40, position: 'absolute', right: '200px', marginTop: '90px', transform: `rotate(25deg)` }} />
     </Container>
       <HeroContainer component={Paper} elevation={0} mb="4" maxWidth="false">
@@ -54,6 +57,7 @@ function LandingPage() {
       {/* <CssBaseline/> */}
     <Container sx={{display: 'flex',  justifyContent: "center",}}>
         <ListAltIcon color="success" sx={{ fontSize: 40, marginLeft: '-50px', marginTop: '50px', transform: `rotate(-25deg)` }} />
+        <TaskAltIcon color="secondary" sx={{ fontSize: 40, marginLeft: '-150px', marginTop: '50px', transform: `rotate(-25deg)` }} />
     </Container>
       <Container maxWidth="false" sx={{backgroundColor:'white' }}>
       <CardMedia
@@ -61,7 +65,8 @@ function LandingPage() {
               // image="https://www.tastingtable.com/img/gallery/the-clever-way-grocery-stores-stock-products/l-intro-1660768883.jpg"
               image={require("../assets/Screenshot 2023-03-13 214332.png")}
               sx={{ border: 1,
-                transform: `scale(0.75)`, }}
+                transform: `scale(0.75)`,
+                boxShadow: 3 }}
             />
         
       </Container>
