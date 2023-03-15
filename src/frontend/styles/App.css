@@ -105,6 +105,7 @@ button:hover {
 
 h1 {
   text-align: center;
+  padding: 40px 0px 0px 0px;
 }
 
 h2 {
@@ -118,7 +119,7 @@ h2 {
   padding: 5%
 }
 
-ul>li {
+.user-trip-list ul>li {
   margin-left: 10px;
 }
 
@@ -142,22 +143,25 @@ ul>li {
 h3{
   display: flex;
   position: relative;
-  padding: 2px 6px 6px -400px;
+  padding: 2px 6px 6px 20px;
   width: 60%;
   align-items: center;
   flex-direction: column;
   margin: 20px auto;
   border: 3px solid rgb(164, 165, 245);
+  border-radius: 20px;
+  list-style-type: none;
 }
 
 #avatar-container {
   display: flex;
   position: relative;
-  align-items: flex-end;
-  flex-direction: row-reverse;
+  align-items: center;
   justify-content: flex-end;
   padding: 1rem;
   gap: 1rem;
+  right: 0;
+  margin: 1rem 0px 0px 0px;
 }
 
 #vote-buttons {
@@ -170,4 +174,44 @@ h3{
   padding: 8px 4px 8px 8px;
   position: absolute;
   top: 0;
+}
+
+#delete{
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  right: 0;
+  padding: 8px 8px 8px 8px;
+  position: absolute;
+  top: 0;
+}
+
+#comment-textfield{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+}
+
+.msg-text {
+  padding: 2rem 0px 2rem 1rem;
+  position: absolute;
+  justify-content: center;
+  overflow-wrap: break-word;
+}
+
+h4 {
+  position: absolute;
+  font-weight: normal;
+  font-size: 80%;
+  margin-left: 5px;
+}
+
+.comment-line ul>li {
+  display: flex;
+  padding: 5px;
+  margin-left: -1em;
+  list-style-type: none;
 }

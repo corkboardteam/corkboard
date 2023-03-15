@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Avatar from '@mui/material/Avatar';
 
 function Message(props) {
   const { message, onVoteMessage, onAddComment, onDeleteMessage } = props;
@@ -15,16 +16,22 @@ function Message(props) {
 
   return (
     <div>
-      <div>{message.text}</div>
+      <div class="msg-text">{message.text}</div>
       <div id="vote-buttons">
         <button onClick={() => onVoteMessage(message.id, "upvote")}>↑</button>
         <span>{message.votes}</span>
         <button onClick={() => onVoteMessage(message.id, "downvote")}>↓</button>
       </div>
-      <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
-      <div>
-        <center><input type="text" id="floatingComment" placeholder="Add a comment here." value={newComment} onChange={handleNewComment} onKeyDown={handleAddComment}/></center>
-        
+      <div id="delete">
+        <button onClick={() => onDeleteMessage(message.id)}>Delete</button>
+      </div>
+      <div id="avatar-container">
+        <Avatar alt="Author Profile" src={message.authorID.photoURL}/>
+      </div>
+      <div id="comment-textfield">
+        <input type="text" placeholder="Type your comment here!" size="80"
+        value={newComment} onChange={handleNewComment} />
+        <button onClick={handleAddComment}>Add</button>
       </div>
     </div>
   );

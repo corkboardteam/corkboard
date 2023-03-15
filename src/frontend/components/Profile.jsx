@@ -67,6 +67,8 @@ function Profile() {
     }
  
     if (phone !== currentUser.phoneNumber) {
+      if(phone === '')
+        return;
       handlePhoneNumber(newPhoneNumber);
       setUpdateAlert(true);
     }

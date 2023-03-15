@@ -1,5 +1,4 @@
 import React from 'react'
-import Dashboard from './frontend/components/Dashboard'
 import GroceryList from './frontend/components/GroceryList'
 import Login from './frontend/components/Login'
 import Signup from './frontend/components/Signup'
@@ -52,7 +51,6 @@ function App() {
           {location.pathname !== '/Login' && location.pathname !== '/Signup' && <Navbar />}
           <Routes>
             <Route path='/' element={<LandingPage />} />
-            <Route path='/Dashboard' element={<Dashboard />} />
             <Route path='/Login' element={<Login />} />
             <Route path='/Signup' element={<Signup />} />
             <Route path='/Group' element={<Protected><Group /></Protected>} />
