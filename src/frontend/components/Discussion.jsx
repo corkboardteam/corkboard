@@ -130,7 +130,7 @@ const Discussion = () => {
         <div>
         <h1>Discussion Board</h1>
         <div>
-            <center><input type="text" id="floatingInput" placeholder="Start a new thread!" 
+            <center><input type="text" id="floatingInput" placeholder="Start a new thread about anything: a grocery trip, or maybe an item in the fridge!" 
             value={newMessage} onChange={handleNewMessage} onKeyDown={handleKeyPress}/></center>
         </div>
         
