@@ -90,11 +90,10 @@ const Navbar = (props) => {
             <Typography
               variant="h6"
               noWrap
-              component={Link} to="/Dashboard"
+              component={Link} to="/Fridge"
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
-                // fontFamily: 'Kaleko 205 Medium',
                 fontWeight: 'bold',
                 fontSize: '1.6rem',
                 letterSpacing: '.2rem',
@@ -150,12 +149,11 @@ const Navbar = (props) => {
             <Typography
               variant="h5"
               noWrap
-              component={Link} to="/Dashboard"
+              component={Link} to="/Fridge"
               sx={{
                 mr: 2,
                 display: { xs: 'flex', md: 'none' },
                 flexGrow: 1,
-                fontFamily: 'Kaleko 205 Medium', 
                 fontWeight: 'bold',
                 letterSpacing: '.3rem',
                 color: 'inherit',
