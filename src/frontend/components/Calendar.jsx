@@ -2,6 +2,9 @@ import '../styles/Calendar.css';
 import React, { useState, useEffect } from "react";
 import User from "../../backend/custom_classes/user";
 import { UserAuth } from "../../backend/authContext";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from "@mui/material/DialogActions";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { handleFindPeopleToShopWith } from "./GroceryList.jsx";
 import { Popup } from "./Popup.jsx"
 import { getCalendar, addGroceryToCalendar, addTripToCalendar, removeTripFromCalendar } from "../../backend/custom_classes/calendar";
@@ -25,9 +28,12 @@ const Calendar = () => {
         "November",
         "December",
     ];
-    const [trips, setTrips] = useState([]);
+    const [withinRange, setWithinRange] = useState([]);
     const { currentUser } = UserAuth();
     const [dateToUsers, setDateToUsers] = useState({});
+    const [openDialog, setOpenDialig] = React.useState(false);
+    const [shopWith, setShopWith] = useState([])
+    const [usersWithTrips, setUsersWithTrips] = useState([])
 
     useEffect(() => {
         getHighlightedDates().then((highlightedDates) => {
@@ -146,7 +152,7 @@ const Calendar = () => {
                 }
             }
         })
-        withinRange = withinRange.filter((u) => u.email !== currentUser.email)
+        //withinRange = withinRange.filter((u) => u.email !== currentUser.email)
 
         let dateToUsers = {}
 
@@ -180,62 +186,240 @@ const Calendar = () => {
     }
 
     
+    // const handleDateClick = (event) => {
+    //     const clickedDate = new Date(currYear, currMonth, parseInt(event.target.innerText));
+    //     console.log(clickedDate);
+    //     const date = new Date(clickedDate);
+    //     const formattedDate = date.toLocaleDateString('en-US');
+    //     console.log(formattedDate);
+    //     if (usersWithTrips) {
+    //         const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
+    //         const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
+    //         alert(userMessage);
+    //     }
+    //     const usersOnDate = [];
+    //     Object.entries(dateToUsers).forEach(([key, value]) => {
+    //         const dateParts = key.split('/');
+    //         const year = parseInt(dateParts[2], 10);
+    //         const month = parseInt(dateParts[0], 10) - 1; // January is 0
+    //         const day = parseInt(dateParts[1], 10);
+    //         const date = new Date(year, month, day);
+    //         if (
+    //             date.getFullYear() === currYear &&
+    //             date.getMonth() === currMonth &&
+    //             date.getDate() === parseInt(event.target.innerText)
+    //         ) {
+    //             usersOnDate.push(...value);
+    //         }
+    //     });
+
+    //     if (usersOnDate.length > 0) {
+    //         const userStrings = usersOnDate.map((user) => `${user.displayName} (${user.email})`);
+    //         const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
+    //         alert(userMessage);
+    //     }
+    //     // const usersWithTrips = dateToUsers[formattedDate];
+        
+    //     // if (usersWithTrips) {
+    //     //   const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
+    //     //   //Popup(clickedDate, usersWithTrips, onClick);
+    //     //   const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
+    //     //   alert(userMessage);
+    //     // }
+    //     // console.log(usersWithTrips);
+    // }
     const handleDateClick = (event) => {
         const clickedDate = new Date(currYear, currMonth, parseInt(event.target.innerText));
-        console.log(clickedDate);
-        const date = new Date(clickedDate);
-        const formattedDate = date.toLocaleDateString('en-US');
-        console.log(formattedDate);
-        
-        // const usersWithTrips = dateToUsers[formattedDate];
-        
-        // if (usersWithTrips) {
-        //   const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
-        //   //Popup(clickedDate, usersWithTrips, onClick);
-        //   const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
-        //   alert(userMessage);
-        // }
-        // console.log(usersWithTrips);
-        
-        
+        const formattedDate = clickedDate.toLocaleDateString('en-US');
+        handleFindPeopleToShopWith(formattedDate);
+        // Get the list of users for the clicked date
+        const usersOnDate = [];
+        Object.entries(dateToUsers).forEach(([key, value]) => {
+          const dateParts = key.split('/');
+          const year = parseInt(dateParts[2], 10);
+          const month = parseInt(dateParts[0], 10) - 1; // January is 0
+          const day = parseInt(dateParts[1], 10);
+          const date = new Date(year, month, day);
+          if (
+            date.getFullYear() === currYear &&
+            date.getMonth() === currMonth &&
+            date.getDate() === parseInt(event.target.innerText)
+          ) {
+            usersOnDate.push(...value);
+          }
+        });
+      
+        // If there are users for the clicked date, show a dialog box with their details
+        if (usersOnDate.length > 0) {
+          const userRows = usersOnDate.map(user => (
+            <TableRow key={user.email}>
+              <TableCell>{user.displayName}</TableCell>
+              <TableCell>{user.email}</TableCell>
+            </TableRow>
+          ));
+      
+          setOpenDialig(true);
+          setUsersWithTrips(userRows);
+        }
       }
+      
 
+    async function handleFindPeopleToShopWith(date) {
+        console.log(date)
+        const usr = new User(currentUser)
+        const allUsers = await usr.getAllUsers()
+        console.log(allUsers)
+
+        let usersWithSameDate = []
+        allUsers.forEach((usr) => {
+            if (usr.trips) {
+                for (const trip in usr.trips) {
+                    if (usr.trips[trip].date === date)
+                        usersWithSameDate.push({ displayName: usr.displayName, email: usr.email })
+                }
+            }
+        })
+        usersWithSameDate = usersWithSameDate.filter((u) => u.email !== currentUser.email)
+        const uniq = new Set()
+        let uniqUsers = []
+        usersWithSameDate.forEach((user) => {
+            if (!uniq.has(user.email)) {
+                uniq.add(user.email)
+                uniqUsers.push(user)
+            }
+        })
+
+        setShopWith(uniqUsers)
+        setOpenDialig(true)
+    }
+    function handleCloseDialog() {
+        setOpenDialig(false)
+        // setShopWith([])
+    }
+
+    // return (
+    //     <div className="wrapper">
+    //       <header>
+    //         <p className="current-date"></p>
+    //         <div className="icons">
+    //           <span
+    //             id="prev"
+    //             className="material-symbols-rounded"
+    //             onClick={handlePrevNextClick}
+    //           >
+    //             {"<"}
+    //           </span>
+    //           <span
+    //             id="next"
+    //             className="material-symbols-rounded"
+    //             onClick={handlePrevNextClick}
+    //           >
+    //             {">"}
+    //           </span>
+    //         </div>
+    //       </header>
+    //       <div className="calendar">
+    //         <ul className="weeks">
+    //           <li>Sun</li>
+    //           <li>Mon</li>
+    //           <li>Tue</li>
+    //           <li>Wed</li>
+    //           <li>Thu</li>
+    //           <li>Fri</li>
+    //           <li>Sat</li>
+    //         </ul>
+    //         <ul className="days" onClick={handleDateClick}></ul>
+    //       </div>
+    //       <Dialog open={openDialog} onClose={handleCloseDialog}>
+    //         {shopWith.length === 0 ? (
+    //           <div className="dialog-div">
+    //             Sorry, we couldn't find anyone else going grocery shopping on this date
+    //           </div>
+    //         ) : (
+    //           <div className="dialog-div">
+    //             We found the following users who are going grocery shopping on this date!
+    //             Shoot them an email :)
+    //             <ul>
+    //               {shopWith.map((usr) => {
+    //                 return (
+    //                   <li key={usr.email}>
+    //                     {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
+    //                   </li>
+    //                 );
+    //               })}
+    //             </ul>
+    //           </div>
+    //         )}
+    //         <DialogActions>
+    //           <Button variant="outlined" onClick={handleCloseDialog}>
+    //             Close
+    //           </Button>
+    //         </DialogActions>
+    //       </Dialog>
+    //     </div>
+    //   );
 
     return (
-        <div className="wrapper">
-        <header>
+        <div className="calendar-container">
+          <header>
             <p className="current-date"></p>
             <div className="icons">
-            <span
+              <span
                 id="prev"
                 className="material-symbols-rounded"
                 onClick={handlePrevNextClick}
-            >
+              >
                 {"<"}
-            </span>
-            <span
+              </span>
+              <span
                 id="next"
                 className="material-symbols-rounded"
                 onClick={handlePrevNextClick}
-            >
+              >
                 {">"}
-            </span>
+              </span>
             </div>
-        </header>
-        <div className="calendar">
+          </header>
+          <div className="calendar">
             <ul className="weeks">
-            <li>Sun</li>
-            <li>Mon</li>
-            <li>Tue</li>
-            <li>Wed</li>
-            <li>Thu</li>
-            <li>Fri</li>
-            <li>Sat</li>
+              <li>Sun</li>
+              <li>Mon</li>
+              <li>Tue</li>
+              <li>Wed</li>
+              <li>Thu</li>
+              <li>Fri</li>
+              <li>Sat</li>
             </ul>
             <ul className="days" onClick={handleDateClick}></ul>
+          </div>
+          <Dialog open={openDialog} onClose={handleCloseDialog}>
+            {
+              shopWith.length === 0 ?
+                <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping on this date</div> :
+                <div className="dialog-div">
+                  We found the following users who are going grocery shopping on the same date as you!
+                  Shoot them an email :)
+                  <ul>
+                    {
+                      shopWith.map((usr) => {
+                        return (
+                          <li key={usr.email}>
+                            {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
+                          </li>
+                        )
+                      })
+                    }
+                  </ul>
+                </div>
+            }
+            <DialogActions>
+              <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </div>
-        </div>
-    );
+      );
+      
+      
 }
 
 export default Calendar;
