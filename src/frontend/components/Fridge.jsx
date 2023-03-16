@@ -134,7 +134,7 @@ function Fridge() {
         const newQuantity = e.target.quantity.value
         const newStore = e.target.whereToBuy.value
 
-        if (parseInt(e.target.limit.value) <= 0 || parseInt(e.target.quantity.value) <= 0) {
+        if (parseInt(e.target.limit.value) <= 0 || parseInt(e.target.quantity.value) < 0) {
             alert("Your current stock or stock limit should be positive")
             return;
         }
@@ -188,11 +188,16 @@ function Fridge() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        if (e.target.limit.value === "0" || e.target.quantity.value === "0") {
-            alert("Your current stock or stock limit can't be zero!")
-            //resetSubmitForm(e)
+        if (parseInt(e.target.limit.value) <= 0 || parseInt(e.target.quantity.value) < 0) {
+            alert("Your current stock or stock limit should be positive")
             return;
         }
+
+        // if (e.target.limit.value === "0" || e.target.quantity.value === "0") {
+        //     alert("Your current stock or stock limit can't be zero!")
+        //     //resetSubmitForm(e)
+        //     return;
+        // }
 
         if (parseInt(e.target.limit.value) < parseInt(e.target.quantity.value)) {
             alert("Your current stock shouldn't be bigger than your stock limit!")
@@ -245,6 +250,7 @@ function Fridge() {
         }
 
         const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid, selectedDate.toLocaleDateString())
+        
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
