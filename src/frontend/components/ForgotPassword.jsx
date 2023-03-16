@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Alert from '@mui/material/Alert';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import {Alert, Container, Button, TextField, Box, Grid, Typography} from '@mui/material';
+
 import { Link, useNavigate } from 'react-router-dom'
 import { UserAuth } from '../../backend/authContext';
 
@@ -41,63 +35,44 @@ const ForgotPassword =() => {
 
 
   return (
-    <Box sx={{ backgroundColor: '#f5f5f5',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <CssBaseline />
-      <Grid container component="main" sx={{ 
-      mt: 4,
-      mb: 10,
-      px: 14,
-      py: 8,
-      justifyContent: 'center',
-      fontFamily: 'Kaleko 205 Medium',
-      color: 'inherit',
-      textDecoration: 'none',}}>
-       <Grid item xs={8} p={6} sm={16} md={5} component={Paper} elevation={8} square> 
-        <Box
-          sx={{
-            my: 4,
-            mx: 'auto',
-            p: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Typography component="h1" variant="h7" fontFamily='Kaleko 205 Medium' pb={3} fontWeight='bold'>
-            Forgot Password?
-          </Typography>
-
-          <Typography component="h3" variant="body1" fontFamily='Kaleko 205 Medium'fontWeight='normal' >
-            Enter the email you used to sign up and we'll send you instructions to reset your password!
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, pt: 4, fontWeight: "bold" }}>
-            Email Address
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Enter your email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 4 }}
-            >
-              Send Reset Instructions
-            </Button>
-            {resetAlert && (
+    <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box maxWidth="50vw" sx={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Grid sx={{ mt: 4 }}>
+        <Typography component="h1" fontSize="2.8em" fontWeight='600'>
+          Forgot Password?
+        </Typography>
+      </Grid>
+      <Container sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+        Enter the email you used to sign up and we'll send you instructions to reset your password!
+      </Container>
+      <Grid sx={{ mt: 4 }}>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, fontSize: "1em", fontWeight: "bold" }}>
+          Email
+          <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Enter your email"
+          name="email"
+          autoComplete="email"
+          autoFocus
+          />
+          <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 4 }}
+          >
+            Send Reset Instructions
+          </Button>
+          {resetAlert && (
               <Alert severity="success">Check your email for further instructions</Alert>
             )}
-          </Box>
         </Box>
-        </Grid>
       </Grid>
     </Box>
+    </Container>
   )
 }
 

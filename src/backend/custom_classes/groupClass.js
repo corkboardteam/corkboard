@@ -34,12 +34,12 @@ class GroupClass {
           uid: user.uid,
           name: user.displayName,
           email: user.email,
+          phone: user.phoneNumber
         }; 
         const groupData = {
           owner: member,
           uid: this.uid,
           name: groupName,
-          desc: null,
           fridge: fridgeID,
           members: arrayUnion(member),
           totalMembers: 1
@@ -160,7 +160,6 @@ class GroupClass {
       }
       const newGroupData = {
         name: newName,
-        desc: newDesc
       }
       const data = await this.data();
       const updatedGroupData = { ...data, ...newGroupData };
@@ -185,6 +184,7 @@ class GroupClass {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
+        phone: user.phoneNumber
       };
       
       // const groupData = groupDoc.data();
@@ -201,9 +201,43 @@ class GroupClass {
     }
   }
 
+  async updateMember(user, updatedUserData) {
+    try {
+      const exists = await this.exists();
+      if (!exists) {
+        throw new Error('Group does not exist');
+      }
+      const data = await this.data();
+      const members = data.members;
+
+      // Find the index of the member to be updated
+      const memberIndex = members.findIndex(member => member.uid === user.uid);
+
+      // If the member is not found, throw an error
+      if (memberIndex === -1) {
+        throw new Error('Member not found in the group');
+      }
+
+      // Update the member data with the new information
+      const updatedMember = {
+        ...members[memberIndex],
+        ...updatedUserData
+      };
+
+      // Replace the old member data with the updated data
+      members[memberIndex] = updatedMember;
+
+      // Save the updated members array back to the Firestore
+      await updateDoc(this.groupRef, { members: members });
+
+      console.log('Member updated:', updatedMember);
+    } catch (error) {
+      console.error('Error updating member data:', error);
+      throw error;
+    }
+  }
+
 }
-
-
 
 async function generateGroupUID() {
   const length = 8;

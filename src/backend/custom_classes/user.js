@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, query, where, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../firebase';
 
 class User {
@@ -59,6 +59,24 @@ class User {
     });
 
     return users
+  }
+
+  async getAllUsersWithGroupID(groupID) {
+    try {
+      const usersCollection = collection(db, 'users');
+      const groupQuery = query(usersCollection, where('groupID', '==', groupID));
+      const querySnapshot = await getDocs(groupQuery);
+  
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        users.push(doc.data());
+      });
+  
+      return users;
+    } catch (error) {
+      console.error('Error fetching users with specific groupID:', error);
+      throw error;
+    }
   }
 }
 
