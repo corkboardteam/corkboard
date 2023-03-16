@@ -2,6 +2,8 @@ import '../styles/Calendar.css';
 import React, { useState, useEffect } from "react";
 import User from "../../backend/custom_classes/user";
 import { UserAuth } from "../../backend/authContext";
+import { handleFindPeopleToShopWith } from "./GroceryList.jsx";
+import { Popup } from "./Popup.jsx"
 import { getCalendar, addGroceryToCalendar, addTripToCalendar, removeTripFromCalendar } from "../../backend/custom_classes/calendar";
 
 
@@ -25,6 +27,7 @@ const Calendar = () => {
     ];
     const [trips, setTrips] = useState([]);
     const { currentUser } = UserAuth();
+    const [dateToUsers, setDateToUsers] = useState({});
 
     useEffect(() => {
         getHighlightedDates().then((highlightedDates) => {
@@ -58,6 +61,7 @@ const Calendar = () => {
             : "";
         //const currentDateStr = `${currYear}-${currMonth + 1}-${i}`;
         let isHighlighted = "";
+        let usersOnDate = [];
         highlightedDates.forEach((dateString) => {
             const dateParts = dateString.split("/");
             const year = parseInt(dateParts[2], 10);
@@ -70,9 +74,25 @@ const Calendar = () => {
                 date.getDate() === i
             ) {
                 isHighlighted = "highlighted";
+                if (dateToUsers[dateString]) {
+                    usersOnDate = dateToUsers[dateString];
+                  }
             }
         });
-        liTag += `<li class="${isToday} ${isHighlighted}">${i}</li>`;
+        liTag += `<li class="${isToday} ${isHighlighted}" onClick="${handleDateClick}">${i}</li>`;
+
+        // liTag += `<li class="${isToday} ${isHighlighted}" data-date="${i}">
+        //           <div class="date">${i}</div>
+        //           <div class="user-list">
+        //             ${usersOnDate
+        //               .map(
+        //                 (user) =>
+        //                   `<div class="user" data-email="${user.email}">${user.displayName}</div>`
+        //               )
+        //               .join("")}
+        //           </div>
+        //        </li>`;
+        //liTag += `<li class="${isToday} ${isHighlighted}">${i}</li>`;
         //liTag += `<li class="${isToday}">${i}</li>`;
         }
 
@@ -81,10 +101,15 @@ const Calendar = () => {
         }
         currentDate.innerText = `${months[currMonth]} ${currYear}`;
         daysTag.innerHTML = liTag;
+        const usersInCalendar = document.querySelectorAll(".user");
+        usersInCalendar.forEach((user) => {
+            user.addEventListener("click", (e) => {
+            alert(`User email: ${e.currentTarget.dataset.email}`);
+            });
+        });
     };
 
     
-
     const handlePrevNextClick = (event) => {
         const prevNextIcon = event.target.closest(".icons span");
         const id = prevNextIcon.id;
@@ -152,13 +177,29 @@ const Calendar = () => {
 
         console.log(uniqUsersAll)
         return tripDates
-
     }
 
-    // const handleDateClick = (event) => {
-    //     const [clkDate, setClkDate] = useState(new Date());
+    
+    const handleDateClick = (event) => {
+        const clickedDate = new Date(currYear, currMonth, parseInt(event.target.innerText));
+        console.log(clickedDate);
+        const date = new Date(clickedDate);
+        const formattedDate = date.toLocaleDateString('en-US');
+        console.log(formattedDate);
+        
+        // const usersWithTrips = dateToUsers[formattedDate];
+        
+        // if (usersWithTrips) {
+        //   const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
+        //   //Popup(clickedDate, usersWithTrips, onClick);
+        //   const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
+        //   alert(userMessage);
+        // }
+        // console.log(usersWithTrips);
+        
+        
+      }
 
-    // }
 
     return (
         <div className="wrapper">
@@ -191,7 +232,7 @@ const Calendar = () => {
             <li>Fri</li>
             <li>Sat</li>
             </ul>
-            <ul className="days"></ul>
+            <ul className="days" onClick={handleDateClick}></ul>
         </div>
         </div>
     );
