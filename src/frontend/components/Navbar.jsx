@@ -18,7 +18,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../backend/authContext';
 
 
-const pages = ['Fridge', 'GroceryList', 'Discussion'];
+const pages = ['Fridge', 'GroceryList', 'Discussion', 'Calendar'];
 const settings = ['Profile', 'Logout'];
 
 const styles = {

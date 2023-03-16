@@ -9,6 +9,9 @@
 .wrapper{
   width: 500px;
   height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 15px 40px rgba(0,0,0,0.12);
@@ -30,7 +33,7 @@ header .icons span{
   color: #878787;
   text-align: center;
   line-height: 38px;
-  font-size: 1.9rem;
+  font-size: 2.2rem;
   user-select: none;
   border-radius: 50%;
 }
@@ -38,14 +41,18 @@ header .icons span{
   margin-right: -10px;
 }
 header .icons span:hover{
-  background: #f2f2f2;
+  background: #fffefe;
 }
 header .current-date{
-  font-size: 1.45rem;
+  padding: 10px;
+  font-size: 1.8rem;
   font-weight: 500;
+  align-self: center;
 }
 .calendar{
-  padding: 20px;
+  padding-top: 40px;
+  padding-left: 80px;
+  padding-right: 80px;
 }
 .calendar ul{
   display: flex;
@@ -59,7 +66,7 @@ header .current-date{
 .calendar li{
   color: #333;
   width: calc(100% / 7);
-  font-size: 1.07rem;
+  font-size: 1.2rem;
 }
 .calendar .weeks li{
   font-weight: 500;
@@ -95,7 +102,7 @@ header .current-date{
   background: #f2f2f2;
 }
 .highlighted::before {
-  background-color: #cfcdf489;
+  background-color: #adaae561;
 }
 .calendar-container {
   display:contents;

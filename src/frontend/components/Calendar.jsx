@@ -5,9 +5,6 @@ import { UserAuth } from "../../backend/authContext";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from "@mui/material/DialogActions";
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { handleFindPeopleToShopWith } from "./GroceryList.jsx";
-import { Popup } from "./Popup.jsx"
-import { getCalendar, addGroceryToCalendar, addTripToCalendar, removeTripFromCalendar } from "../../backend/custom_classes/calendar";
 
 
 const Calendar = () => {
@@ -137,8 +134,8 @@ const Calendar = () => {
     async function getHighlightedDates() {
         const usr = new User(currentUser);
         const allUsers = await usr.getAllUsers();
-        const startDate = new Date(currDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-        const endDate = new Date(currDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const startDate = new Date(currDate.getTime() - 45 * 24 * 60 * 60 * 1000);
+        const endDate = new Date(currDate.getTime() + 45 * 24 * 60 * 60 * 1000);
         let withinRange = [];
         let tripDates = [];
 
@@ -185,49 +182,6 @@ const Calendar = () => {
         return tripDates
     }
 
-    
-    // const handleDateClick = (event) => {
-    //     const clickedDate = new Date(currYear, currMonth, parseInt(event.target.innerText));
-    //     console.log(clickedDate);
-    //     const date = new Date(clickedDate);
-    //     const formattedDate = date.toLocaleDateString('en-US');
-    //     console.log(formattedDate);
-    //     if (usersWithTrips) {
-    //         const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
-    //         const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
-    //         alert(userMessage);
-    //     }
-    //     const usersOnDate = [];
-    //     Object.entries(dateToUsers).forEach(([key, value]) => {
-    //         const dateParts = key.split('/');
-    //         const year = parseInt(dateParts[2], 10);
-    //         const month = parseInt(dateParts[0], 10) - 1; // January is 0
-    //         const day = parseInt(dateParts[1], 10);
-    //         const date = new Date(year, month, day);
-    //         if (
-    //             date.getFullYear() === currYear &&
-    //             date.getMonth() === currMonth &&
-    //             date.getDate() === parseInt(event.target.innerText)
-    //         ) {
-    //             usersOnDate.push(...value);
-    //         }
-    //     });
-
-    //     if (usersOnDate.length > 0) {
-    //         const userStrings = usersOnDate.map((user) => `${user.displayName} (${user.email})`);
-    //         const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
-    //         alert(userMessage);
-    //     }
-    //     // const usersWithTrips = dateToUsers[formattedDate];
-        
-    //     // if (usersWithTrips) {
-    //     //   const userStrings = usersWithTrips.map((user) => `${user.displayName} (${user.email})`);
-    //     //   //Popup(clickedDate, usersWithTrips, onClick);
-    //     //   const userMessage = `Users with trips on ${formattedDate}: ${userStrings.join(', ')}`;
-    //     //   alert(userMessage);
-    //     // }
-    //     // console.log(usersWithTrips);
-    // }
     const handleDateClick = (event) => {
         const clickedDate = new Date(currYear, currMonth, parseInt(event.target.innerText));
         const formattedDate = clickedDate.toLocaleDateString('en-US');
@@ -297,68 +251,6 @@ const Calendar = () => {
         // setShopWith([])
     }
 
-    // return (
-    //     <div className="wrapper">
-    //       <header>
-    //         <p className="current-date"></p>
-    //         <div className="icons">
-    //           <span
-    //             id="prev"
-    //             className="material-symbols-rounded"
-    //             onClick={handlePrevNextClick}
-    //           >
-    //             {"<"}
-    //           </span>
-    //           <span
-    //             id="next"
-    //             className="material-symbols-rounded"
-    //             onClick={handlePrevNextClick}
-    //           >
-    //             {">"}
-    //           </span>
-    //         </div>
-    //       </header>
-    //       <div className="calendar">
-    //         <ul className="weeks">
-    //           <li>Sun</li>
-    //           <li>Mon</li>
-    //           <li>Tue</li>
-    //           <li>Wed</li>
-    //           <li>Thu</li>
-    //           <li>Fri</li>
-    //           <li>Sat</li>
-    //         </ul>
-    //         <ul className="days" onClick={handleDateClick}></ul>
-    //       </div>
-    //       <Dialog open={openDialog} onClose={handleCloseDialog}>
-    //         {shopWith.length === 0 ? (
-    //           <div className="dialog-div">
-    //             Sorry, we couldn't find anyone else going grocery shopping on this date
-    //           </div>
-    //         ) : (
-    //           <div className="dialog-div">
-    //             We found the following users who are going grocery shopping on this date!
-    //             Shoot them an email :)
-    //             <ul>
-    //               {shopWith.map((usr) => {
-    //                 return (
-    //                   <li key={usr.email}>
-    //                     {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
-    //                   </li>
-    //                 );
-    //               })}
-    //             </ul>
-    //           </div>
-    //         )}
-    //         <DialogActions>
-    //           <Button variant="outlined" onClick={handleCloseDialog}>
-    //             Close
-    //           </Button>
-    //         </DialogActions>
-    //       </Dialog>
-    //     </div>
-    //   );
-
     return (
         <div className="calendar-container">
           <header>
@@ -397,7 +289,7 @@ const Calendar = () => {
               shopWith.length === 0 ?
                 <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping on this date</div> :
                 <div className="dialog-div">
-                  We found the following users who are going grocery shopping on the same date as you!
+                  We found the following users who are going grocery shopping on this date!
                   Shoot them an email :)
                   <ul>
                     {
