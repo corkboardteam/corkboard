@@ -31,6 +31,7 @@ const styles = {
       boxShadow: 'none',
     },
     padding: '5px 5px',
+    marginLeft: '5px',
     fontWeight: 'bold',
     fontSize: '1rem',
     borderRadius: '50px'
