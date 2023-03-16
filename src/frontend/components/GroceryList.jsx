@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 function GroceryList() {
 
     const [currentTrips, setCurrentTrips] = React.useState({});
-    const [openDialog, setOpenDialig] = React.useState(false);
+    const [openDialog, setOpenDialog] = React.useState(false);
     const [shopWith, setShopWith] = useState([])
     const [selectedStartDate, setSelectedStartDate] = useState("")
     const [selectedEndDate, setSelectedEndDate] = useState("")
@@ -76,11 +76,11 @@ function GroceryList() {
         })
 
         setShopWith(uniqUsers)
-        setOpenDialig(true)
+        setOpenDialog(true)
     }
 
     function handleCloseDialog() {
-        setOpenDialig(false)
+        setOpenDialog(false)
         // setShopWith([])
     }
 

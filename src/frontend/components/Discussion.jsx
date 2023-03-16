@@ -3,6 +3,9 @@ import { useNavigate} from 'react-router-dom';
 import Message from "./Message.jsx";
 import { UserAuth } from '../../backend/authContext';
 import Avatar from '@mui/material/Avatar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from "@mui/material/DialogActions";
+import { Button } from '@mui/material';
 
 const Discussion = () => {
     //const { groupID } = groupID;
@@ -10,6 +13,7 @@ const Discussion = () => {
     const [newMessage, setNewMessage] = useState("");
     const navigate = useNavigate();
     const { currentUser } = UserAuth();
+    const [openDialog, setOpenDialog] = React.useState(true);
 
     useEffect(() => {
         if (currentUser.groupID == null) {
@@ -25,6 +29,10 @@ const Discussion = () => {
     useEffect(() => {
     localStorage.setItem(`discussions_${currentUser.groupID}`, JSON.stringify(messages));
     }, [currentUser, messages]);
+
+    function handleCloseDialog() {
+        setOpenDialog(false);
+    }
 
     async function handleNewMessage(event) {
         setNewMessage(event.target.value);
@@ -105,8 +113,24 @@ const Discussion = () => {
     }
 
     async function handleDeleteMessage(id) {
-        const newMessages = messages.filter((message) => message.id !== id);
-        setMessages(newMessages);
+        if(currentUser.uid == (messages.map((message) => message.authorID.uid))[0]){
+            const newMessages = messages.filter((message) => message.id !== id);
+            setMessages(newMessages);
+        }else{
+            setOpenDialog(true)
+            return (
+            <body>
+                <Dialog open={openDialog} onClose={handleCloseDialog} >
+                    {
+                    <div className="dialog-div">You do not have permissions to delete this thread because you are not this thread's author.</div>
+                    }
+                    <DialogActions>
+                        <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+            </body>
+            )
+        }
     }
 
     async function handleKeyPress(event) {
