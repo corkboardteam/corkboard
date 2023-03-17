@@ -577,14 +577,14 @@ function Fridge() {
                             }
                         </Table>
                     </TableContainer>
-                <Box sx={{ display: 'flex', position: 'fixed', bottom: '0px', right: '5px', justifyContent: 'right' }}>
-                {/* <Typography variant="h8">
+                    <Box sx={{ display: 'flex', position: 'fixed', bottom: '0px', right: '5px', justifyContent: 'right' }}>
+                        {/* <Typography variant="h8">
                     {Object.keys(users).map((usr, ind) => {
                         return <Typography variant="h8" key={usr}>User {ind + 1}: {users[usr]}</Typography>;
                     })}
                 </Typography> */}
-                <Typography sx={{ fontSize: 10 }}>Room ID: {currentUser.groupID}</Typography>
-                </Box>
+                        <Typography sx={{ fontSize: 10 }}>Room ID: {currentUser.groupID}</Typography>
+                    </Box>
                 </Container>
             </div>
                 :
