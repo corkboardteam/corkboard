@@ -469,7 +469,7 @@ function Fridge() {
                                 //this part renders all the grocery runs scheduled
                                 currentTrips.map((trip) => {
                                     return (
-                                        <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
+                                        <TableBody key={trip.tripID} style={{ border: '2px solid red' }}>
                                             <TableRow>
                                                 <TableCell colSpan={showCheckBox ? 6 : 5}><medium>Grocery run initiated by {users[trip.userID]} on {trip.date}</medium></TableCell>
                                                 <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip)}>Cancel trip</Button>

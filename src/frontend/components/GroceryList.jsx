@@ -7,6 +7,9 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 import Dialog from '@mui/material/Dialog';
 import DialogActions from "@mui/material/DialogActions";
 import DatePicker from 'react-datepicker';
+import { Container } from '@mui/system';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 
 function GroceryList() {
@@ -152,75 +155,76 @@ function GroceryList() {
     }
 
     return (
-        <body>
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-                {
-                    shopWith.length === 0 ?
-                        <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping on this date</div> :
-                        <div className="dialog-div">
-                            We found the following users who are going grocery shopping on the same date as you!
-                            Shoot them an email :)
+        <Container>
+            <body>
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                    {
+                        shopWith.length === 0 ?
+                            <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping on this date</div> :
+                            <div className="dialog-div">
+                                We found the following users who are going grocery shopping on the same date as you!
+                                Shoot them an email :)
 
-                            <ul>
-                                {
-                                    shopWith.map((usr) => {
-                                        return (
-                                            <li key={usr.email}>
-                                                {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
-                                            </li>
-                                        )
-                                    })
-                                }
-                            </ul>
-                        </div>
-                }
-                <DialogActions>
-                    <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
-                </DialogActions>
-
-            </Dialog>
-
-
-            <Dialog open={displayDateRange} onClose={handleCloseDisplayDateRange}>
-                {
-                    Object.keys(usersInDateRange).length === 0 ?
-                        <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping within this date range</div> :
-                        <div className="dialog-div user-trip-list">
-                            We found the following users going shopping between <b>{selectedStartDate ? `${new Date(selectedStartDate).toLocaleDateString('en-us',
-                                { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b> and <b>{selectedEndDate ? `${new Date(selectedEndDate).toLocaleDateString('en-us',
-                                    { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b>! Shoot them an email :)
-                            <ul>
-                                {
-                                    Object.keys(usersInDateRange).
-                                        sort((date1, date2) => (new Date(date1)) - (new Date(date2))).map((date) => {
+                                <ul>
+                                    {
+                                        shopWith.map((usr) => {
                                             return (
-                                                <li>On {date}:
-                                                    <ul>
-                                                        {
-                                                            usersInDateRange[date].map((usr) => {
-                                                                return (
-                                                                    <li key={`${usr.email}${date}`}>
-                                                                        {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
-                                                                    </li>
-                                                                )
-                                                            })
-                                                        }
-                                                    </ul>
+                                                <li key={usr.email}>
+                                                    {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
                                                 </li>
                                             )
                                         })
-                                }
-                            </ul>
+                                    }
+                                </ul>
+                            </div>
+                    }
+                    <DialogActions>
+                        <Button variant="outlined" onClick={handleCloseDialog}>Close</Button>
+                    </DialogActions>
 
-                        </div>
-                }
-                <DialogActions>
-                    <Button variant="outlined" onClick={handleCloseDisplayDateRange}>Close</Button>
-                </DialogActions>
+                </Dialog>
 
-            </Dialog>
-            {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
-            {/* <form method="post" onSubmit={addGroceryToDB}>
+
+                <Dialog open={displayDateRange} onClose={handleCloseDisplayDateRange}>
+                    {
+                        Object.keys(usersInDateRange).length === 0 ?
+                            <div className="dialog-div">Sorry, we couldn't find anyone else going grocery shopping within this date range</div> :
+                            <div className="dialog-div user-trip-list">
+                                We found the following users going shopping between <b>{selectedStartDate ? `${new Date(selectedStartDate).toLocaleDateString('en-us',
+                                    { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b> and <b>{selectedEndDate ? `${new Date(selectedEndDate).toLocaleDateString('en-us',
+                                        { weekday: "long", year: "numeric", month: "short", day: "numeric" })}` : ""}</b>! Shoot them an email :)
+                                <ul>
+                                    {
+                                        Object.keys(usersInDateRange).
+                                            sort((date1, date2) => (new Date(date1)) - (new Date(date2))).map((date) => {
+                                                return (
+                                                    <li>On {date}:
+                                                        <ul>
+                                                            {
+                                                                usersInDateRange[date].map((usr) => {
+                                                                    return (
+                                                                        <li key={`${usr.email}${date}`}>
+                                                                            {usr.displayName ? `${usr.displayName}: ` : null} {usr.email}
+                                                                        </li>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </ul>
+                                                    </li>
+                                                )
+                                            })
+                                    }
+                                </ul>
+
+                            </div>
+                    }
+                    <DialogActions>
+                        <Button variant="outlined" onClick={handleCloseDisplayDateRange}>Close</Button>
+                    </DialogActions>
+
+                </Dialog>
+                {/* modify the buttons below to include them in the table under the headers to add more rows instead */}
+                {/* <form method="post" onSubmit={addGroceryToDB}>
                 <label for="itemName">Item Name: </label>
                 <input type="text" id="itemName" name="itemName"></input>
                 <label for="price">Price: </label>
@@ -228,92 +232,95 @@ function GroceryList() {
                 <label for="storeName">Store Name: </label>
                 <input type="text" id="storeName" name="storeName"></input>
                 <button type="submit">+</button>
-    </form> */}
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Item</TableCell>
-                        <TableCell>Quantity to Buy</TableCell>
-                        <TableCell>Limit</TableCell>
-                        <TableCell>Where to buy</TableCell>
-                        <TableCell>Estimated Cost</TableCell>
-                        <TableCell></TableCell>
-                    </TableRow>
-                </TableHead>
-                {
-                    //this part renders all the grocery runs scheduled
-                    Object.values(currentTrips)
-                        .sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
-                        .map((trip) => {
-                            return (
-                                <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
-                                    <TableRow>
-                                        <TableCell colSpan={5}><small>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</small></TableCell>
-                                        <TableCell>
-                                            <Button variant="outlined"
-                                                onClick={() => handleFindPeopleToShopWith(trip.date)}>
-                                                Find people to shop with!
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                    {
-                                        trip.toBuy.map((groc) => {
+                </form> */}
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Item</TableCell>
+                            <TableCell>Quantity to Buy</TableCell>
+                            <TableCell>Limit</TableCell>
+                            <TableCell>Where to buy</TableCell>
+                            <TableCell>Estimated Cost</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    {
+                        //this part renders all the grocery runs scheduled
+                        Object.values(currentTrips)
+                            .sort((trip1, trip2) => (new Date(trip1.date)) - (new Date(trip2.date)))
+                            .map((trip) => {
+                                return (
+                                    <TableBody key={trip.tripID}>
+                                        <TableRow>
+                                            <TableCell colSpan={5}>Grocery run initiated by {currentUser.displayName ? currentUser.displayName : currentUser.email} on {trip.date}</TableCell>
+                                            <TableCell>
+                                                <Button variant="outlined"
+                                                    onClick={() => handleFindPeopleToShopWith(trip.date)}>
+                                                    Find people to shop with!
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                        {
+                                            trip.toBuy.map((groc) => {
 
-                                            return <TableRow>
+                                                return <TableRow>
 
-                                                <TableCell>{groc.itemName}</TableCell>
-                                                <TableCell>To buy: {groc.quantityToBuy}</TableCell>
-                                                <TableCell>{groc.maxQuantity}</TableCell>
-                                                <TableCell>{groc.whereToBuy}</TableCell>
-                                                <TableCell>{groc.price >= 0 ?
-                                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                                    "N/A"}</TableCell>
-                                            </TableRow>
-                                        })
-                                    }
-                                </TableBody>
-                            )
-                        })
-                }
+                                                    <TableCell>{groc.itemName}</TableCell>
+                                                    <TableCell>To buy: {groc.quantityToBuy}</TableCell>
+                                                    <TableCell>{groc.maxQuantity}</TableCell>
+                                                    <TableCell>{groc.whereToBuy}</TableCell>
+                                                    <TableCell>{groc.price >= 0 ?
+                                                        `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                        "N/A"}</TableCell>
+                                                </TableRow>
+                                            })
+                                        }
+                                    </TableBody>
+                                )
+                            })
+                    }
 
-                {
-                    //     allGroceries.map((groc) => {
-                    //         return (
-                    //             <tr key={groc.id}>
-                    //                 <td>{groc.data.itemName}</td>
-                    //                 <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit} per ${groc.data.groceryUnit}` : "N/A"}</td>
-                    //             </tr>
-                    //         )
-                    //     })
-                    // }
-                }
-            </Table>
+                    {
+                        //     allGroceries.map((groc) => {
+                        //         return (
+                        //             <tr key={groc.id}>
+                        //                 <td>{groc.data.itemName}</td>
+                        //                 <td>{groc.data.price >= 0 ? `${groc.data.price} ${groc.data.priceUnit} per ${groc.data.groceryUnit}` : "N/A"}</td>
+                        //             </tr>
+                        //         )
+                        //     })
+                        // }
+                    }
+                </Table>
 
-            <div>
-                Or, search for trips happening between a specific date range (inclusive)!
                 <div>
-                    Start date
-                    <DatePicker
-                        selected={selectedStartDate}
-                        onChange={handleStartDateChange}
-                        dateFormat="MM/dd/yyyy"
-                        className="custom-datepicker"
-                    />
-                </div>
-                <div>
-                    End date
-                    <DatePicker
-                        selected={selectedEndDate}
-                        onChange={handleEndDateChange}
-                        dateFormat="MM/dd/yyyy"
-                        className="custom-datepicker"
-                    />
-                </div>
+                    <Box sx={{ fontSize: 12, marginTop: '20px', marginBottom: '15px' }}><i>Search for trips happening between a specific date range (inclusive)!</i></Box>
+                    <Box maxWidth='50vw'>
+                        <Typography sx={{ fontSize: 16 }} >
+                            Start date</Typography>
+                        <DatePicker
+                            selected={selectedStartDate}
+                            onChange={handleStartDateChange}
+                            dateFormat="MM/dd/yyyy"
+                            className="custom-datepicker"
+                        />
+                    </Box>
+                    <Box maxWidth='50vw'>
+                    <Typography sx={{ fontSize: 16 }} >
+                        End date</Typography>
+                        <DatePicker
+                            selected={selectedEndDate}
+                            onChange={handleEndDateChange}
+                            dateFormat="MM/dd/yyyy"
+                            className="custom-datepicker"
+                        />
+                    </Box>
 
-                <Button onClick={handleSetDateRange}>Start Search!</Button>
+                    <Button variant="outlined" onClick={handleSetDateRange} sx={{ marginTop: '15px' }}>Start Search!</Button>
 
-            </div>
-        </body>
+                </div>
+            </body>
+        </Container>
 
     );
 }
