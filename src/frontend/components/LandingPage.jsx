@@ -2,7 +2,7 @@ import React from "react";
 import { CardContent, CardMedia, Container, Grid, styled, Typography, Paper } from "@mui/material/";
 import CssBaseline from '@mui/material/CssBaseline';
 import { pink, orange } from '@mui/material/colors';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import SvgIcon from '@mui/material/SvgIcon';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import CreateIcon from '@mui/icons-material/Create';
@@ -10,13 +10,14 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 // // This page will introduce our web app and give an overview of the features. 
 // // It will also contain buttons for login and signup page which will redirect the user.
-function HomeIcon(props: SvgIconProps) {
+function HomeIcon(props) {
   return (
     <SvgIcon {...props}>
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
     </SvgIcon>
   );
 }
+
 
 
 const HeroContainer = styled(Container)(({ theme }) => ({
