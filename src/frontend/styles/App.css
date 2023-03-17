@@ -123,24 +123,24 @@ h2 {
   margin-left: 10px;
 }
 
-#floatingInput{
+#floatingInput {
   width: 60%;
   position: relative;
-	display: inherit;
-	border-radius: 9999em;
-	margin: 50px 50px 50px 50px;
-	border: none;
-	outline: none;
-	padding: 0 .325em;
-	z-index: 1;
+  display: inherit;
+  border-radius: 9999em;
+  margin: 50px 50px 50px 50px;
+  border: none;
+  outline: none;
+  padding: 0 .325em;
+  z-index: 1;
 
   box-shadow: inset 0 0 0 3px #fff,
     0 0 0 4px #fff,
-    3px -3px 15px #00bfff, 
+    3px -3px 15px #00bfff,
     -3px 3px 15px #da90ff;
 }
 
-h3{
+h3 {
   display: flex;
   position: relative;
   padding: 2px 6px 6px 20px;
@@ -176,7 +176,7 @@ h3{
   top: 0;
 }
 
-#delete{
+#delete {
   align-items: center;
   box-sizing: border-box;
   display: flex;
@@ -188,7 +188,7 @@ h3{
   top: 0;
 }
 
-#comment-textfield{
+#comment-textfield {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -216,7 +216,7 @@ h4 {
   list-style-type: none;
 }
 
-.overlay{
+.overlay {
   background: rgba(0, 0, 0, 0.25);
   z-index: 1;
 }

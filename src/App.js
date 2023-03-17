@@ -39,32 +39,32 @@ const theme = createTheme({
       '"Segoe UI Symbol"',
     ].join(','),
   },
-    
+
 });
 
 function App() {
   const location = useLocation();
 
   return (
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          {location.pathname !== '/Login' && location.pathname !== '/Signup' && <Navbar />}
-          <Routes>
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/Login' element={<Login />} />
-            <Route path='/Signup' element={<Signup />} />
-            <Route path='/Group' element={<Protected><Group /></Protected>} />
-            <Route path='/Profile' element={<Protected><Profile /></Protected>} />
-            <Route path='/ForgotPassword' element={<ForgotPassword />} />
-            <Route path='/GroceryList' element={<Protected><GroceryList /></Protected>} />
-            <Route path='/Fridge' element={<Protected><Fridge /></Protected>} />
-            <Route path='/Discussion' element={<Protected><Discusion /></Protected>} />
-            <Route path='/Calendar' element={<Protected><Calendar /></Protected>} />
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        {location.pathname !== '/Login' && location.pathname !== '/Signup' && <Navbar />}
+        <Routes>
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/Login' element={<Login />} />
+          <Route path='/Signup' element={<Signup />} />
+          <Route path='/Group' element={<Protected><Group /></Protected>} />
+          <Route path='/Profile' element={<Protected><Profile /></Protected>} />
+          <Route path='/ForgotPassword' element={<ForgotPassword />} />
+          <Route path='/GroceryList' element={<Protected><GroceryList /></Protected>} />
+          <Route path='/Fridge' element={<Protected><Fridge /></Protected>} />
+          <Route path='/Discussion' element={<Protected><Discusion /></Protected>} />
+          <Route path='/Calendar' element={<Protected><Calendar /></Protected>} />
 
-          </Routes>
-        </ThemeProvider>
-        
-      </AuthProvider>
+        </Routes>
+      </ThemeProvider>
+
+    </AuthProvider>
   );
 }
 

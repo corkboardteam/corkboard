@@ -80,30 +80,30 @@ const Navbar = (props) => {
     navigate('/Login');
   }
 
-  
+
   return (
     <ElevationScroll {...props}>
-      <AppBar position="sticky" elevation={0} sx={{ background: 'white', color: 'black'}}>
+      <AppBar position="sticky" elevation={0} sx={{ background: 'white', color: 'black' }}>
         <CssBaseline />
-          <Toolbar>
-            <KitchenIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component={Link} to="/Fridge"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontWeight: 'bold',
-                fontSize: '1.6rem',
-                letterSpacing: '.2rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              Corkboard
-            </Typography>
-            {currentUser && (
+        <Toolbar>
+          <KitchenIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component={Link} to="/Fridge"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontWeight: 'bold',
+              fontSize: '1.6rem',
+              letterSpacing: '.2rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Corkboard
+          </Typography>
+          {currentUser && (
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
@@ -137,95 +137,95 @@ const Navbar = (props) => {
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
                     <Typography textAlign="center">
                       <Link style={{ textDecoration: "none", color: "black" }} to={page}>
-                          {page}
+                        {page}
                       </Link>
                     </Typography>
                   </MenuItem>
                 ))}
               </Menu>
             </Box>
-            )}
-            <KitchenIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component={Link} to="/Fridge"
-              sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontWeight: 'bold',
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              Corkboard
-            </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', ml: 2 }}>
-              {currentUser && pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, mr: 4, px: 3, fontSize: '1rem', color: 'black', display: 'block' }}
-                >
-                  <Link style={{ textDecoration: "none", color: "black" }} to={page}>
-                    {page}
-                  </Link>
-                  
-                </Button>
-              ))}
+          )}
+          <KitchenIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            variant="h5"
+            noWrap
+            component={Link} to="/Fridge"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontWeight: 'bold',
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            Corkboard
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', ml: 2 }}>
+            {currentUser && pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, mr: 4, px: 3, fontSize: '1rem', color: 'black', display: 'block' }}
+              >
+                <Link style={{ textDecoration: "none", color: "black" }} to={page}>
+                  {page}
+                </Link>
+
+              </Button>
+            ))}
+          </Box>
+          {currentUser ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 2 }}>
+                  <Avatar alt="User Profile" src={currentUser.photoURL} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">
+                      {setting === "Logout" ? (
+                        <Link style={{ textDecoration: "none", color: "black" }} onClick={handleLogout}>
+                          {setting}
+                        </Link>
+                      ) : (
+                        <Link style={{ textDecoration: "none", color: "black" }} to={setting}>
+                          {setting}
+                        </Link>
+                      )}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>) : (
+            <Box sx={{ flexGrow: 0 }}>
+              <Button component={Link} to="/Login" color="inherit" sx={{ ...styles.customButton }}>
+                Log in
+              </Button>
+              <Button variant="contained" component={Link} to="/Signup" color="primary" sx={{ ...styles.customButton }}>
+                Sign up
+              </Button>
             </Box>
-            {currentUser ? (
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 2 }}>
-                    <Avatar alt="User Profile" src={currentUser.photoURL}/>
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorUser}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">
-                        {setting === "Logout" ? (
-                          <Link style={{ textDecoration: "none", color: "black" }} onClick={handleLogout}>
-                            {setting}
-                          </Link>
-                        ) : (
-                          <Link style={{ textDecoration: "none", color: "black" }} to={setting}>
-                            {setting}
-                          </Link>
-                        )}
-                      </Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>) : (
-                <Box sx={{ flexGrow: 0 }}>
-                  <Button  component={Link} to="/Login" color="inherit" sx={{ ...styles.customButton }}>
-                    Log in
-                  </Button>
-                  <Button  variant="contained" component={Link} to="/Signup" color="primary" sx={{ ...styles.customButton }}>
-                    Sign up
-                  </Button>
-                </Box>
-              )}
-          </Toolbar>
+          )}
+        </Toolbar>
       </AppBar>
     </ElevationScroll>
   );

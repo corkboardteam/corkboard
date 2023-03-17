@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Box, Alert, Grid, TextField, Button, 
+import {
+  Paper, Box, Alert, Grid, TextField, Button,
   Typography, Avatar, Divider, styled, Tab, Tabs, Table, TableContainer,
-  TableBody, TableHead, TableRow, TableCell,} from '@mui/material/';
+  TableBody, TableHead, TableRow, TableCell,
+} from '@mui/material/';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../backend/authContext';
 import { GroupClass } from '../../backend/custom_classes/groupClass';
@@ -22,8 +24,8 @@ const DividerContainer = styled(Divider)({
 });
 
 function Profile() {
-  const { currentUser, changePassword, changeEmail, updateProfile, 
-          updateDisplayName, updateProfilePicture, updatePhoneNumber } = UserAuth();
+  const { currentUser, changePassword, changeEmail, updateProfile,
+    updateDisplayName, updateProfilePicture, updatePhoneNumber } = UserAuth();
   const navigate = useNavigate();
   const [newDisplayName, setNewDisplayName] = useState('');
   const [newPhotoURL, setNewPhotoURL] = useState('');
@@ -38,7 +40,7 @@ function Profile() {
 
   useEffect(() => {
     console.log(currentUser);
-    
+
   }, [currentUser]);
 
   const handleSubmit = async (e) => {
@@ -47,42 +49,42 @@ function Profile() {
     const name = data.get('name');
     const phone = data.get('phone');
     const photoURL = data.get('photo');
-  
+
     let updated = false;
-  
+
     if (name && name !== currentUser.displayName) {
       handleDisplayName(name);
       updated = true;
     }
-  
+
     if (phone && phone !== currentUser.phoneNumber) {
       handlePhoneNumber(phone);
       updated = true;
     }
-  
+
     if (photoURL && photoURL !== currentUser.photoURL) {
       handlePhotoURL(photoURL);
       updated = true;
     }
-  
+
     if (updated) {
       setUpdateAlert(true);
       setTimeout(() => setUpdateAlert(false), 5000);
     }
-  
+
     navigate('/Profile');
   }
 
   const handleDisplayName = async (name) => {
-    console.log(name);    
+    console.log(name);
     const updatedUserData = {};
     updatedUserData.name = name;
     const group = new GroupClass(currentUser.groupID);
     group.updateMember(currentUser, updatedUserData);
     await updateDisplayName(name);
     return;
-    };
-  
+  };
+
   const handleEmail = async (e) => {
     e.preventDefault();
     const updatedUserData = {};
@@ -97,7 +99,7 @@ function Profile() {
     group.updateMember(currentUser, updatedUserData);
 
     setEmailAlert(true);
-    setTimeout(() => setEmailAlert(false), 5000);       
+    setTimeout(() => setEmailAlert(false), 5000);
   };
 
   const handlePhoneNumber = async (phoneNumber) => {
@@ -106,7 +108,7 @@ function Profile() {
     phoneNumber = phoneNumber.replace(/-/g, '');
     await updatePhoneNumber(phoneNumber);
 
-    return;  
+    return;
   };
 
   const handlePhotoURL = async (photoURL) => {
@@ -122,9 +124,9 @@ function Profile() {
     const newPassword = data.get('newPassword');
     await changePassword(newPassword, currPassword);
     setPasswordAlert(true);
-    setTimeout(() => setPasswordAlert(false), 5000); 
+    setTimeout(() => setPasswordAlert(false), 5000);
   };
-  
+
   const handleLeaveGroup = async () => {
     const group = new GroupClass(currentUser.groupID);
     await group.leaveGroup(currentUser);
@@ -152,14 +154,14 @@ function Profile() {
         setUserInGroup(false);
       }
     }
-    
+
     setSelectedTab(newValue);
   };
 
-  
+
 
   return (
-    <Grid sx={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch', backgroundColor: '#DFE9EB', minHeight: '100vh' }}>
+    <Grid sx={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch', minHeight: '100vh' }}>
       <Grid component={Paper} elevation={4} item xs={5} width='400px' sm={10} mt={10} ml={20} mb={10} >
         <Tabs orientation="vertical" variant='fullWidth' value={selectedTab} onChange={handleTabChange}>
           <Tab label="Profile" />
@@ -176,7 +178,7 @@ function Profile() {
                 <AvatarImage
                   src={currentUser.photoURL}
                   alt="User Profile"
-                  sx={{ display: 'inside',mx: 'auto', mt: 2 }}
+                  sx={{ display: 'inside', mx: 'auto', mt: 2 }}
                 />
                 <DividerContainer />
                 <FormContainer >
@@ -200,7 +202,7 @@ function Profile() {
                         variant="outlined"
                         fullWidth
                         margin="normal"
-                        defaultValue= { currentUser.email}
+                        defaultValue={currentUser.email}
                         InputProps={{
                           readOnly: true,
                         }}
@@ -259,116 +261,116 @@ function Profile() {
             )}
             {selectedTab === 1 && (
               <>
-              <FormContainer>
-                <Grid component="form" onSubmit={handleEmail} item xs={12}>
-                  <Typography variant="h5" sx={{textAlign: 'center', fontWeight: 'bold'}}>
-                    Change Email
-                  </Typography>
-                  <DividerContainer />
-                  <Grid mb={1}>
-                    Email
-                    <TextField
-                      required
-                      label="Enter new email"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      type="email"
-                      name="newemail"
-                    />
-                  </Grid>
-                  <Grid mb={1}>
-                    Password
-                    <TextField
-                      required
-                      label="Enter password to change email"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      type="password"
-                      name="curpassword"
-                        />
-                  </Grid>
-                  <Grid mb={1}>
-                    <Button variant="contained" color="primary" type="submit">
+                <FormContainer>
+                  <Grid component="form" onSubmit={handleEmail} item xs={12}>
+                    <Typography variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
                       Change Email
-                    </Button>
-                    {emailAlert && (
-                      <Alert severity="success">Email updated successfully!</Alert>
-                    )}
+                    </Typography>
+                    <DividerContainer />
+                    <Grid mb={1}>
+                      Email
+                      <TextField
+                        required
+                        label="Enter new email"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="email"
+                        name="newemail"
+                      />
+                    </Grid>
+                    <Grid mb={1}>
+                      Password
+                      <TextField
+                        required
+                        label="Enter password to change email"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="password"
+                        name="curpassword"
+                      />
+                    </Grid>
+                    <Grid mb={1}>
+                      <Button variant="contained" color="primary" type="submit">
+                        Change Email
+                      </Button>
+                      {emailAlert && (
+                        <Alert severity="success">Email updated successfully!</Alert>
+                      )}
+                    </Grid>
                   </Grid>
-                </Grid>
-              </FormContainer>
-              <DividerContainer />
+                </FormContainer>
+                <DividerContainer />
               </>
             )}
             {selectedTab === 2 && (
               <>
-              <FormContainer>
-                <Grid component="form" onSubmit={handlePassword} item xs={12}>
-                  <Typography variant="h5" gutterBottom sx={{textAlign: 'center', fontWeight: 'bold'}}>
-                    Change Password
-                  </Typography>
-                  <DividerContainer />
-                  <Grid mb={1}>
-                    Current Password
-                    <TextField
-                      required
-                      label="Enter current password"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      type="password"
-                      name="currentPassword"
-                    />
-                  </Grid>
-                  <Grid mb={1}>
-                    New Password
-                    <TextField
-                      required
-                      label="Enter new password"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      type="password"
-                      name="newPassword"
-                    />
-                  </Grid>
-                  <Grid mb={1}>
-                    Confirm New Password
-                    <TextField
-                      required
-                      label="Reenter new password"
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      type="password"
-                      name="confirmNewPassword"
-                    />
-                  </Grid>
-                  <Grid mb={1}>
-                    <Button variant="contained" color="primary" type="submit">
+                <FormContainer>
+                  <Grid component="form" onSubmit={handlePassword} item xs={12}>
+                    <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>
                       Change Password
-                    </Button>
-                    {passwordAlert && (
-                      <Alert severity="success">Password updated successfully!</Alert>
-                    )}
+                    </Typography>
+                    <DividerContainer />
+                    <Grid mb={1}>
+                      Current Password
+                      <TextField
+                        required
+                        label="Enter current password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="password"
+                        name="currentPassword"
+                      />
+                    </Grid>
+                    <Grid mb={1}>
+                      New Password
+                      <TextField
+                        required
+                        label="Enter new password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="password"
+                        name="newPassword"
+                      />
+                    </Grid>
+                    <Grid mb={1}>
+                      Confirm New Password
+                      <TextField
+                        required
+                        label="Reenter new password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        type="password"
+                        name="confirmNewPassword"
+                      />
+                    </Grid>
+                    <Grid mb={1}>
+                      <Button variant="contained" color="primary" type="submit">
+                        Change Password
+                      </Button>
+                      {passwordAlert && (
+                        <Alert severity="success">Password updated successfully!</Alert>
+                      )}
+                    </Grid>
                   </Grid>
-                </Grid>
-              </FormContainer>
-              <DividerContainer />
+                </FormContainer>
+                <DividerContainer />
               </>
             )}
             {selectedTab === 3 && (
               <>
                 {userInGroup ? (
                   <>
-                    <Typography variant="h4"  sx={{mt: 4, textAlign: 'center', fontWeight: 'bold'}}>
+                    <Typography variant="h4" sx={{ mt: 4, textAlign: 'center', fontWeight: 'bold' }}>
                       {groupName} ({currentUser.groupID})
                     </Typography>
                     <DividerContainer />
                     <TableContainer >
-                      <Table sx={{mt: 4, minWidth: 700 }}>
+                      <Table sx={{ mt: 4, minWidth: 700 }}>
                         <TableHead>
                           <TableRow>
                             <TableCell>Name</TableCell>
@@ -392,15 +394,15 @@ function Profile() {
                         </TableBody>
                       </Table>
                     </TableContainer>
-                    <Box onClick={handleLeaveGroup} sx={{display: 'flex', justifyContent: 'flex-end', mt: 2, mb: 2, mr: 2}}>
+                    <Box onClick={handleLeaveGroup} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2, mb: 2, mr: 2 }}>
                       <Button variant="contained" color="primary" type="submit">
                         Leave Group
                       </Button>
                     </Box>
                   </>
                 ) : (
-                  <Typography variant="h5" gutterBottom sx={{mt: 10, textAlign: 'center', fontWeight: 'bold'}}>
-                    Not in a group yet? Join a group <Link to="/Group">here!</Link>  
+                  <Typography variant="h5" gutterBottom sx={{ mt: 10, textAlign: 'center', fontWeight: 'bold' }}>
+                    Not in a group yet? Join a group <Link to="/Group">here!</Link>
                   </Typography>
                 )}
                 <DividerContainer />

@@ -13,14 +13,14 @@ import { UserAuth } from '../../backend/authContext';
 import { Container } from '@mui/system';
 
 
-const Signup =() => {
+const Signup = () => {
   const { currentUser, signUp, updateDisplayName } = UserAuth();
-	const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (currentUser != null) {
       navigate('/Fridge');
-    } 
+    }
     console.log(currentUser);
   }, [currentUser, navigate]);
 
@@ -38,71 +38,71 @@ const Signup =() => {
 
   return (
     <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <Box maxWidth="50vw" sx={{ alignItems: 'center', justifyContent: 'center' }}>
-      <Grid sx={{ mt: 4 }}>
-        <Typography component="h1" fontSize="2.8em" fontWeight='600'>
-          Sign up
+      <Box maxWidth="50vw" sx={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Grid sx={{ mt: 4 }}>
+          <Typography component="h1" fontSize="2.8em" fontWeight='600'>
+            Sign up
           </Typography>
-      </Grid>
-      <Container sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-        Already have an account?
-        <Box sx={{ marginLeft: '5px' }}>
-          <Link to="/Login" href="#" variant="body2" >
-            {"Log in"}
-          </Link>
-        </Box>
-      </Container>
-      <Grid sx={{ mt: 4 }}>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, fontSize: "1em", fontWeight: "bold" }}>
-          Name
-          <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="name"
-          label="Enter your name"
-          type="name"
-          id="name"
-          autoComplete="name"
-          />
-          Email
-          <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Enter your email"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          />
-          Password
-          <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Create a password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          />
-          <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Remember me"
-          />
-          <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 4 }}
-          >
-            Create Account
+        </Grid>
+        <Container sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+          Already have an account?
+          <Box sx={{ marginLeft: '5px' }}>
+            <Link to="/Login" href="#" variant="body2" >
+              {"Log in"}
+            </Link>
+          </Box>
+        </Container>
+        <Grid sx={{ mt: 4 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, fontSize: "1em", fontWeight: "bold" }}>
+            Name
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="name"
+              label="Enter your name"
+              type="name"
+              id="name"
+              autoComplete="name"
+            />
+            Email
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Enter your email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            Password
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Create a password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 4 }}
+            >
+              Create Account
             </Button>
-            </Box>
-            </Grid>
-            </Box>
-            </Container>
+          </Box>
+        </Grid>
+      </Box>
+    </Container>
     // <Box sx={{ backgroundColor: '#DFE9EB',position: 'static', overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
     //   <Grid container component="main" sx={{ 
     //   mr: 2,

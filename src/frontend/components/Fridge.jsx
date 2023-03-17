@@ -253,7 +253,7 @@ function Fridge() {
         }
 
         const newTrip = await addTripToFridge(items, currentUser.groupID, currentUser.uid, selectedDate.toLocaleDateString())
-        
+
         setShowCheckBox(false)
         // needs to handle changing currentGroceries and trips
         const updatedTrips = [...currentTrips]
