@@ -48,8 +48,7 @@
   height: 00px;
 }
 
-table {
-  /* the border is literally just for sizing ref */
+/* table {
   table-layout: fixed;
   width: 100%;
   height: 100%;
@@ -71,7 +70,7 @@ td {
 
 tr {
   border-bottom: 1px solid black;
-}
+} */
 
 button {
   font-size: 13px;
@@ -108,12 +107,12 @@ h1 {
   padding: 40px 0px 0px 0px;
 }
 
-h2 {
+/* h2 {
   text-align: right;
   font-size: 20px;
   font-weight: 400;
   padding: 0px 30px 30px 30px;
-}
+} */
 
 .dialog-div {
   padding: 5%
@@ -133,6 +132,13 @@ h2 {
   outline: none;
   padding: 0 .325em;
   z-index: 1;
+  display: inherit;
+  border-radius: 9999em;
+  margin: 50px 50px 50px 50px;
+  border: none;
+  outline: none;
+  padding: 0 .325em;
+  z-index: 1;
 
   box-shadow: inset 0 0 0 3px #fff,
     0 0 0 4px #fff,
@@ -140,7 +146,7 @@ h2 {
     -3px 3px 15px #da90ff;
 }
 
-h3 {
+/* h3 {
   display: flex;
   position: relative;
   padding: 2px 6px 6px 20px;
@@ -151,7 +157,7 @@ h3 {
   border: 3px solid rgb(164, 165, 245);
   border-radius: 20px;
   list-style-type: none;
-}
+} */
 
 #avatar-container {
   display: flex;
