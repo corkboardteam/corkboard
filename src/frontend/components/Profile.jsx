@@ -370,7 +370,7 @@ function Profile() {
                     </Typography>
                     <DividerContainer />
                     <TableContainer >
-                      <Table sx={{ mt: 4, minWidth: 700 }}>
+                      <Table sx={{ mt: 4 }}>
                         <TableHead>
                           <TableRow>
                             <TableCell>Name</TableCell>
