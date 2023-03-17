@@ -7,6 +7,7 @@ import KitchenIcon from '@mui/icons-material/Kitchen';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import CreateIcon from '@mui/icons-material/Create';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import Box from '@mui/material/Box';
 
 // // This page will introduce our web app and give an overview of the features. 
 // // It will also contain buttons for login and signup page which will redirect the user.
@@ -60,11 +61,11 @@ function LandingPage() {
         <ListAltIcon color="success" sx={{ fontSize: 40, marginLeft: '-50px', marginTop: '50px', transform: `rotate(-25deg)` }} />
         <TaskAltIcon color="secondary" sx={{ fontSize: 40, marginLeft: '-150px', marginTop: '50px', transform: `rotate(-25deg)` }} />
       </Container>
-      <Container maxWidth="false" sx={{ backgroundColor: 'white' }}>
+      <Container maxWidth="false" sx={{ backgroundColor: 'white', marginBottom: '50px' }}>
         <CardMedia
           component="img"
           // image="https://www.tastingtable.com/img/gallery/the-clever-way-grocery-stores-stock-products/l-intro-1660768883.jpg"
-          image={require("../assets/Screenshot 2023-03-13 214332.png")}
+          image={require("../assets/localhost_3000_Fridge.png")}
           sx={{
             border: 1,
             transform: `scale(0.75)`,
@@ -73,10 +74,27 @@ function LandingPage() {
         />
 
       </Container>
-      <Container maxWidth='false' sx={{ backgroundColor: 'white', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        PLACEHOLDER
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.
+      <Container sx={{ backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <Typography variant="h4" fontWeight='bold' component="h1" align='center'>
+          Ever buy eggs at Costco on the same day that your roommate buys two cartons at Trader Joe’s?
+        </Typography>
+        <Box maxWidth='40vw' sx={{ backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <Typography variant="h4" component="h2" align='center' sx={{ marginTop: '50px', marginBottom: '20px' }}>
+          Then Corkboard is for you and your roommates!
+        </Typography>
+        </Box>
+        <CardMedia
+          component="img"
+          // image="https://www.tastingtable.com/img/gallery/the-clever-way-grocery-stores-stock-products/l-intro-1660768883.jpg"
+          image={require("../assets/localhost_3000_Discussion.png")}
+          sx={{
+            border: 1,
+            transform: `scale(0.75)`,
+            boxShadow: 3
+          }}
+        />
       </Container>
+
 
     </>
   );
