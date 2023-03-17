@@ -215,3 +215,8 @@ h4 {
   margin-left: -1em;
   list-style-type: none;
 }
+
+.overlay{
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}

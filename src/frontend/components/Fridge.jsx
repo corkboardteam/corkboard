@@ -13,9 +13,12 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Grid";
 import { type } from "@testing-library/user-event/dist/type";
-
+import { Container } from '@mui/system';
+// import CancelIcon from '@mui/icons-material/Cancel';
+import { yellow } from '@mui/material/colors';
 
 function Fridge() {
 
@@ -374,252 +377,222 @@ function Fridge() {
     }
 
     return (
-        <div>
-            {currentUser.groupID ? <h2>Room ID: {currentUser.groupID}</h2>
-                : <h2>You're not in a group yet. Join a group <Link to="/group">here</Link></h2>}
+        <Box>
+            {currentUser.groupID ? <div>
+                <h2>Room ID: {currentUser.groupID}</h2>
+
+                <ul>
+                    {Object.keys(users).map((usr, ind) => {
+                        return <li key={usr}>User {ind + 1}: {users[usr]}</li>;
+                    })}
+                </ul>
+
+                {
+                    // forms for editing each grocery item in the table 
+                    fridgeItems.map((groc) => {
+                        return (
+                            <div>
+                                <form key={groc.itemName} method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
+                                </form>
+                            </div>
+                        )
+                    })
+                }
+                {
+                    // handles submitting check groceries
+                    <form method="post" id="submit-checked-groceries"
+                        name="submitCheckedGroceries"
+                        onSubmit={handleCheckedItems}></form>
+                }
+                {
+                    <form method="post" id="addGroceries" name="addGroceries" onSubmit={handleSubmit}></form>
+                }
+
+                {
+                    showCheckBox ?
+                        <div>Select items to purchase and click done to add them to your grocery list {'\u0028'}highlighted at the top of the fridge{'\u0029'}.
+                            <br></br>
+                            <Button variant="outlined" type="submit" form="submit-checked-groceries">Done</Button>
+                        </div> :
+                        <form style={{ marginBottom: '3%' }} method="post" onSubmit={(e) => { e.preventDefault(); setShowCheckBox(true) }}>
+                            <Button variant="outlined" type="submit">Plan grocery trip</Button>
+                        </form>
+                }
+                <TableContainer>
+
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                {showCheckBox ? <TableCell>Select</TableCell> : null}
+                                <TableCell>Item</TableCell>
+                                <TableCell>Stock</TableCell>
+                                <TableCell>Limit</TableCell>
+                                <TableCell>Where to buy</TableCell>
+                                <TableCell>Estimated Cost</TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        {showCheckBox ? null :
+                            <TableRow>
+                                <TableCell>
+                                    <TextField
+                                        fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
+                                        inputProps={{ form: "addGroceries" }}></TextField></TableCell>
+                                <TableCell>
+                                    <TextField fullWidth title="Please enter a number " label="Quantity in stock"
+                                        required size="small" inputProps={{
+                                            inputMode: 'numeric',
+                                            pattern: '[0-9]*',
+                                            form: "addGroceries",
+                                            title: "Please enter a positive number"
+                                        }} id="quantity" name="quantity"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField title="Please enter a number "
+                                        fullWidth label="Stock Limit" required size="small"
+                                        inputProps={{
+                                            inputMode: 'numeric',
+                                            pattern: '[0-9]*',
+                                            form: "addGroceries",
+                                            title: "Please enter a positive number"
+                                        }} id="limit" name="limit"></TextField>
+                                </TableCell>
+                                <TableCell>
+                                    <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
+                                </TableCell>
+                                <TableCell>N/A</TableCell>
+                                <TableCell >
+                                    <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
+                                </TableCell>
+                            </TableRow>
+                        }
+                        {
+                            //this part renders all the grocery runs scheduled
+                            currentTrips.map((trip) => {
+                                return (
+                                    <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
+                                        <TableRow>
+                                            <TableCell colSpan={showCheckBox ? 6 : 5}><medium>Grocery run initiated by {users[trip.userID]} on {trip.date}</medium></TableCell>
+                                            <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip)}>Cancel trip</Button>
+                                                <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
+                                        </TableRow>
+                                        {
+                                            trip.toBuy.map((groc) => {
+
+                                                return <TableRow>
+                                                    {showCheckBox ? <TableCell></TableCell> : null}
+                                                    <TableCell>{groc.itemName}</TableCell>
+                                                    <TableCell>To buy: {groc.quantityToBuy}</TableCell>
+                                                    <TableCell>{groc.maxQuantity}</TableCell>
+                                                    <TableCell>{groc.whereToBuy}</TableCell>
+                                                    <TableCell>{groc.price >= 0 ?
+                                                        `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                        "N/A"}</TableCell>
+                                                </TableRow>
+                                            })
+                                        }
+                                    </TableBody>
+                                )
+                            })
+                        }
+                        {
+                            //this part lists all the items currently in a fridge
+                            fridgeItems.map((groc) => {
+                                const showEditCur = showEdit[groc.itemName]
+                                const showGroceryTripInputCur = checkedItems.has(groc.itemName)
+                                return (
+                                    <TableBody>
+                                        <TableRow key={groc.id}>
+                                            {showCheckBox ? <TableCell > <input type="checkbox" name={`${groc.itemName}`} onChange={handleCheckboxChange} /> </TableCell> : null}
+
+                                            <TableCell>{groc.itemName}</TableCell>
 
 
-            <ul>
-                {Object.keys(users).map((usr, ind) => {
-                    return <li key={usr}>User {ind + 1}: {users[usr]}</li>;
-                })}
-            </ul>
+                                            <TableCell>{showEditCur ?
+                                                <input type="number" id="quantity" name="quantity" form={`edit-${groc.itemName}-form`}
+                                                    defaultValue={groc.currentQuantity}></input>
+                                                : groc.currentQuantity}</TableCell>
 
-            {
-                // forms for editing each grocery item in the table 
-                fridgeItems.map((groc) => {
-                    return (
-                        <div>
-                            <form key={groc.itemName} method="post" id={`edit-${groc.itemName}-form`} onSubmit={handleEdit}>
-                            </form>
-                        </div>
-                    )
-                })
+                                            <TableCell>{showEditCur ?
+                                                <input type="number" id="limit" name="limit" form={`edit-${groc.itemName}-form`}
+                                                    defaultValue={groc.maxQuantity}></input>
+                                                : groc.maxQuantity}</TableCell>
+                                            <TableCell>{showEditCur ?
+                                                <input type="text" id="whereToBuy" name="whereToBuy" form={`edit-${groc.itemName}-form`}
+                                                    defaultValue={groc.whereToBuy}></input>
+                                                : groc.whereToBuy}</TableCell>
+
+
+
+                                            <TableCell>{groc.price >= 0 ?
+                                                `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                "N/A"}</TableCell>
+
+                                            <TableCell >
+                                                <form id={groc.itemName} method="post" onSubmit={handleDelete}>
+                                                    <Button size="small" variant="outlined" type="submit">Delete</Button>
+                                                </form>
+                                                {
+                                                    !showEditCur ?
+                                                        <form method="post" id={`toggle-${groc.itemName}-edit`} onSubmit={handleToggle}>
+                                                            <Button size="small" variant="outlined" type="submit" >Edit</Button>
+                                                        </form> :
+                                                        <Button size="small" variant="outlined" type="submit" form={`edit-${groc.itemName}-form`}>Submit</Button>
+
+                                                }
+                                            </TableCell>
+                                        </TableRow>
+                                        {
+                                            showGroceryTripInputCur ?
+                                                <TableRow>
+                                                    <TableCell></TableCell>
+                                                    <TableCell>{groc.itemName}</TableCell>
+                                                    <TableCell>
+                                                        <TextField title="Please enter a number " fullWidth
+                                                            label="Quantity to Buy" required size="small"
+                                                            inputProps={{
+                                                                inputMode: 'numeric',
+                                                                pattern: '[0-9]*',
+                                                                form: "submit-checked-groceries",
+                                                                title: "Please enter a positive number"
+                                                            }}
+                                                            id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
+                                                        ></TextField>
+                                                    </TableCell>
+                                                    <TableCell>{groc.maxQuantity}</TableCell>
+                                                    <TableCell>{groc.whereToBuy}</TableCell>
+                                                    <TableCell>{groc.price >= 0 ?
+                                                        `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
+                                                        "N/A"}</TableCell>
+                                                    <TableCell>
+                                                        <p>Select Date</p>
+                                                        <DatePicker
+                                                            selected={selectedDate}
+                                                            onChange={handleDateChange}
+                                                            dateFormat="MM/dd/yyyy"
+                                                            className="custom-datepicker"
+                                                        />
+
+                                                    </TableCell>
+                                                </TableRow> :
+                                                null
+                                        }
+                                    </TableBody>
+                                )
+
+                            })
+                        }
+                    </Table>
+                </TableContainer>
+            </div>
+                :
+                <Container disableGutters sx={{ backgroundColor: yellow[200], height: '50px', display: 'flex', justifyContent: 'left', alignItems: 'center', marginTop: '10px', marginBottom: '10px' }}>
+                    {/* <CancelIcon sx={{ fontSize: 20 }} /> */}
+                    <Typography component="h1" fontSize="1em" sx={{ padding: '0', marginLeft: '30px' }}>You're not in a group yet. Join a group <Link to="/group">here</Link>!</Typography>
+                </Container>
+
             }
-            {
-                // handles submitting check groceries
-                <form method="post" id="submit-checked-groceries"
-                    name="submitCheckedGroceries"
-                    onSubmit={handleCheckedItems}></form>
-            }
-            {
-                <form method="post" id="addGroceries" name="addGroceries" onSubmit={handleSubmit}></form>
-            }
-
-            {
-                showCheckBox ?
-                    <div>Select items to purchase and click done to add them to your grocery list {'\u0028'}highlighted at the top of the fridge{'\u0029'}.
-                        <br></br>
-                        <Button variant="outlined" type="submit" form="submit-checked-groceries">Done</Button>
-                    </div> :
-                    <form style={{ marginBottom: '3%' }} method="post" onSubmit={(e) => { e.preventDefault(); setShowCheckBox(true) }}>
-                        <Button variant="outlined" type="submit">Plan grocery trip</Button>
-                    </form>
-            }
-            <TableContainer>
-
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            {showCheckBox ? <TableCell>Select</TableCell> : null}
-                            <TableCell>Item</TableCell>
-                            <TableCell>Stock</TableCell>
-                            <TableCell>Limit</TableCell>
-                            <TableCell>Where to buy</TableCell>
-                            <TableCell>Estimated Cost</TableCell>
-                            <TableCell></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    {showCheckBox ? null :
-                        <TableRow>
-                            <TableCell>
-                                <TextField
-                                    fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"
-                                    inputProps={{ form: "addGroceries" }}></TextField></TableCell>
-                            <TableCell>
-                                <TextField fullWidth title="Please enter a number " label="Quantity in stock"
-                                    required size="small" inputProps={{
-                                        inputMode: 'numeric',
-                                        pattern: '[0-9]*',
-                                        form: "addGroceries",
-                                        title: "Please enter a positive number"
-                                    }} id="quantity" name="quantity"></TextField>
-                            </TableCell>
-                            <TableCell>
-                                <TextField title="Please enter a number "
-                                    fullWidth label="Stock Limit" required size="small"
-                                    inputProps={{
-                                        inputMode: 'numeric',
-                                        pattern: '[0-9]*',
-                                        form: "addGroceries",
-                                        title: "Please enter a positive number"
-                                    }} id="limit" name="limit"></TextField>
-                            </TableCell>
-                            <TableCell>
-                                <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy" inputProps={{ form: "addGroceries" }}></TextField>
-                            </TableCell>
-                            <TableCell>N/A</TableCell>
-                            <TableCell >
-                                <Button size="small" variant="outlined" type="submit" form="addGroceries">Add</Button>
-                            </TableCell>
-                        </TableRow>
-                    }
-                    {
-                        //this part renders all the grocery runs scheduled
-                        currentTrips.map((trip) => {
-                            return (
-                                <TableBody key={trip.tripID} style={{ border: '5px solid red' }}>
-                                    <TableRow>
-                                        <TableCell colSpan={showCheckBox ? 6 : 5}><medium>Grocery run initiated by {users[trip.userID]} on {trip.date}</medium></TableCell>
-                                        <TableCell><Button size="medium" variant="outlined" onClick={() => handleCancelTrip(trip)}>Cancel trip</Button>
-                                            <Button size="medium" variant="outlined" onClick={() => handleCompleteTrip(trip)}>Complete trip</Button></TableCell>
-                                    </TableRow>
-                                    {
-                                        trip.toBuy.map((groc) => {
-
-                                            return <TableRow>
-                                                {showCheckBox ? <TableCell></TableCell> : null}
-                                                <TableCell>{groc.itemName}</TableCell>
-                                                <TableCell>To buy: {groc.quantityToBuy}</TableCell>
-                                                <TableCell>{groc.maxQuantity}</TableCell>
-                                                <TableCell>{groc.whereToBuy}</TableCell>
-                                                <TableCell>{groc.price >= 0 ?
-                                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                                    "N/A"}</TableCell>
-                                            </TableRow>
-                                        })
-                                    }
-                                </TableBody>
-                            )
-                        })
-                    }
-                    {
-                        //this part lists all the items currently in a fridge
-                        fridgeItems.map((groc) => {
-                            const showEditCur = showEdit[groc.itemName]
-                            const showGroceryTripInputCur = checkedItems.has(groc.itemName)
-                            return (
-                                <TableBody>
-                                    <TableRow key={groc.id}>
-                                        {showCheckBox ? <TableCell > <input type="checkbox" name={`${groc.itemName}`} onChange={handleCheckboxChange} /> </TableCell> : null}
-
-                                        <TableCell>{groc.itemName}</TableCell>
-
-
-                                        <TableCell>{showEditCur ?
-                                            <input type="number" id="quantity" name="quantity" form={`edit-${groc.itemName}-form`}
-                                                defaultValue={groc.currentQuantity}></input>
-                                            : groc.currentQuantity}</TableCell>
-
-                                        <TableCell>{showEditCur ?
-                                            <input type="number" id="limit" name="limit" form={`edit-${groc.itemName}-form`}
-                                                defaultValue={groc.maxQuantity}></input>
-                                            : groc.maxQuantity}</TableCell>
-                                        <TableCell>{showEditCur ?
-                                            <input type="text" id="whereToBuy" name="whereToBuy" form={`edit-${groc.itemName}-form`}
-                                                defaultValue={groc.whereToBuy}></input>
-                                            : groc.whereToBuy}</TableCell>
-
-
-
-                                        <TableCell>{groc.price >= 0 ?
-                                            `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                            "N/A"}</TableCell>
-
-                                        <TableCell >
-                                            <form id={groc.itemName} method="post" onSubmit={handleDelete}>
-                                                <Button size="small" variant="outlined" type="submit">Delete</Button>
-                                            </form>
-                                            {
-                                                !showEditCur ?
-                                                    <form method="post" id={`toggle-${groc.itemName}-edit`} onSubmit={handleToggle}>
-                                                        <Button size="small" variant="outlined" type="submit" >Edit</Button>
-                                                    </form> :
-                                                    <Button size="small" variant="outlined" type="submit" form={`edit-${groc.itemName}-form`}>Submit</Button>
-
-                                            }
-                                        </TableCell>
-                                    </TableRow>
-                                    {
-                                        showGroceryTripInputCur ?
-                                            <TableRow>
-                                                <TableCell></TableCell>
-                                                <TableCell>{groc.itemName}</TableCell>
-                                                <TableCell>
-                                                    <TextField title="Please enter a number " fullWidth
-                                                        label="Quantity to Buy" required size="small"
-                                                        inputProps={{
-                                                            inputMode: 'numeric',
-                                                            pattern: '[0-9]*',
-                                                            form: "submit-checked-groceries",
-                                                            title: "Please enter a positive number"
-                                                        }}
-                                                        id={`quantityToBuy${groc.itemName}`} name={`quantityToBuy${groc.itemName}`}
-                                                    ></TextField>
-                                                </TableCell>
-                                                <TableCell>{groc.maxQuantity}</TableCell>
-                                                <TableCell>{groc.whereToBuy}</TableCell>
-                                                <TableCell>{groc.price >= 0 ?
-                                                    `${groc.price} ${groc.priceUnit} per ${groc.groceryUnit}` :
-                                                    "N/A"}</TableCell>
-                                                <TableCell>
-                                                    <p>Select Date</p>
-                                                    <DatePicker
-                                                        selected={selectedDate}
-                                                        onChange={handleDateChange}
-                                                        dateFormat="MM/dd/yyyy"
-                                                        className="custom-datepicker"
-                                                    />
-
-                                                </TableCell>
-                                            </TableRow> :
-                                            null
-                                    }
-                                </TableBody>
-                            )
-
-                        })
-                    }
-                </Table>
-            </TableContainer>
-
-            {/* This part is the form for adding groceries */}
-            {/*
-            <Box
-                sx={{
-                    display: 'grid',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '80%',
-                    mt: '15px',
-                    mb: '15px'
-                }}>
-
-                <form method="post" onSubmit={handleSubmit}>
-                    <Grid container style={{ border: 'none', width: '100%' }} spacing={1} >
-
-                        <Grid item xs={6} md={6}>
-                            <TextField fullWidth label="Grocery Name" required size="small" id="itemName" name="itemName"></TextField>
-                        </Grid>
-                        <Grid item xs={6} md={6}>
-                            <TextField title="Please enter a number " fullWidth label="Stock Limit" required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} id="limit" name="limit"></TextField>
-                        </Grid>
-
-                        <Grid item xs={6} md={6}>
-                            <TextField fullWidth title="Please enter a number " label="Quantity in stock" required size="small" inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} id="quantity" name="quantity"></TextField>
-                        </Grid>
-                        <Grid item xs={6} md={6}>
-                            <TextField fullWidth label="Store" size="small" id="whereToBuy" name="whereToBuy"></TextField>
-                        </Grid>
-
-                        <Grid item xs={12} >
-                            <Button fullWidth variant="outlined" type="submit ">Add</Button>
-                        </Grid>
-
-                    </Grid>
-                </form>
-            </Box>*/}
-        </div>
+        </Box>
     );
 }
 
