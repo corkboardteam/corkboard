@@ -78,7 +78,7 @@ function LandingPage() {
         <Typography variant="h4" fontWeight='bold' component="h1" align='center'>
           Ever buy eggs at Costco on the same day that your roommate buys two cartons at Trader Joe’s?
         </Typography>
-        <Box maxWidth='40vw' sx={{ backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <Box maxWidth='50vw' sx={{ backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         <Typography variant="h4" component="h2" align='center' sx={{ marginTop: '50px', marginBottom: '20px' }}>
           Then Corkboard is for you and your roommates!
         </Typography>
